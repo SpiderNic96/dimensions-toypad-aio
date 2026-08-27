@@ -1,0 +1,22 @@
+name: Reproduce AIO artifact
+
+on:
+  workflow_dispatch:
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Repack supplied reference AIO
+        run: ./scripts/repack-reference-aio.sh | tee build-repack.log
+      - name: Upload repackaged reference artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dimensions-toypad-AIO-3.3.11-repacked
+          path: build/dimensions-toypad-AIO-3.3.11-repacked.zip
+      - name: Upload build log
+        uses: actions/upload-artifact@v4
+        with:
+          name: dimensions-toypad-repack-build-log
+          path: build-repack.log

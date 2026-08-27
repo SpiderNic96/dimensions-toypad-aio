@@ -1,0 +1,72 @@
+name: Build RPCS3 Toypad AppImage
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build RPCS3 and package AppImage in Fedora 41
+        shell: bash
+        run: |
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            fedora:41 bash -lc '
+              set -euxo pipefail
+              dnf -y update
+              dnf -y install \
+                cmake ninja-build gcc-c++ git-core patch curl file tar gzip unzip findutils \
+                qt6-qtbase-devel qt6-qtmultimedia-devel qt6-qtsvg-devel \
+                vulkan-loader-devel vulkan-headers glslang \
+                libxkbcommon-devel libxkbcommon-x11-devel \
+                alsa-lib-devel pulseaudio-libs-devel jack-audio-connection-kit-devel \
+                ffmpeg-devel openal-soft-devel libatomic zlib-devel curl-devel libudev-devel \
+                glew-devel libpng-devel libjpeg-turbo-devel libevdev-devel systemd-devel dbus-devel \
+                llvm19-devel llvm19-static wayland-devel wayland-protocols-devel libglvnd-devel \
+                libusb1-devel libaio-devel
+
+              rm -rf /tmp/rpcs3-dist /workspace/build/source-rpcs3 /workspace/build/appimage
+              mkdir -p /tmp/rpcs3-dist /workspace/build/source-rpcs3 /workspace/build/appimage
+              git clone https://github.com/NeverCookFirst/RPCS3-Seamless-Toypad-Build.git /tmp/rpcs3-dist/rpcs3
+              cd /tmp/rpcs3-dist/rpcs3
+              git checkout 797f1e417f736a04e43319f27812228c4c8dbf6e
+              git submodule update --init --recursive --depth 1
+
+              sed -i '"'"'/^#include <QMainWindow>/a #include <unordered_set>'"'"' rpcs3qt/game_list_frame.h || true
+              sed -i '"'"'/^#include "config_database.h"/a #include <QJsonDocument>\n#include <QJsonObject>'"'"' rpcs3qt/config_database.cpp || true
+              sed -i '"'"'s|QString(msg).arg(entry->name)|QString(msg).arg(QString::fromStdString(entry->name))|'"'"' rpcs3qt/game_list_actions.cpp || true
+
+              ROOT=/tmp/rpcs3-dist bash /workspace/scripts/../source/rpcs3-patch/apply-color-forwarding.sh
+
+              mkdir -p /tmp/rpcs3-dist/build
+              cd /tmp/rpcs3-dist/build
+              cmake ../rpcs3 -G Ninja \
+                -DCMAKE_BUILD_TYPE=Release \
+                -DUSE_NATIVE_INSTRUCTIONS=OFF \
+                -DBUILD_LLVM=ON \
+                -DSTATIC_LINK_LLVM=ON \
+                -DUSE_SYSTEM_SDL=OFF \
+                -DUSE_ALSA=ON -DUSE_PULSE=ON -DUSE_JACK=ON
+              ninja
+              /tmp/rpcs3-dist/build/bin/rpcs3 --version 2>&1 | tee /workspace/build/source-rpcs3/version.txt || true
+
+              bash /workspace/scripts/build-rpcs3-appimage.sh /tmp/rpcs3-dist /workspace/build/appimage
+            '
+
+      - name: Check artifact exists
+        run: |
+          test -x build/appimage/RPCS3-Toypad-x86_64.AppImage
+          sha256sum build/appimage/RPCS3-Toypad-x86_64.AppImage
+
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: dimensions-toypad-rpcs3-appimage
+          path: |
+            build/appimage/RPCS3-Toypad-x86_64.AppImage
+            build/appimage/RPCS3-Toypad-x86_64.AppImage.sha256
+            build/source-rpcs3/version.txt

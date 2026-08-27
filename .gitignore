@@ -1,0 +1,9 @@
+# Local build output
+build/
+dist/
+node_modules/
+upstream-source/
+release-staging/
+*.orig
+*.log
+.DS_Store

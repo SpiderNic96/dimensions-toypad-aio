@@ -1,0 +1,10 @@
+This repository is a collection/distribution of multiple components with different licences.
+
+See:
+- source/plugin/ for the plugin licence information.
+- source/protocol/LICENSE for the 0BSD protocol licence.
+- source/COPYING.GPL-2.0 where the bundled plugin-side GPL text is included.
+- source/SOURCES.md and source/THIRD-PARTY-NOTICES.md for third-party provenance.
+
+The bundled RPCS3 code/runtime remains subject to RPCS3 and fork file-level licensing.
+LEGO, LEGO Dimensions and related marks are property of their respective owners.

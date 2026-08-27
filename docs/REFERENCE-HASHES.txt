@@ -1,0 +1,10 @@
+Dimensions Toypad AIO 3.3.11 reference files
+
+AIO ZIP
+7a57a02a8b6133fed712842ee7b60e2eb7514cd71333811be0c71d73a75a351f  release/reference/dimensions-toypad-AIO-3.3.11.zip
+
+SOURCE ZIP
+cd58bad52fbfe95a6ac3b3a4ad59c9e07650fa0380330f43be99b9fe66df516a  release/source/dimensions-toypad-SOURCE-3.3.11.zip
+
+Bundled AppImage inside AIO
+1f2ce02de8bf361834bcb38e1e92d0f9ee138bc71e1c271628b55eed437f2e71  rpcs3/RPCS3-Toypad-x86_64.AppImage

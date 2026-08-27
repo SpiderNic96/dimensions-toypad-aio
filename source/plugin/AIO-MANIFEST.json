@@ -1,0 +1,48 @@
+{
+  "version": "toypad-20260826-aio-3.3.11",
+  "rpcs3_sha256": "1f2ce02de8bf361834bcb38e1e92d0f9ee138bc71e1c271628b55eed437f2e71",
+  "rpcs3_size": 258210296,
+  "rpcs3_commit": "797f1e417f736a04e43319f27812228c4c8dbf6e",
+  "tag_source": "https://github.com/harrysof/LegoToypad",
+  "tag_source_version": "v1.5",
+  "plugin_version": "3.3.11",
+  "runtime_policy": "bundled-only-no-fallback",
+  "launcher_chain": "play-dimensions.sh -> run-both.sh -> bundled RPCS3 AppImage --no-gui EBOOT.BIN",
+  "game_display": "16:9 1280x720 via Gamescope when needed; native Steam Gaming Mode compositor when already present",
+  "listener_state": "waiting|connected|not_configured",
+  "credits_file": "CREDITS.md",
+  "sources_file": "SOURCES.md",
+  "source_code_status": "SOURCE-CODE-STATUS.md",
+  "performance_notes": "PERFORMANCE.md",
+  "release_checklist": "RELEASE-CHECKLIST.md",
+  "phone_remote": "automatic upstream LegoToypad v1.5 Web UI provisioning; no separate phone app required",
+  "first_run_setup": "automatic background setup; user supplies only their own game/content files",
+  "rpc3_source_offer": "SOURCE/fetch-upstream-source.sh",
+  "download_policy": "HTTPS via host-trusted curl with Python CA-bundle fallback; TLS verification never disabled",
+  "platforms": "SteamOS/Steam Deck and Bazzite handheld Steam Gaming Mode",
+  "runtime_qt": "Force XCB for bundled AppImage under Gamescope; do not force native Wayland",
+  "changelog_3_3_8": [
+    "Bundled RPCS3 now forwards LED colour/flash commands over the toypad socket",
+    "Live per-pad and broadcast LED colour visible in the Decky QAM panel",
+    "Phone remote catalog gains a synthetic 'Starters' franchise (Batman, Gandalf, Wyldstyle + their vehicles)",
+    "state_json now emits per-pad ledColor for phone UI halo rendering",
+    "phoneRemoteState = ready | no_network so the UI can display an accurate fallback",
+    "Multi-client toypad listener so Decky panel and phone can connect simultaneously"
+  ],
+  "changelog_3_3_9": [
+    "LED colour now paints the pad-slot border in the Decky QAM pad view (not just the Setup diagnostic row)",
+    "Phone remote pad halo now reflects live LED colour instead of the static figure tag colour",
+    "New get_pad_colors RPC + 500ms polling in the pad view for real-time LED updates",
+    "state_json.pad.color is overridden by ledColor when present; original figure colour preserved in tagColor"
+  ],
+  "changelog_3_3_10": [
+    "FIX: colour reader no longer sends HELLO \u2014 the fork's inbound listener treated 'H' as an unknown LOAD/REMOVE/MOVE command and dropped the connection, so no colour frames ever reached the plugin. Without HELLO the reader connects and stays open exactly like the 'xxd' shell tap that worked.",
+    "Colour reader diagnostics: setup panel shows 'reader: connected + N frames' or 'reader: waiting (last error)' so it's obvious whether frames are being received.",
+    "Version detection now reads both stdout and stderr; RPCS3's AppImage-wrapped launcher prints to stderr, so the panel was showing 'version string unavailable' even for correct builds."
+  ],
+  "changelog_3_3_11": [
+    "Per-pad vs broadcast LED colour now resolves by recency, not by 'per-pad always wins'",
+    "Locate Keystone hints stop lingering after the game resets the pads with a Colour All",
+    "No emulator rebuild required - resolution logic is entirely plugin-side"
+  ]
+}
