@@ -1,4 +1,4 @@
-# LEGO Dimensions Toypad — Steam Deck AIO 3.3.11
+# LEGO Dimensions Toypad — Steam Deck RPCS3 AIO 3.3.11
 
 [CEMU VERSION - COMING SOON]
 
