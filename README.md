@@ -10,6 +10,10 @@ An unofficial community Steam Deck/Decky integration for LEGO Dimensions, combin
 
 The app is a Steam Deck-focused control and integration layer for LEGO Dimensions. It lets the game run against an emulated Toypad while the Decky Quick Access Menu provides figure/pad management and live Toypad LED visualisation. A phone can also act as the remote through the upstream LegoToypad v1.5 web UI.
 
+![Plugin UI - Demo](source/docs/Plugin%20UI%20-%20Demo.jpg)
+
+*Demo: the Decky Toypad interface running alongside LEGO Dimensions, showing live figure slots and Toypad controls.*
+
 The supplied AIO is intentionally **bundled-runtime only**: the plugin verifies the exact bundled RPCS3 AppImage SHA-256 and refuses to silently substitute a system, PATH, container, or development RPCS3.
 
 ## What it does
