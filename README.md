@@ -81,6 +81,10 @@ The repository includes the supplied provenance files under `source/`, including
 
 Current RPCS3 upstream documentation confirms RPCS3 supports Linux and that most files use GPL-2.0-only licensing, with file-level notices taking precedence.
 
+## Development acknowledgement
+
+This project has been developed with AI-assisted research and engineering contributions from **Claude (Anthropic), including Claude Opus**, alongside the human project author. Claude/Opus has contributed to code analysis, troubleshooting, documentation, architecture review, and investigation of LEGO Dimensions Toypad/emulation behaviour. Where AI-assisted analysis produced experimental findings or proposed fixes, those findings are treated as development research rather than established upstream Cemu/RPCS3 facts and remain subject to testing and verification.
+
 ## Reference AIO
 
 `release/reference/dimensions-toypad-AIO-3.3.11.zip` is the exact AIO ZIP supplied for this repository build-out.
