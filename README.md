@@ -1,5 +1,7 @@
 # LEGO Dimensions Toypad — Steam Deck AIO 3.3.11
 
+[CEMU VERSION - COMING SOON]
+
 An unofficial community Steam Deck/Decky integration for LEGO Dimensions, combining a Decky Loader plugin, an emulated Toypad bridge, the upstream LegoToypad v1.5 phone UI, and a bundled patched RPCS3 Linux AppImage.
 
 > **This repository preserves the supplied 3.3.11 release and its source distribution. It does not claim that a bit-for-bit source rebuild was completed in this environment. See [`docs/BUILD-ATTEMPT.md`](docs/BUILD-ATTEMPT.md).**
