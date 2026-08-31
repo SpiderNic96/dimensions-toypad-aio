@@ -12,10 +12,8 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout integration repo
-        uses: actions/checkout@v4
-      - name: Checkout Xenia Toypad source
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           repository: NeverCookFirst/Xenia-Seamless-Toypad-Build
           ref: toypad
@@ -47,18 +45,15 @@ jobs:
           cs=once(cs,anchor,get)
           c.write_text(cs)
           PY
-      - name: Install Linux build dependencies
+      - name: Install dependencies
         run: |
-          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc >/dev/null
           sudo apt-get update
           sudo apt-get install -y mesa-vulkan-drivers valgrind libc++-dev libc++abi-dev libgtk-3-dev libsdl2-dev libvulkan-dev libx11-xcb-dev clang-20 lld-20 spirv-tools libfuse2
           sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-20 200
           sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-20 200
           sudo update-alternatives --install /usr/bin/lld lld /usr/bin/lld-20 200
           sudo update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/ld.lld-20 200
-          sudo update-alternatives --install /usr/bin/llvm-ar llvm-ar /usr/bin/llvm-ar-20 200
-          sudo update-alternatives --install /usr/bin/llvm-ranlib llvm-ranlib /usr/bin/llvm-ranlib-20 200
-          sudo update-alternatives --install /usr/bin/llvm-nm llvm-nm /usr/bin/llvm-nm-20 200
       - name: Install Vulkan SDK and linuxdeploy
         run: |
           wget -qO vulkan-sdk.tar.xz https://sdk.lunarg.com/sdk/download/latest/linux/vulkan-sdk.tar.xz
@@ -85,19 +80,11 @@ jobs:
           rm -rf "$APPDIR"
           mkdir -p "$APPDIR/usr/bin"
           cp "$BIN" "$APPDIR/usr/bin/xenia_canary"
-          for size in 16 32 48 64 128 256 512 1024; do
-            mkdir -p "$APPDIR/usr/share/icons/hicolor/${size}x${size}/apps"
-            cp "assets/icon/${size}.png" "$APPDIR/usr/share/icons/hicolor/${size}x${size}/apps/xenia_canary.png"
-          done
-          "$GITHUB_WORKSPACE/linuxdeploy" \
-            --appdir "$APPDIR" \
-            --executable "$BIN" \
-            --desktop-file "$GITHUB_WORKSPACE/xenia-src/assets/xenia_canary.desktop" \
-            --icon-file "$GITHUB_WORKSPACE/xenia-src/assets/icon/256.png" \
-            --output appimage
-          echo 'AppImages produced in:'
-          find "$GITHUB_WORKSPACE" -maxdepth 2 -type f -name '*.AppImage' -print
-          f=$(find "$GITHUB_WORKSPACE/xenia-src" -maxdepth 1 -type f -name '*.AppImage' -print -quit)
+          for size in 16 32 48 64 128 256 512 1024; do mkdir -p "$APPDIR/usr/share/icons/hicolor/${size}x${size}/apps"; cp "assets/icon/${size}.png" "$APPDIR/usr/share/icons/hicolor/${size}x${size}/apps/xenia_canary.png"; done
+          "$GITHUB_WORKSPACE/linuxdeploy" --appdir "$APPDIR" --executable "$BIN" --desktop-file "$GITHUB_WORKSPACE/xenia-src/assets/xenia_canary.desktop" --icon-file "$GITHUB_WORKSPACE/xenia-src/assets/icon/256.png" --output appimage
+          echo 'Produced:'
+          find "$GITHUB_WORKSPACE" -maxdepth 3 -type f -name '*.AppImage' -print
+          f=$(find "$GITHUB_WORKSPACE" -maxdepth 3 -type f -name 'Xenia_Canary-x86_64.AppImage' -print -quit)
           test -n "$f"
           cp "$f" "$GITHUB_WORKSPACE/Xenia-Toypad-x86_64.AppImage"
           chmod +x "$GITHUB_WORKSPACE/Xenia-Toypad-x86_64.AppImage"
