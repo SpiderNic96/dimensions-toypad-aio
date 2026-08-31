@@ -76,12 +76,37 @@ jobs:
         run: ./xenia-build.py build --config=Release
       - name: Package AppImage
         working-directory: xenia-src
+        shell: bash
         run: |
-          test -s build/bin/Linux/Release/xenia_canary
-          APPDIR="$GITHUB_WORKSPACE/xenia-appdir"; mkdir -p "$APPDIR/usr/bin"; cp build/bin/Linux/Release/xenia_canary "$APPDIR/usr/bin/xenia_canary"
-          for size in 16 32 48 64 128 256 512 1024; do mkdir -p "$APPDIR/usr/share/icons/hicolor/${size}x${size}/apps"; cp "assets/icon/${size}.png" "$APPDIR/usr/share/icons/hicolor/${size}x${size}/apps/xenia_canary.png"; done
-          ./../linuxdeploy --appdir "$APPDIR" --executable build/bin/Linux/Release/xenia_canary --desktop-file "$GITHUB_WORKSPACE/xenia-src/assets/xenia_canary.desktop" --icon-file "$GITHUB_WORKSPACE/xenia-src/assets/icon/256.png" --output appimage
-          f=$(ls -1 "$GITHUB_WORKSPACE"/*.AppImage | head -n1); chmod +x "$f"; cp "$f" "$GITHUB_WORKSPACE/Xenia-Toypad-x86_64.AppImage"; sha256sum "$GITHUB_WORKSPACE/Xenia-Toypad-x86_64.AppImage" | tee "$GITHUB_WORKSPACE/xenia-sha256.txt"
+          set -euo pipefail
+          BIN=build/bin/Linux/Release/xenia_canary
+          test -s "$BIN"
+          APPDIR="$GITHUB_WORKSPACE/xenia-appdir"
+          rm -rf "$APPDIR"
+          mkdir -p "$APPDIR/usr/bin"
+          cp "$BIN" "$APPDIR/usr/bin/xenia_canary"
+          for size in 16 32 48 64 128 256 512 1024; do
+            mkdir -p "$APPDIR/usr/share/icons/hicolor/${size}x${size}/apps"
+            cp "assets/icon/${size}.png" "$APPDIR/usr/share/icons/hicolor/${size}x${size}/apps/xenia_canary.png"
+          done
+          "$GITHUB_WORKSPACE/linuxdeploy" \
+            --appdir "$APPDIR" \
+            --executable "$BIN" \
+            --desktop-file "$GITHUB_WORKSPACE/xenia-src/assets/xenia_canary.desktop" \
+            --icon-file "$GITHUB_WORKSPACE/xenia-src/assets/icon/256.png" \
+            --output appimage
+          echo 'AppImages produced in:'
+          find "$GITHUB_WORKSPACE" -maxdepth 2 -type f -name '*.AppImage' -print
+          f=$(find "$GITHUB_WORKSPACE/xenia-src" -maxdepth 1 -type f -name '*.AppImage' -print -quit)
+          test -n "$f"
+          cp "$f" "$GITHUB_WORKSPACE/Xenia-Toypad-x86_64.AppImage"
+          chmod +x "$GITHUB_WORKSPACE/Xenia-Toypad-x86_64.AppImage"
+          sha256sum "$GITHUB_WORKSPACE/Xenia-Toypad-x86_64.AppImage" | tee "$GITHUB_WORKSPACE/xenia-sha256.txt"
       - name: Upload Xenia AppImage
         uses: actions/upload-artifact@v4
-        with: {name: xenia-toypad-appimage, path: "Xenia-Toypad-x86_64.AppImage\nxenia-sha256.txt", retention-days: 14}
+        with:
+          name: xenia-toypad-appimage
+          path: |
+            Xenia-Toypad-x86_64.AppImage
+            xenia-sha256.txt
+          retention-days: 14
