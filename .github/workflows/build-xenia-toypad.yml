@@ -1,0 +1,87 @@
+name: Build Xenia Toypad AppImage
+
+on:
+  push:
+    branches: [xenia-toypad-steamdeck]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout integration repo
+        uses: actions/checkout@v4
+      - name: Checkout Xenia Toypad source
+        uses: actions/checkout@v4
+        with:
+          repository: NeverCookFirst/Xenia-Seamless-Toypad-Build
+          ref: toypad
+          path: xenia-src
+          submodules: false
+          fetch-depth: 1
+      - name: Patch Xenia with GET_LED support
+        working-directory: xenia-src
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          h=Path('src/xenia/hid/portal/emulated_toypad.h'); c=Path('src/xenia/hid/portal/emulated_toypad.cc')
+          hs=h.read_text(); cs=c.read_text()
+          def once(s,a,b):
+              if s.count(a)!=1: raise SystemExit('patch anchor mismatch: '+a[:60])
+              return s.replace(a,b,1)
+          hs=once(hs,'  void GetModel(const uint8_t* buf, uint8_t sequence,\n                std::array<uint8_t, 32>& reply_buf);\n\n  static std::array<uint8_t, 8> Decrypt(','''  void GetModel(const uint8_t* buf, uint8_t sequence,\n                std::array<uint8_t, 32>& reply_buf);\n\n  struct LedPadState { uint8_t pad=0, mode=0, r=0, g=0, b=0, on=0, off=0, count=0, speed=0; };\n  void HandleLedCommand(const uint8_t*, size_t);\n  void SetLedState(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);\n  std::array<LedPadState,3> GetLedStates();\n  uint8_t GetLedSerial();\n\n  static std::array<uint8_t, 8> Decrypt(''')
+          hs=once(hs,'  std::queue<std::array<uint8_t, 32>> responses_;\n','''  std::queue<std::array<uint8_t, 32>> responses_;\n  xe_mutex led_lock_;\n  std::array<LedPadState,3> led_state_{};\n  uint8_t led_serial_=0;\n''')
+          h.write_text(hs)
+          cs=once(cs,'  return true;\n}\n\nuint16_t ListenerPort() {','''  return true;\n}\n\nbool SendAll(socket_t s,const uint8_t* data,size_t len){ while(len){ auto n=::send(s,reinterpret_cast<const char*>(data),static_cast<int>(len),0); if(n<=0)return false; data+=n; len-=static_cast<size_t>(n);} return true; }\n\nuint16_t ListenerPort() {''')
+          marker='// ============================================================================\n// Figure management (driven by the companion-app listener)\n// ============================================================================\n'
+          led='''namespace { uint8_t LP(uint8_t p){return p==1?0:p==2?1:2;} uint8_t LR(uint8_t r){return r+1;} }\nvoid EmulatedToypad::SetLedState(uint8_t p,uint8_t m,uint8_t r,uint8_t g,uint8_t b,uint8_t on,uint8_t off,uint8_t count,uint8_t speed){ std::lock_guard<xe_mutex> q(led_lock_); auto a=[&](uint8_t p){auto& s=led_state_[LP(p)]; if(s.mode==m&&s.r==r&&s.g==g&&s.b==b&&s.on==on&&s.off==off&&s.count==count&&s.speed==speed)return; s={p,m,r,g,b,on,off,count,speed}; ++led_serial_;}; if(!p){a(1);a(2);a(3);}else a(p); }\nstd::array<EmulatedToypad::LedPadState,3> EmulatedToypad::GetLedStates(){std::lock_guard<xe_mutex> q(led_lock_);return led_state_;}\nuint8_t EmulatedToypad::GetLedSerial(){std::lock_guard<xe_mutex> q(led_lock_);return led_serial_;}\nvoid EmulatedToypad::HandleLedCommand(const uint8_t* b,size_t n){ if(n<25)return; switch(b[2]){ case 0xC0:SetLedState(b[4],1,b[5],b[6],b[7],0,0,0,0);break; case 0xC1:break; case 0xC2:SetLedState(b[4],3,b[7],b[8],b[9],0,0,b[6],b[5]);break; case 0xC3:SetLedState(b[4],2,b[8],b[9],b[10],b[5],b[6],b[7]==0xFF?0:b[7],0);break; case 0xC4:{auto s=GetLedStates();auto&e=s[LP(b[4])];SetLedState(b[4],3,e.r,e.g,e.b,0,0,b[6],b[5]);break;} case 0xC6:for(uint8_t r=0;r<3;r++){auto o=4+r*6;if(!b[o])SetLedState(LR(r),0,0,0,0,0,0,0,0);else SetLedState(LR(r),3,b[o+3],b[o+4],b[o+5],0,0,b[o+2],b[o+1]);}break; case 0xC7:for(uint8_t r=0;r<3;r++){auto o=4+r*7;if(!b[o])SetLedState(LR(r),0,0,0,0,0,0,0,0);else SetLedState(LR(r),2,b[o+4],b[o+5],b[o+6],b[o+1],b[o+2],b[o+3]==0xFF?0:b[o+3],0);}break; case 0xC8:for(uint8_t r=0;r<3;r++){auto o=4+r*4;if(!b[o])SetLedState(LR(r),0,0,0,0,0,0,0,0);else SetLedState(LR(r),1,b[o+1],b[o+2],b[o+3],0,0,0,0);}break; default:break;} }\n\n'''
+          cs=once(cs,marker,led+marker)
+          cs=once(cs,'''    case 0xC8: {  // Color All\n      GetBlankResponse(0x01, sequence, result);\n      break;\n    }''','''    case 0xC8: {  // Color All\n      HandleLedCommand(buf, buf_size);\n      GetBlankResponse(0x01, sequence, result);\n      break;\n    }''')
+          cs=once(cs,'  if (pad < 1 || pad > 3 || index >= kToypadFigureCount) {','  if (cmd != 0x04 && (pad < 1 || pad > 3 || index >= kToypadFigureCount)) {')
+          anchor='''    default: {\n      XELOGW("Toypad listener: unknown command {:02X}", cmd);'''
+          get='''    case 0x04: { auto states=GetLedStates(); uint8_t response[30]{}; response[0]=0x4C; response[1]=GetLedSerial(); response[2]=3; for(size_t i=0;i<3;i++){size_t o=3+i*9; response[o]=states[i].pad; response[o+1]=states[i].mode; response[o+2]=states[i].r; response[o+3]=states[i].g; response[o+4]=states[i].b; response[o+5]=states[i].on; response[o+6]=states[i].off; response[o+7]=states[i].count; response[o+8]=states[i].speed;} SendAll(client,response,sizeof(response)); break; }\n    default: {\n      XELOGW("Toypad listener: unknown command {:02X}", cmd);'''
+          cs=once(cs,anchor,get)
+          c.write_text(cs)
+          PY
+      - name: Install Linux build dependencies
+        run: |
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+          sudo apt-get update
+          sudo apt-get install -y mesa-vulkan-drivers valgrind libc++-dev libc++abi-dev libgtk-3-dev libsdl2-dev libvulkan-dev libx11-xcb-dev clang-20 lld-20 spirv-tools libfuse2
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-20 200
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-20 200
+          sudo update-alternatives --install /usr/bin/lld lld /usr/bin/lld-20 200
+          sudo update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/ld.lld-20 200
+          sudo update-alternatives --install /usr/bin/llvm-ar llvm-ar /usr/bin/llvm-ar-20 200
+          sudo update-alternatives --install /usr/bin/llvm-ranlib llvm-ranlib /usr/bin/llvm-ranlib-20 200
+          sudo update-alternatives --install /usr/bin/llvm-nm llvm-nm /usr/bin/llvm-nm-20 200
+      - name: Install Vulkan SDK and linuxdeploy
+        run: |
+          wget -qO vulkan-sdk.tar.xz https://sdk.lunarg.com/sdk/download/latest/linux/vulkan-sdk.tar.xz
+          mkdir -p "$HOME/vulkan-sdk" && tar -xf vulkan-sdk.tar.xz -C "$HOME/vulkan-sdk"
+          V=$(ls "$HOME/vulkan-sdk" | head -n1); echo "VULKAN_SDK=$HOME/vulkan-sdk/$V/x86_64" >> "$GITHUB_ENV"; echo "$HOME/vulkan-sdk/$V/x86_64/bin" >> "$GITHUB_PATH"
+          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage -O linuxdeploy; chmod +x linuxdeploy
+      - name: Fetch Xenia submodules
+        working-directory: xenia-src
+        run: |
+          SUBMODULES=$(grep -oP '(?<=path = )(?!third_party/(?:DirectX(?:-Headers|ShaderCompiler)|xbyak_aarch64)).+' .gitmodules)
+          git submodule update --init --depth=1 -j$(getconf _NPROCESSORS_ONLN) $SUBMODULES
+      - name: Build Xenia
+        working-directory: xenia-src
+        env: {CC: clang-20, CXX: clang++-20}
+        run: ./xenia-build.py build --config=Release
+      - name: Package AppImage
+        working-directory: xenia-src
+        run: |
+          test -s build/bin/Linux/Release/xenia_canary
+          APPDIR="$GITHUB_WORKSPACE/xenia-appdir"; mkdir -p "$APPDIR/usr/bin"; cp build/bin/Linux/Release/xenia_canary "$APPDIR/usr/bin/xenia_canary"
+          for size in 16 32 48 64 128 256 512 1024; do mkdir -p "$APPDIR/usr/share/icons/hicolor/${size}x${size}/apps"; cp "assets/icon/${size}.png" "$APPDIR/usr/share/icons/hicolor/${size}x${size}/apps/xenia_canary.png"; done
+          ./../linuxdeploy --appdir "$APPDIR" --executable build/bin/Linux/Release/xenia_canary --desktop-file "$GITHUB_WORKSPACE/xenia-src/assets/xenia_canary.desktop" --icon-file "$GITHUB_WORKSPACE/xenia-src/assets/icon/256.png" --output appimage
+          f=$(ls -1 "$GITHUB_WORKSPACE"/*.AppImage | head -n1); chmod +x "$f"; cp "$f" "$GITHUB_WORKSPACE/Xenia-Toypad-x86_64.AppImage"; sha256sum "$GITHUB_WORKSPACE/Xenia-Toypad-x86_64.AppImage" | tee "$GITHUB_WORKSPACE/xenia-sha256.txt"
+      - name: Upload Xenia AppImage
+        uses: actions/upload-artifact@v4
+        with: {name: xenia-toypad-appimage, path: "Xenia-Toypad-x86_64.AppImage\nxenia-sha256.txt", retention-days: 14}
