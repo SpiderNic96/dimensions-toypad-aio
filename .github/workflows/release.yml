@@ -1,0 +1,142 @@
+name: Publish release
+
+# Two ways in, because pushing a tag is not always available:
+#
+#   1. Push a v* tag. The workflow that runs is the one at the tagged commit,
+#      so a tag on a feature branch publishes a build off that branch with
+#      nothing merged to main.
+#   2. Push a commit whose message contains [release]. The version then comes
+#      from plugin.json and the workflow creates the tag itself, at the pushed
+#      commit, via `gh release create --target`. This is the path to use when
+#      the tag ref namespace is not writable from where you are pushing.
+#
+# Either way, a commit that is not reachable from the default branch is
+# published as a pre-release, so a branch test build never becomes "Latest".
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - '**'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    # A branch push only cuts a release when the commit explicitly asks for one.
+    if: >-
+      startsWith(github.ref, 'refs/tags/v') ||
+      contains(github.event.head_commit.message, '[release]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history: the pre-release decision below asks whether the
+          # tagged commit is reachable from the default branch.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package.json
+
+      - name: Install dependencies and build
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+          node --check dist/index.js
+
+      # A tag names its own version; a [release] commit takes plugin.json's,
+      # which is the file the Decky loader actually reads.
+      - name: Resolve version
+        id: ver
+        run: |
+          set -euo pipefail
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            V="${GITHUB_REF_NAME#v}"
+          else
+            V="$(node -p "require('./plugin.json').version")"
+          fi
+          echo "Releasing $V"
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          echo "tag=v$V" >> "$GITHUB_OUTPUT"
+
+      # Cutting the same version twice is a mistake, not an update: fail loudly
+      # rather than half-overwriting an existing release's assets.
+      - name: Refuse to overwrite an existing release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if gh release view "${{ steps.ver.outputs.tag }}" >/dev/null 2>&1; then
+            echo "::error::Release ${{ steps.ver.outputs.tag }} already exists. Bump the version in plugin.json, or delete that release first."
+            exit 1
+          fi
+
+      # Same staging as package-release.yml: plugin runtime only, no bundled
+      # emulator AppImages - install_backend() in main.py fetches those
+      # separately at setup time, hash-verified against the pinned
+      # Backend.appimage_sha256.
+      - name: Assemble archive contents
+        run: |
+          set -euo pipefail
+          STAGE="build/dimensions-toypad"
+          rm -rf build
+          mkdir -p "$STAGE"
+          cp main.py plugin.json package.json README.md LICENSE setup-licenses.sh "$STAGE/"
+          cp -r dist assets docs source LICENSES "$STAGE/"
+          rm -rf "$STAGE/dist/index.js.map"
+
+      - name: Zip archive
+        run: |
+          set -euo pipefail
+          cd build
+          zip -qr "dimensions-toypad-AIO-${{ steps.ver.outputs.version }}.zip" dimensions-toypad
+          sha256sum "dimensions-toypad-AIO-${{ steps.ver.outputs.version }}.zip" \
+            | tee "dimensions-toypad-AIO-${{ steps.ver.outputs.version }}.zip.sha256"
+
+      # Release notes are that version's own section of docs/CHANGELOG.md, so
+      # the release and the changelog cannot drift apart.
+      - name: Extract release notes
+        id: notes
+        run: |
+          set -euo pipefail
+          V="${{ steps.ver.outputs.version }}"
+          awk -v hdr="## $V " 'index($0, hdr) == 1 {f=1} f && /^## / && index($0, hdr) != 1 {exit} f' \
+            docs/CHANGELOG.md > build/notes.md || true
+          if [ ! -s build/notes.md ]; then
+            echo "No '## $V' section in docs/CHANGELOG.md; falling back to generated notes."
+            echo "have_notes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "have_notes=true" >> "$GITHUB_OUTPUT"
+            cat build/notes.md
+          fi
+
+      # Anything not reachable from the default branch is a test build, so it
+      # is published as a pre-release and never becomes the repo's "Latest".
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          V="${{ steps.ver.outputs.version }}"
+          ARGS=()
+          if git merge-base --is-ancestor "$GITHUB_SHA" "origin/$DEFAULT_BRANCH" 2>/dev/null; then
+            echo "Tagged commit is on $DEFAULT_BRANCH - publishing as a full release."
+          else
+            echo "Tagged commit is not on $DEFAULT_BRANCH - publishing as a pre-release."
+            ARGS+=(--prerelease)
+          fi
+          if [ "${{ steps.notes.outputs.have_notes }}" = "true" ]; then
+            ARGS+=(--notes-file build/notes.md)
+          else
+            ARGS+=(--generate-notes)
+          fi
+          gh release create "${{ steps.ver.outputs.tag }}" \
+            --title "dimensions-toypad $V" \
+            --target "$GITHUB_SHA" \
+            "${ARGS[@]}" \
+            "build/dimensions-toypad-AIO-$V.zip" \
+            "build/dimensions-toypad-AIO-$V.zip.sha256"

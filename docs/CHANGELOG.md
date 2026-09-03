@@ -4,6 +4,29 @@ Consolidated history from the v3.3.11 GitHub release to current.
 
 ---
 
+## 3.4.2 — Overlay no longer crops its own controls
+
+First on-hardware look at the deployed overlay: the pad itself renders
+correctly (3/1/3 geometry, circular centre, wider lower row, focus ring), but
+everything under it was being cut off - the Move / Remove / Clear all / Close
+row in pad mode, and the franchise grid in the picker.
+
+`PadGrid` is width-driven (`width: 100%` plus a 700:397 `aspect-ratio`), so at
+the shell's full 792px interior it claimed ~450px of height before anything
+else got a say, and the shell's `overflow: hidden` silently cropped the rest.
+
+- The pad is now the element that gives way, not the controls: its width is
+  capped by the vertical room actually left over (`48vh` in pad
+  mode, `38vh` in the picker modes, converted back into a width
+  through the pad's own aspect ratio), so it shrinks rather than pushing the
+  controls out of the shell.
+- The four scrolling result regions are now real flex items
+  (`flex: 1 1 auto; min-height: 0`) instead of fixed `40vh`/`46vh` blocks, so
+  they shrink into the space available instead of spilling past the shell edge.
+- `package-lock.json` version resynced (it was still pinned at 3.3.41).
+
+---
+
 ## 3.4.1 — Multi-backend, licensing compliance, protocol fixes P1–P7, features F1–F8
 
 > **Note:** Untested on physical Steam Deck hardware. Verification on real Deck hardware is pending.

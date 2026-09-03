@@ -1467,6 +1467,15 @@ const ToypadModal = ({ closeModal, onClosed }) => {
             background: tone === "on" ? "rgba(29,39,53,.75)" : "rgba(20,24,33,.6)",
             border: "1px solid " + (tone === "on" ? "#45b8ff" : "transparent"),
         }, children: label }));
+    // How much vertical room the pad may take inside the 88vh shell. Kept in
+    // vh rather than "88vh minus my estimate of the chrome": Steam scales its
+    // own UI, so a px estimate of the toggles and buttons underneath is a guess
+    // that silently stops biting at the exact scale where it matters. 48vh
+    // leaves roughly 250px for ~150px of controls at 1:1 - enough slack to
+    // survive the scaling. The picker modes hand more of it to the results.
+    const padHeightBudget = (mode === "franchises" || mode === "picking")
+        ? "38vh"
+        : "48vh";
     return (SP_JSX.jsx(DFL.ModalRoot, { className: "dt-toypad-modal-root", closeModal: back, onCancel: back, onEscKeypress: back, children: SP_JSX.jsx("div", { style: {
                 position: "fixed", inset: 0,
                 width: "100vw", height: "100vh",
@@ -1489,7 +1498,7 @@ const ToypadModal = ({ closeModal, onClosed }) => {
                     display: "flex", flexDirection: "column",
                     overflow: "hidden",
                     boxShadow: "0 24px 60px rgba(0,0,0,.6)",
-                }, children: [SP_JSX.jsx("style", { children: FOCUS_CSS }), SP_JSX.jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "10px" }, children: [SP_JSX.jsx("div", { style: { fontSize: "16px", fontWeight: 600 }, children: "Dimensions Toypad" }), SP_JSX.jsx("div", { style: { fontSize: "11px", opacity: 0.6 }, children: hint })] }), SP_JSX.jsx("div", { style: { flex: "0 0 auto" }, children: SP_JSX.jsx(PadGrid, { slots: slots, pads: pads, held: null, moveSource: moveSource, onSlot: onSlot, padColors: padColors, gridRef: mode === "pad" ? landRef : undefined }) }), (mode === "franchises" || mode === "picking") ? (SP_JSX.jsxs("div", { style: { marginTop: "10px", flex: "1 1 auto", minHeight: 0, display: "flex", flexDirection: "column" }, children: [SP_JSX.jsx(DFL.TextField, { ...{ ref: landRef, value: search, placeholder: mode === "picking" ? ("Search " + franchise + "...") : "Search all figures...", onChange: (e) => setSearch(e?.target?.value ?? "") } }), (search.trim() && groupedFigures.length) ? (SP_JSX.jsx(DFL.Focusable, { "flow-children": "vertical", style: { marginTop: "6px", maxHeight: "40vh", overflowY: "auto", overflowX: "hidden", position: "relative", isolation: "isolate", contain: "paint", borderRadius: "10px" }, children: groupedFigures.map((f) => {
+                }, children: [SP_JSX.jsx("style", { children: FOCUS_CSS }), SP_JSX.jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "10px" }, children: [SP_JSX.jsx("div", { style: { fontSize: "16px", fontWeight: 600 }, children: "Dimensions Toypad" }), SP_JSX.jsx("div", { style: { fontSize: "11px", opacity: 0.6 }, children: hint })] }), SP_JSX.jsx("div", { style: { flex: "0 0 auto", display: "flex", justifyContent: "center" }, children: SP_JSX.jsx("div", { style: { minWidth: 0, width: `min(100%, calc(${padHeightBudget} * ${PAD_VIEW.w} / ${PAD_VIEW.h}))` }, children: SP_JSX.jsx(PadGrid, { slots: slots, pads: pads, held: null, moveSource: moveSource, onSlot: onSlot, padColors: padColors, gridRef: mode === "pad" ? landRef : undefined }) }) }), (mode === "franchises" || mode === "picking") ? (SP_JSX.jsxs("div", { style: { marginTop: "10px", flex: "1 1 auto", minHeight: 0, display: "flex", flexDirection: "column" }, children: [SP_JSX.jsx(DFL.TextField, { ...{ ref: landRef, value: search, placeholder: mode === "picking" ? ("Search " + franchise + "...") : "Search all figures...", onChange: (e) => setSearch(e?.target?.value ?? "") } }), (search.trim() && groupedFigures.length) ? (SP_JSX.jsx(DFL.Focusable, { "flow-children": "vertical", style: { marginTop: "6px", flex: "1 1 auto", minHeight: 0, maxHeight: "40vh", overflowY: "auto", overflowX: "hidden", position: "relative", isolation: "isolate", contain: "paint", borderRadius: "10px" }, children: groupedFigures.map((f) => {
                                     const isFav = favourites.some((fav) => fav.franchise?.toLowerCase() === f.franchise?.toLowerCase() && fav.name?.toLowerCase() === (f.family || f.name)?.toLowerCase());
                                     return SP_JSX.jsx(ModalFigureRow, { fig: f, builds: f.builds, isFav: isFav, onToggleFav: onToggleFav, onPick: place }, f.id);
                                 }) })) : search.trim() ? (SP_JSX.jsx("div", { style: { fontSize: "11px", opacity: 0.5, padding: "8px 2px" }, children: "Nothing matches that." })) : mode === "franchises" ? (
@@ -1499,6 +1508,7 @@ const ToypadModal = ({ closeModal, onClosed }) => {
                             // only up/down worked. "grid" walks both axes.
                             SP_JSX.jsx(DFL.Focusable, { "flow-children": "grid", style: {
                                     marginTop: "6px", display: "flex", flexWrap: "wrap",
+                                    flex: "1 1 auto", minHeight: 0,
                                     maxHeight: "46vh", overflowY: "auto", overflowX: "hidden",
                                     alignContent: "flex-start",
                                     // Own stacking + paint containment: without these a
@@ -1507,7 +1517,7 @@ const ToypadModal = ({ closeModal, onClosed }) => {
                                     borderRadius: "10px",
                                 }, children: franchises.length
                                     ? franchises.map((f) => SP_JSX.jsx(ModalFranchiseTile, { franchise: f, onPick: (fr) => { setFranchise(fr.name); setSearch(""); setMode("picking"); } }, f.name))
-                                    : SP_JSX.jsx("div", { style: { fontSize: "11px", opacity: 0.5, padding: "8px 2px" }, children: "No tag library loaded." }) })) : (SP_JSX.jsx(DFL.Focusable, { "flow-children": "vertical", style: { marginTop: "6px", maxHeight: "40vh", overflowY: "auto", overflowX: "hidden", position: "relative", isolation: "isolate", contain: "paint", borderRadius: "10px" }, children: groupedFigures.length
+                                    : SP_JSX.jsx("div", { style: { fontSize: "11px", opacity: 0.5, padding: "8px 2px" }, children: "No tag library loaded." }) })) : (SP_JSX.jsx(DFL.Focusable, { "flow-children": "vertical", style: { marginTop: "6px", flex: "1 1 auto", minHeight: 0, maxHeight: "40vh", overflowY: "auto", overflowX: "hidden", position: "relative", isolation: "isolate", contain: "paint", borderRadius: "10px" }, children: groupedFigures.length
                                     ? groupedFigures.map((f) => {
                                         const isFav = favourites.some((fav) => fav.franchise?.toLowerCase() === f.franchise?.toLowerCase() && fav.name?.toLowerCase() === (f.family || f.name)?.toLowerCase());
                                         return SP_JSX.jsx(ModalFigureRow, { fig: f, builds: f.builds, isFav: isFav, onToggleFav: onToggleFav, onPick: place }, f.id);

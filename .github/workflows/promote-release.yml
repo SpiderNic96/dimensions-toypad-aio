@@ -1,0 +1,68 @@
+name: Promote release
+
+# Flips an existing pre-release to a full release and pins it as the repo's
+# "Latest" - the state a build earns once it has actually been tested, rather
+# than the state it is published in.
+#
+# Two ways in, mirroring release.yml:
+#   1. Run it from the Actions tab and give it a version (needs this file on
+#      the default branch first).
+#   2. Push a commit whose message contains [promote]. The version then comes
+#      from plugin.json.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to promote, without the v, e.g. 3.4.2'
+        required: true
+  push:
+    branches:
+      - '**'
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.head_commit.message, '[promote]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: ver
+        run: |
+          set -euo pipefail
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            V="${{ github.event.inputs.version }}"
+          else
+            V="$(node -p "require('./plugin.json').version")"
+          fi
+          V="${V#v}"
+          echo "Promoting $V"
+          echo "tag=v$V" >> "$GITHUB_OUTPUT"
+
+      - name: Promote to latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.ver.outputs.tag }}"
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            echo "::error::No release $TAG to promote."
+            exit 1
+          fi
+          # --latest pins it explicitly rather than leaving GitHub to infer
+          # "latest" from tag order, which a pre-release never wins.
+          gh release edit "$TAG" --prerelease=false --latest
+          # `gh release view --json` has no isLatest field, so confirm the
+          # pin against the releases/latest endpoint instead.
+          gh release view "$TAG" --json tagName,isPrerelease
+          LATEST="$(gh api "repos/$GITHUB_REPOSITORY/releases/latest" --jq .tag_name)"
+          echo "releases/latest is now: $LATEST"
+          if [ "$LATEST" != "$TAG" ]; then
+            echo "::error::$TAG did not become the latest release (got $LATEST)."
+            exit 1
+          fi
