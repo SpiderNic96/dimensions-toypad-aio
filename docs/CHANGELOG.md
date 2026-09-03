@@ -8,6 +8,31 @@ Consolidated history from the v3.3.11 GitHub release to current.
 
 > **Note:** Untested on physical Steam Deck hardware. Verification on real Deck hardware is pending.
 
+**Remediation pass (post-feature-work correctness fixes)**
+
+The feature work below (P1–P7, F1–F8) shipped in an earlier pass; the
+multi-backend claim wasn't actually wired up until this one:
+
+- Backend AppImages are fetched and hash-verified at setup time
+  (`install_backend`), never bundled — each backend gets its own
+  isolated config/cache/content root, so RPCS3 and Xenia coexist
+  without colliding with a standalone install of either.
+- Real pad geometry ported from `PAD_CELLS` (700×397, not 350×400).
+- Per-backend Game Mode/Desktop launchers and shortcuts, replacing a
+  single RPCS3-only launcher chain that had no Xenia path at all.
+- `src/index.tsx`'s decompiled `SP_JSX` runtime calls converted to
+  real JSX and split into modules (`api.ts`, `led.ts`, `Pad.tsx`,
+  `Picker.tsx`, `types.ts`).
+- `COMMAND_GAP` split into MOVE vs. simple-command gaps; UI strings
+  made backend-aware instead of hardcoded to RPCS3.
+- RPCS3 `release_api` repinned to the AppImage already built from a
+  commit that's byte-identical to harrysof's v0.3 source (confirmed
+  by full source diff) — harrysof's own release only ships a Windows
+  build, so the working Linux AppImage is hosted on this repo's own
+  `backends` release instead.
+- `dist/index.js` rebuilt — the committed bundle predated all of the
+  above and had drifted from `src/`.
+
 **Multi-Backend**
 - Integrated Xenia Canary alongside RPCS3.
 - Enforced `license_mask = -1` for Linux Xenia setups.
