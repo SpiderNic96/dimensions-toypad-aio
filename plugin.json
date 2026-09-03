@@ -14,5 +14,5 @@
     "description": "Place LEGO Dimensions figures on an emulated toypad (RPCS3, Xenia, Cemu) from the Steam Deck Quick Access Menu, or from your phone on the same Wi-Fi. Character progress is saved back to per-figure tag files.",
     "image": ""
   },
-  "version": "3.4.1"
+  "version": "3.4.2"
 }

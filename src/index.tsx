@@ -43,7 +43,7 @@ import {
   getConfigSetting,
   setConfigSetting,
 } from "./api";
-import { Check, PadGrid } from "./Pad";
+import { Check, PadGrid, PAD_VIEW } from "./Pad";
 import { FranchiseRow, FigureRow, ModalFranchiseTile, ModalFigureRow } from "./Picker";
 import { ledMapEqual } from "./led";
 
@@ -1154,6 +1154,16 @@ const ToypadModal = ({ closeModal, onClosed }: any) => {
         }}>{label}</DFL.Focusable>
     );
 
+    // How much vertical room the pad may take inside the 88vh shell. Kept in
+    // vh rather than "88vh minus my estimate of the chrome": Steam scales its
+    // own UI, so a px estimate of the toggles and buttons underneath is a guess
+    // that silently stops biting at the exact scale where it matters. 48vh
+    // leaves roughly 250px for ~150px of controls at 1:1 - enough slack to
+    // survive the scaling. The picker modes hand more of it to the results.
+    const padHeightBudget = (mode === "franchises" || mode === "picking")
+        ? "38vh"
+        : "48vh";
+
     return (
         <DFL.ModalRoot className="dt-toypad-modal-root" closeModal={back} onCancel={back} onEscKeypress={back}>
             <div style={{
@@ -1185,8 +1195,17 @@ const ToypadModal = ({ closeModal, onClosed }: any) => {
                         <div style={{ fontSize: "16px", fontWeight: 600 }}>Dimensions Toypad</div>
                         <div style={{ fontSize: "11px", opacity: 0.6 }}>{hint}</div>
                     </div>
-                    <div style={{ flex: "0 0 auto" }}>
-                        <PadGrid slots={slots} pads={pads} held={null} moveSource={moveSource} onSlot={onSlot} padColors={padColors} gridRef={mode === "pad" ? landRef : undefined} />
+                    {/* v3.4.2: the pad is the part that gives way, not the controls.
+                        PadGrid is width-driven (100% + aspect-ratio), so at the shell's
+                        full 792px interior it claims ~450px of height and the shell's
+                        overflow:hidden simply cropped whatever came after it - the
+                        Move/Remove/Clear/Close row in pad mode, the franchise grid in
+                        the picker. Capping the pad's *width* by the height left over
+                        makes it shrink instead. */}
+                    <div style={{ flex: "0 0 auto", display: "flex", justifyContent: "center" }}>
+                        <div style={{ minWidth: 0, width: `min(100%, calc(${padHeightBudget} * ${PAD_VIEW.w} / ${PAD_VIEW.h}))` }}>
+                            <PadGrid slots={slots} pads={pads} held={null} moveSource={moveSource} onSlot={onSlot} padColors={padColors} gridRef={mode === "pad" ? landRef : undefined} />
+                        </div>
                     </div>
                     {(mode === "franchises" || mode === "picking") ? (
                         <div style={{ marginTop: "10px", flex: "1 1 auto", minHeight: 0, display: "flex", flexDirection: "column" }}>
@@ -1194,7 +1213,7 @@ const ToypadModal = ({ closeModal, onClosed }: any) => {
                             {/* A live query always wins: results drop straight down as a
                                 navigable list, whichever level you are on. */}
                             {(search.trim() && groupedFigures.length) ? (
-                                <DFL.Focusable flow-children="vertical" style={{ marginTop: "6px", maxHeight: "40vh", overflowY: "auto", overflowX: "hidden", position: "relative", isolation: "isolate", contain: "paint", borderRadius: "10px" }}>
+                                <DFL.Focusable flow-children="vertical" style={{ marginTop: "6px", flex: "1 1 auto", minHeight: 0, maxHeight: "40vh", overflowY: "auto", overflowX: "hidden", position: "relative", isolation: "isolate", contain: "paint", borderRadius: "10px" }}>
                                     {groupedFigures.map((f: any) => {
                                         const isFav = favourites.some((fav: any) => fav.franchise?.toLowerCase() === f.franchise?.toLowerCase() && fav.name?.toLowerCase() === (f.family || f.name)?.toLowerCase());
                                         return <ModalFigureRow key={f.id} fig={f} builds={f.builds} isFav={isFav} onToggleFav={onToggleFav} onPick={place} />;
@@ -1209,6 +1228,7 @@ const ToypadModal = ({ closeModal, onClosed }: any) => {
                                 // only up/down worked. "grid" walks both axes.
                                 <DFL.Focusable flow-children="grid" style={{
                                     marginTop: "6px", display: "flex", flexWrap: "wrap",
+                                    flex: "1 1 auto", minHeight: 0,
                                     maxHeight: "46vh", overflowY: "auto", overflowX: "hidden",
                                     alignContent: "flex-start",
                                     // Own stacking + paint containment: without these a
@@ -1221,7 +1241,7 @@ const ToypadModal = ({ closeModal, onClosed }: any) => {
                                         : <div style={{ fontSize: "11px", opacity: 0.5, padding: "8px 2px" }}>No tag library loaded.</div>}
                                 </DFL.Focusable>
                             ) : (
-                                <DFL.Focusable flow-children="vertical" style={{ marginTop: "6px", maxHeight: "40vh", overflowY: "auto", overflowX: "hidden", position: "relative", isolation: "isolate", contain: "paint", borderRadius: "10px" }}>
+                                <DFL.Focusable flow-children="vertical" style={{ marginTop: "6px", flex: "1 1 auto", minHeight: 0, maxHeight: "40vh", overflowY: "auto", overflowX: "hidden", position: "relative", isolation: "isolate", contain: "paint", borderRadius: "10px" }}>
                                     {groupedFigures.length
                                         ? groupedFigures.map((f: any) => {
                                             const isFav = favourites.some((fav: any) => fav.franchise?.toLowerCase() === f.franchise?.toLowerCase() && fav.name?.toLowerCase() === (f.family || f.name)?.toLowerCase());
