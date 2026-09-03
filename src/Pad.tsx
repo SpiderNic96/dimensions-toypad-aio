@@ -3,7 +3,6 @@ import * as DFL from "@decky/ui";
 import { useState, useEffect, useRef } from "react";
 import { getIcon } from "./api";
 import {
-    hexA,
     zoneRgb,
     zoneRgba,
     flashStyle,
@@ -12,7 +11,23 @@ import {
     useLedFrameVars,
 } from "./led";
 
-// ---------------------------------------------------------------- pad grid
+// ---------------------------------------------------------------- pad geometry
+// Ported from LegoToypad main.cpp:4509 (kPadCells), absolutely positioned in a
+// 700x397 landscape view box (x 100-800, y 103-500) - not 350:400, that was a
+// misread of a CSS calc() width that propagated into an earlier draft. The
+// centre cell is larger and sits higher than the two wings; the lower row is
+// visibly wider than the upper row.
+export const PAD_CELLS = [
+    { slot: 0, x: 100, y: 220, w: 140, h: 136 },  // left upper
+    { slot: 1, x: 356, y: 103, w: 188, h: 184 },  // CENTRE - larger, higher
+    { slot: 2, x: 660, y: 220, w: 140, h: 136 },  // right upper
+    { slot: 3, x: 100, y: 364, w: 136, h: 136 },
+    { slot: 4, x: 244, y: 364, w: 164, h: 136 },  // lower row is WIDER
+    { slot: 5, x: 492, y: 364, w: 164, h: 136 },
+    { slot: 6, x: 664, y: 364, w: 136, h: 136 },
+];
+export const PAD_VIEW = { x: 100, y: 103, w: 700, h: 397 };
+
 // The pad is 3/1/3: a tall centre flanked by two sections of three. Laying it
 // out the way the hardware looks makes "Left · lower R" mean something at a
 // glance, rather than being a label you have to decode.
@@ -35,6 +50,17 @@ export const SLOTS = [
     { "slot": 6, "pad": 3, "index": 6, "zone": "right", "label": "Right · lower R" },
 ];
 
+const cellByIndex = (i: number) => PAD_CELLS[i];
+
+// Percentages against PAD_VIEW, not raw pixels - the pad scales with whatever
+// box the panel gives it.
+const pctRect = (r: { x: number; y: number; w: number; h: number }) => ({
+    left: `${((r.x - PAD_VIEW.x) / PAD_VIEW.w) * 100}%`,
+    top: `${((r.y - PAD_VIEW.y) / PAD_VIEW.h) * 100}%`,
+    width: `${(r.w / PAD_VIEW.w) * 100}%`,
+    height: `${(r.h / PAD_VIEW.h) * 100}%`,
+});
+
 export const Check = ({ ok, label, detail, pending }: any) => (
     <div style={{ display: "flex", gap: "8px", alignItems: "baseline", padding: "3px 0" }}>
         <span style={{ color: pending ? "#ffc93c" : ok ? "#5fd08a" : "#ff6b4a", fontSize: "13px", width: "14px" }}>
@@ -49,7 +75,78 @@ export const Check = ({ ok, label, detail, pending }: any) => (
     </div>
 );
 
-export const PadCell = ({ slot, occupant, armed, isSource, wide, onActivate, ledColor, cellRef }: any) => {
+// ---------------------------------------------------------------- region halo
+// Upstream RenderLedHalo(region, ...) draws one diffuse glow per region, over
+// the region's bounding box - not one per slot, which used to read as three
+// independent lamps instead of a diffused panel.
+const HALO_MARGIN = 22;       // kLedGlowRadius's companion margin, expands the region box
+const HALO_BLUR_MAX = 14;     // kLedGlowRadius: blur radius at full luminance
+const HALO_ALPHA_MAX = 210;   // 0-255 scale; converted to a CSS 0-1 alpha below
+const HALO_LEVELS = 9;        // quantised intensity steps, 0/8 .. 8/8
+
+const luminance = (r: number, g: number, b: number) =>
+    0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+// Quantised so the halo doesn't visibly repaint on every minor colour shift -
+// it steps through 9 fixed levels instead of continuously tracking luminance.
+const quantiseIntensity = (l: number) => {
+    const step = Math.round((Math.max(0, Math.min(255, l)) / 255) * (HALO_LEVELS - 1));
+    return step / (HALO_LEVELS - 1);
+};
+
+const regionBounds = (indices: number[]) => {
+    const cells = indices.map(cellByIndex);
+    const x0 = Math.min(...cells.map((c) => c.x)) - HALO_MARGIN;
+    const y0 = Math.min(...cells.map((c) => c.y)) - HALO_MARGIN;
+    const x1 = Math.max(...cells.map((c) => c.x + c.w)) + HALO_MARGIN;
+    const y1 = Math.max(...cells.map((c) => c.y + c.h)) + HALO_MARGIN;
+    return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+};
+
+const REGION_INDICES: Record<"left" | "centre" | "right", number[]> = {
+    left: ZONE_ORDER.left,
+    centre: ZONE_ORDER.centre,
+    right: ZONE_ORDER.right,
+};
+
+const RegionPanel = ({ region, ledColor, children }: { region: "left" | "centre" | "right"; ledColor: any; children?: any }) => {
+    const explicitOff = !!(ledColor && ledColor.kind === "off");
+    const lit = ledColor && !explicitOff;
+    const rect = pctRect(regionBounds(REGION_INDICES[region]));
+    // The centre region is a circular collar around the puck; the wings stay
+    // rounded-rect panels.
+    const radius = region === "centre" ? "50%" : "28px";
+    const l = lit ? luminance(ledColor.r ?? 0, ledColor.g ?? 0, ledColor.b ?? 0) : 0;
+    const intensity = quantiseIntensity(l);
+    const blur = HALO_BLUR_MAX * intensity;
+    const alpha = (HALO_ALPHA_MAX * intensity) / 255;
+    return (
+        <>
+            {/* One diffuse halo per region, sized to the region's bounding box
+                (not per slot) - three independent per-slot glows used to read
+                as three lamps rather than one diffused panel. */}
+            {lit ? (
+                <div
+                    className="dt-glow"
+                    style={Object.assign(
+                        {
+                            position: "absolute",
+                            left: rect.left, top: rect.top, width: rect.width, height: rect.height,
+                            pointerEvents: "none", zIndex: 0,
+                            borderRadius: radius,
+                            background: "radial-gradient(ellipse at 50% 45%, " + zoneRgba(region, alpha) + " 0%, " + zoneRgba(region, alpha * 0.45) + " 45%, " + zoneRgba(region, 0) + " 100%)",
+                            filter: "blur(" + blur + "px)",
+                        } as any,
+                        ledColor?.kind === "flash" ? flashStyle(ledColor) : {}
+                    )}
+                />
+            ) : null}
+            {children}
+        </>
+    );
+};
+
+export const PadCell = ({ slot, occupant, armed, isSource, onActivate, ledColor, cellRef }: any) => {
     const [art, setArt] = useState("");
     // The portrait is the figure's own artwork, fetched by the id the pad is
     // holding. v3.3.12: the portrait IS the tile - no name text competing for
@@ -67,19 +164,23 @@ export const PadCell = ({ slot, occupant, armed, isSource, wide, onActivate, led
     const explicitOff = !!(ledColor && ledColor.kind === "off");
     const lit = ledColor && !explicitOff ? zoneRgb(slot.zone) : null;
     const animated = !!(ledColor && ledColor.kind === "flash");
-    const tint = lit || zoneColour(slot.zone);
     const edge = isSource ? "#45b8ff" : armed ? "#ffc93c" : lit ? lit : "rgba(169,215,238,.28)";
+    const cell = cellByIndex(slot.slot);
+    const rect = pctRect(cell);
+    // Circular centre collar - most of the visual recognition, and the part
+    // that used to be a rounded square.
+    const radius = slot.zone === "centre" ? "50%" : "9px";
     return (
         <DFL.Focusable ref={cellRef} onActivate={onActivate} focusClassName="dt-pad-focus" className="dt-cell" style={{
-            flex: wide ? "1 1 100%" : "1 1 0%",
-            minWidth: 0,
-            position: "relative",
-            minHeight: wide ? "66px" : "52px",
-            margin: "3px",
-            borderRadius: slot.zone === "centre" ? "14px" : "9px",
+            position: "absolute",
+            left: rect.left, top: rect.top, width: rect.width, height: rect.height,
+            zIndex: 1,
+            borderRadius: radius,
             background: occupant ? "rgba(10,14,20,.30)" : "rgba(6,10,15,.22)",
             border: "2px " + (isSource ? "dashed" : "solid") + " " + edge,
-            boxShadow: lit ? "0 0 16px " + zoneRgba(slot.zone, 0.45) + ", inset 0 0 20px " + zoneRgba(slot.zone, 0.18) : "inset 0 1px 0 rgba(255,255,255,.04)",
+            // The diffuse glow now lives on the shared region halo (RegionPanel);
+            // the cell itself only carries a crisp lit edge and a soft inset lift.
+            boxShadow: lit ? "inset 0 0 10px " + zoneRgba(slot.zone, 0.30) : "inset 0 1px 0 rgba(255,255,255,.04)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -87,18 +188,6 @@ export const PadCell = ({ slot, occupant, armed, isSource, wide, onActivate, led
             // v3.3.40: colour-independent flash. See flashKeyframes.
             ...(animated ? flashBrightnessStyle(ledColor) : {}),
         } as any}>
-            {/* Whole-cell LED wash. Sits under the portrait so the figure stays
-                readable while the tile itself carries the colour. */}
-            {lit ? (
-                <div className="dt-glow" style={Object.assign({
-                    position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0,
-                    background: "radial-gradient(ellipse at 50% 45%, " + zoneRgba(slot.zone, 0.62) + " 0%, " + zoneRgba(slot.zone, 0.34) + " 28%, " + zoneRgba(slot.zone, 0.13) + " 62%, " + zoneRgba(slot.zone, 0.025) + " 100%)",
-                    filter: "saturate(1.08)",
-                }, ledColor?.kind === "flash" ? flashStyle(ledColor) : {}) as any}>
-                    <div style={{ position: "absolute", left: "50%", top: "45%", width: "22px", height: "22px", transform: "translate(-50%,-50%)", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,.96) 0%, rgba(255,255,255,.72) 18%, " + zoneRgba(slot.zone, 0.48) + " 42%, rgba(255,255,255,0) 72%)", filter: "blur(.35px)", boxShadow: "0 0 12px " + zoneRgba(slot.zone, 0.55) + ", 0 0 8px rgba(255,255,255,.32)" }} />
-                    <div style={{ position: "absolute", inset: "2px", borderRadius: "inherit", boxShadow: "inset 0 0 22px " + zoneRgba(slot.zone, 0.30) + ", 0 0 18px " + zoneRgba(slot.zone, 0.24) }} />
-                </div>
-            ) : null}
             {art ? (
                 <img src={art} alt="" style={{
                     position: "absolute", left: "50%", top: "50%",
@@ -129,37 +218,6 @@ export const PadCell = ({ slot, occupant, armed, isSource, wide, onActivate, led
     );
 };
 
-export const PadZone = ({ zone, ledColor, wideFirst, children }: any) => {
-    const explicitOff = !!(ledColor && ledColor.kind === "off");
-    const lit = ledColor && !explicitOff ? zoneRgb(zone) : null;
-    const tint = lit || zoneColour(zone);
-    const base = explicitOff ? "rgba(0,0,0,.10)" : "rgba(190,230,248,.10)";
-    return (
-        <div className="dt-zone" style={{
-            position: "relative",
-            flex: zone === "centre" ? "0.85 1 0%" : "1 1 0%",
-            minWidth: 0,
-            display: "flex", flexDirection: "column",
-            padding: "3px",
-            borderRadius: zone === "centre" ? "18px" : "13px",
-            background: "radial-gradient(ellipse at 50% 45%, " + (lit ? zoneRgba(zone, 0.26) : base) + " 0%, " + (lit ? zoneRgba(zone, 0.08) : "rgba(190,230,248,.025)") + " 58%, rgba(0,0,0,.10) 100%)",
-            border: "1px solid " + (lit ? hexA(lit, 0.55) : "rgba(190,230,248,.08)"),
-            boxShadow: lit ? "0 0 24px " + zoneRgba(zone, 0.35) + ", inset 0 0 28px " + zoneRgba(zone, 0.16) : "0 0 10px rgba(190,230,248,.04), inset 0 0 20px rgba(190,230,248,.03)",
-        }}>
-            <div className="dt-glow" style={Object.assign({
-                position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0,
-                borderRadius: "inherit",
-                background: lit ? "radial-gradient(ellipse at 50% 45%, " + zoneRgba(zone, 0.38) + " 0%, " + zoneRgba(zone, 0.20) + " 34%, " + zoneRgba(zone, 0.065) + " 70%, rgba(0,0,0,0) 100%)" : explicitOff ? "none" : "radial-gradient(ellipse at 50% 45%, rgba(220,245,255,.13) 0%, rgba(220,245,255,.05) 48%, rgba(0,0,0,0) 100%)",
-                boxShadow: lit ? "inset 0 0 34px " + zoneRgba(zone, 0.22) + ", 0 0 24px " + zoneRgba(zone, 0.18) : "none",
-            }, ledColor?.kind === "flash" ? flashStyle(ledColor) : {}) as any}>
-                {lit ? <div style={{ position: "absolute", left: "50%", top: "45%", width: "30px", height: "30px", transform: "translate(-50%,-50%)", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,.92) 0%, rgba(255,255,255,.62) 16%, " + zoneRgba(zone, 0.40) + " 42%, rgba(255,255,255,0) 72%)", filter: "blur(.4px)", boxShadow: "0 0 16px " + zoneRgba(zone, 0.48) }} /> : null}
-                <div style={{ position: "absolute", inset: "1px", borderRadius: "inherit", border: lit ? "1px solid " + zoneRgba(zone, 0.22) : "1px solid rgba(220,245,255,.03)", pointerEvents: "none" }} />
-            </div>
-            <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", flex: 1 }}>{children}</div>
-        </div>
-    );
-};
-
 export const PadGrid = ({ slots, pads, held, moveSource, onSlot, padColors, gridRef }: any) => {
     const ledRootRef = useRef(null);
     useLedFrameVars(padColors, ledRootRef);
@@ -171,54 +229,41 @@ export const PadGrid = ({ slots, pads, held, moveSource, onSlot, padColors, grid
         var padKey = ({ 'centre': '0', 'center': '0', 'left': '1', 'right': '2' } as any)[String(zone).toLowerCase()];
         return padColors ? (padColors[padKey] || padColors.all) : null;
     };
-    const cell = (i: number, wide?: boolean) => {
+    const cell = (i: number) => {
         const s = slots[i];
         if (!s)
             return null;
         return (
-            <PadCell key={i} slot={s} occupant={pads[i]} armed={held !== null && !pads[i]} isSource={moveSource === i} wide={wide} onActivate={() => onSlot(i)} ledColor={zoneLed(s.zone)} cellRef={i === ZONE_ORDER.left[0] ? gridRef : undefined} />
+            <PadCell key={i} slot={s} occupant={pads[i]} armed={held !== null && !pads[i]} isSource={moveSource === i} onActivate={() => onSlot(i)} ledColor={zoneLed(s.zone)} cellRef={i === ZONE_ORDER.left[0] ? gridRef : undefined} />
         );
     };
-    // Shaped like the real toypad: a dark base plate, two rounded side sections
-    // of three, and a taller rounded centre between them.
+    // Shaped like the real toypad: a circular centre collar between two
+    // rounded wing panels, absolutely positioned inside a 700x397 landscape
+    // box (PAD_VIEW) rather than a flex grid.
     const activeLeds = ["left", "centre", "right"].map(zoneLed).filter(Boolean);
     return (
         <>
             <style>{flashKeyframes(activeLeds)}</style>
-            <DFL.Focusable flow-children="horizontal" ref={ledRootRef} style={{
-                display: "flex", gap: "5px", padding: "5px",
-                borderRadius: "16px", background: "rgba(4,8,13,.32)",
-                boxShadow: "inset 0 1px 0 rgba(255,255,255,.03)",
+            <div ref={ledRootRef} style={{
+                position: "relative",
+                width: "100%",
+                aspectRatio: `${PAD_VIEW.w} / ${PAD_VIEW.h}`,
+                // The pad has no backing panel of its own - it sits directly
+                // over the game / QAM background.
+                background: "transparent",
                 "--dt-left-r": "0", "--dt-left-g": "0", "--dt-left-b": "0",
                 "--dt-centre-r": "0", "--dt-centre-g": "0", "--dt-centre-b": "0",
                 "--dt-right-r": "0", "--dt-right-g": "0", "--dt-right-b": "0",
             } as any}>
-                <>
-                    <PadZone zone="left" ledColor={zoneLed("left")}>
-                        <DFL.Focusable flow-children="vertical" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                            {cell(ZONE_ORDER.left[0], true)}
-                            <DFL.Focusable flow-children="horizontal" style={{ display: "flex" }}>
-                                {cell(ZONE_ORDER.left[1])}
-                                {cell(ZONE_ORDER.left[2])}
-                            </DFL.Focusable>
-                        </DFL.Focusable>
-                    </PadZone>
-                    <PadZone zone="centre" ledColor={zoneLed("centre")}>
-                        <DFL.Focusable flow-children="vertical" style={{ display: "flex", flex: 1 }}>
-                            {cell(ZONE_ORDER.centre[0], true)}
-                        </DFL.Focusable>
-                    </PadZone>
-                    <PadZone zone="right" ledColor={zoneLed("right")}>
-                        <DFL.Focusable flow-children="vertical" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                            {cell(ZONE_ORDER.right[0], true)}
-                            <DFL.Focusable flow-children="horizontal" style={{ display: "flex" }}>
-                                {cell(ZONE_ORDER.right[1])}
-                                {cell(ZONE_ORDER.right[2])}
-                            </DFL.Focusable>
-                        </DFL.Focusable>
-                    </PadZone>
-                </>
-            </DFL.Focusable>
+                <RegionPanel region="left" ledColor={zoneLed("left")} />
+                <RegionPanel region="centre" ledColor={zoneLed("centre")} />
+                <RegionPanel region="right" ledColor={zoneLed("right")} />
+                <DFL.Focusable flow-children="grid" style={{ position: "absolute", inset: 0 }}>
+                    {ZONE_ORDER.left.map(cell)}
+                    {ZONE_ORDER.centre.map(cell)}
+                    {ZONE_ORDER.right.map(cell)}
+                </DFL.Focusable>
+            </div>
         </>
     );
 };
