@@ -47,6 +47,13 @@ import { Check, PadGrid } from "./Pad";
 import { FranchiseRow, FigureRow, ModalFranchiseTile, ModalFigureRow } from "./Picker";
 import { ledMapEqual } from "./led";
 
+// R8: user-facing strings must name whichever backend is actually active,
+// not assume RPCS3 - "waiting for RPCS3" reads as broken when Xenia is the
+// one connected. Short, display-friendly names; the RPC layer already
+// has the full label via getBackends() when that's ever needed instead.
+const BACKEND_SHORT_NAMES: Record<string, string> = { rpcs3: "RPCS3", xenia: "Xenia" };
+const backendShortName = (key: string) => BACKEND_SHORT_NAMES[key] || (key ? key.toUpperCase() : "the backend");
+
 // v3.3.12: the Quick Access menu runs its own focus pass shortly after a panel
 // mounts, and it lands on the last ButtonItem rather than the pad. Re-asserting
 // focus on a short ladder of timers wins that race without fighting Steam's
@@ -293,8 +300,8 @@ const Content = () => {
                                             setup.listenerState === "connected"
                                                 ? `Connected on :${setup.listenerPort}`
                                                 : setup.listenerState === "waiting"
-                                                    ? "Waiting for RPCS3 game..."
-                                                    : "Not configured — bundled RPCS3 is unavailable"
+                                                    ? `Waiting for the ${backendShortName(setup.backend)} game...`
+                                                    : `Not configured — ${backendShortName(setup.backend)} is not installed`
                                         } />
                                     </div>
                                 </DFL.PanelSectionRow>
@@ -490,7 +497,7 @@ const Content = () => {
                                 onClick={async () => {
                                     setShortcutMsg("Creating...");
                                     const backendKey = setup?.backend || "rpcs3";
-                                    const shortName = backendKey === "xenia" ? "Xenia" : "RPCS3";
+                                    const shortName = backendShortName(backendKey);
                                     const messages: string[] = [];
                                     if (gmPlayChecked) {
                                         try {
