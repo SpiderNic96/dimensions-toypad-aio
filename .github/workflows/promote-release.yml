@@ -57,4 +57,12 @@ jobs:
           # --latest pins it explicitly rather than leaving GitHub to infer
           # "latest" from tag order, which a pre-release never wins.
           gh release edit "$TAG" --prerelease=false --latest
-          gh release view "$TAG" --json tagName,isPrerelease,isLatest
+          # `gh release view --json` has no isLatest field, so confirm the
+          # pin against the releases/latest endpoint instead.
+          gh release view "$TAG" --json tagName,isPrerelease
+          LATEST="$(gh api "repos/$GITHUB_REPOSITORY/releases/latest" --jq .tag_name)"
+          echo "releases/latest is now: $LATEST"
+          if [ "$LATEST" != "$TAG" ]; then
+            echo "::error::$TAG did not become the latest release (got $LATEST)."
+            exit 1
+          fi
