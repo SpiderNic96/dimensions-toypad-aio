@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """
 Dimensions Toypad - Decky Loader plugin backend.
 
@@ -30,10 +31,13 @@ import re
 import shutil
 import socket
 import ssl
+import struct
 import subprocess
 import tarfile
 import threading
 import time
+from collections import deque
+from dataclasses import dataclass, field
 import urllib.parse
 import urllib.request
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -81,13 +85,13 @@ RPCS3_REPO = "https://github.com/NeverCookFirst/RPCS3-Seamless-Toypad-Build"
 # AIO runtime: this exact AppImage is the only RPCS3 source allowed at runtime.
 PLUGIN_ROOT = Path(__file__).resolve().parent
 BUNDLED_RPCS3 = PLUGIN_ROOT / "rpcs3" / "RPCS3-Toypad-x86_64.AppImage"
-BUNDLED_RPCS3_SHA256 = "1f2ce02de8bf361834bcb38e1e92d0f9ee138bc71e1c271628b55eed437f2e71"
-BUNDLED_RPCS3_VERSION = "toypad-20260825 / 0.0.42-5-797f1e41+colour"
-AIO_PLUGIN_VERSION = "3.3.11"
-WEB_UI_VERSION = "LegoToypad v1.5"
+BUNDLED_RPCS3_SHA256 = "c9221b0178ec12308638d828408f1a9b638d59de432dc8df45aa9bcaedaaf07b"
+BUNDLED_RPCS3_VERSION = "toypad-20260827 / 0.0.42-7-6905c5ad+LED"
+AIO_PLUGIN_VERSION = "3.4.1"
+WEB_UI_VERSION = "LegoToypad v1.8"
 
 # Tag dumps and artwork live in harrysof's picker repo.
-TAG_SOURCE_TARBALL = "https://codeload.github.com/harrysof/LegoToypad/tar.gz/refs/tags/v1.5"
+TAG_SOURCE_TARBALL = "https://codeload.github.com/harrysof/LegoToypad/tar.gz/refs/tags/v1.8"
 
 # v1.5's "Story" mode: the starter pack only, like the game's own campaign.
 # Scoped by franchise as upstream does - "Batman" alone also matches the one
@@ -116,16 +120,11 @@ STARTERS_ROSTER = (
     # Gandalf's vehicle
     ("lord of the rings", "shadowfax"),
     ("lord of the rings", "gandalf's horse"),
-    # Marty McFly's DeLorean (Nic's requested addition; ships in the BttF
-    # level pack rather than the base starter box, but rounds out a good
-    # "getting started" loadout)
-    ("back to the future", "delorean time machine"),
-    ("back to the future", "delorean"),
 )
 TAG_SOURCE_BINS = "All Bin Files"
-# v1.5 ships its phone UI and artwork in the repo; we serve them verbatim so the
+# v1.8 ships its phone UI, artwork and vehicles.csv; we serve them verbatim so the
 # remote looks and behaves exactly like the desktop app's own web remote.
-TAG_SOURCE_EXTRA = ("Assets", "Web")
+TAG_SOURCE_EXTRA = ("Assets", "Web", "vehicles.csv")
 ASSET_ROOT = WORK_DIR / "assets"
 WEB_ROOT = WORK_DIR / "web"
 
@@ -154,11 +153,88 @@ DEFAULT_LIBRARY_PATHS = [
 ]
 
 
+@dataclass(frozen=True)
+class Backend:
+    key: str
+    label: str
+    console: str
+    appimage_name: str
+    appimage_sha256: str
+    version_string: str
+    version_probe: tuple[str, ...]
+    source_repo: str
+    source_commit: str
+    port: int = 9191
+    port_env: str | None = None
+    persistent_connection: bool = False
+    supports_get_led: bool = True
+    game_globs: tuple[str, ...] = ()
+    content_root: Path | None = None
+    launch_args: tuple[str, ...] = ()
+    settings_profile: dict = field(default_factory=dict)
+
+
+BACKENDS = {
+    "rpcs3": Backend(
+        key="rpcs3",
+        label="RPCS3 (PS3)",
+        console="PS3",
+        appimage_name="RPCS3-Toypad-x86_64.AppImage",
+        appimage_sha256="c9221b0178ec12308638d828408f1a9b638d59de432dc8df45aa9bcaedaaf07b",
+        version_string="0.0.42-7-6905c5ad+LED",
+        version_probe=("--version",),
+        source_repo="https://github.com/NeverCookFirst/RPCS3-Seamless-Toypad-Build",
+        source_commit="6905c5ad82805af216a8addad40ee7dcea49f66b",
+        port_env="RPCS3_TOYPAD_PORT",
+        game_globs=("*PS3_GAME/USRDIR/EBOOT.BIN", "*EBOOT.BIN"),
+        launch_args=("--no-gui",),
+    ),
+    "xenia": Backend(
+        key="xenia",
+        label="Xenia (Xbox 360)",
+        console="Xbox 360",
+        appimage_name="xenia_canary_linux_toypad.AppImage",
+        appimage_sha256="",
+        version_string="linux-toypad@52aabc6c6",
+        version_probe=("--help",),
+        source_repo="https://github.com/SpiderNic96/Xenia-Seamless-Toypad-Build",
+        source_commit="52aabc6c6b71cc7b0810975541839784787e1332",
+        port_env="XENIA_TOYPAD_PORT",
+        supports_get_led=False,
+        game_globs=("*/5752084B/Default.xex", "*Default.xex"),
+        content_root=Path("~/.local/share/Xenia/content/0000000000000000/5752084B"),
+        launch_args=("--gpu=vulkan",),
+        settings_profile={
+            "license_mask": -1,
+            "draw_resolution_scale_x": 1,
+            "draw_resolution_scale_y": 1,
+            "readback_memexport": False,
+            "readback_resolve": "fast",
+            "readback_resolve_max_kb": 256,
+            "vsync": True,
+            "framerate_limit": 120,
+            "clear_memory_page_state": False,
+            "use_shm_open": False,
+        },
+    ),
+}
+
 DEFAULT_CONFIG = {
+    "backend": "rpcs3",
     "webPort": 8781,
     "webEnabled": True,
     "gamePath": str(HOME / "lego" / "game"),
     "rpcs3Path": "",
+    "ledEnabled": True,
+    "diagnosticsEnabled": False,
+    "hotkeyCodes": [],
+    "hotkeyEnabled": True,
+    "favourites": [],
+    "recents": [],
+    "recentsLimit": 12,
+    "padSkin": "default",
+    "soundEffects": False,
+    "confirmButtonSwap": False,
 }
 
 
@@ -173,6 +249,8 @@ class Plugin:
         self.library = []
         self.library_root = None
         self.last_send = 0.0
+        self.command_in_flight = False
+        self.COMMAND_GAP = 0.35
         self._lock = asyncio.Lock()
         self._httpd = None
         self._busy = ""
@@ -201,8 +279,15 @@ class Plugin:
         # show whether it's actually connected + parsing frames.
         self._color_reader_stats = {
             "connects": 0, "frames_parsed": 0, "last_error": "",
-            "connected": False, "last_frame_ts": 0.0,
+            "connected": False, "last_frame_ts": 0.0, "led_serial": 0,
+            "mode": "get-led", "snapshots_seen": 0, "changed_snapshots": 0,
         }
+        # v3.3.33: retain a bounded stream of every changed GET_LED snapshot.
+        # This is deliberately separate from the renderer state so diagnostics
+        # can prove the sequence that Decky's listener actually observed.
+        self._led_event_seq = 0
+        self._led_events = deque(maxlen=120)
+        self._last_led_snapshot = None
 
         WORK_DIR.mkdir(parents=True, exist_ok=True)
         TAG_CACHE.mkdir(parents=True, exist_ok=True)
@@ -270,126 +355,278 @@ class Plugin:
     # v1 wire format (see spec repo): 0x55, 0x01, event_type, pad_byte,
     # payload_len, payload...
     #   0x01 Colour: [r, g, b]
-    #   0x02 Flash:  [on_ms, off_ms, count, r, g, b]
+    #   0x02 Flash:  [tick_on, tick_off, tick_count, r, g, b]
+    # Timing fields are Toypad ticks; the current RPCS3/Harry implementation
+    # documents them as approximately 40 ms per tick. Preserve raw ticks and
+    # derive milliseconds only for diagnostics/render timing.
     #   pad byte:    0=centre, 1=left, 2=right, 0xFF=broadcast (all pads)
     # Anything else is skipped without disconnecting so future firmware
     # additions can't break this reader.
 
+    LED_TICK_MS = 40
+
     async def _run_color_reader(self):
-        import time
-        backoff = 1.0
+        """Poll the bundled RPCS3 v1.2 LED snapshot endpoint.
+
+        The current NeverCookFirst RPCS3 build (commit 6905c5ad / v1.2) and
+        Harry's Windows implementation share the same GET_LED contract:
+        send 04 00 00 00 00 and receive a fixed 30-byte 0x4C snapshot.
+        Each request is deliberately one connection because the listener
+        handles one command per client connection.
+
+        IMPORTANT: do not send HELLO. 0x04 is the actual documented LED
+        request for this runtime and is only sent after the TCP connection is
+        established.
+        """
+        backoff = 0.5
+        # v3.3.40: adaptive poll. The listener needs one connection per request,
+        # so a fixed 120ms poll meant ~8 TCP connect/close cycles per second
+        # forever, the overwhelming majority returning an unchanged snapshot.
+        # Idle now backs off toward POLL_IDLE; any change snaps straight back
+        # to POLL_FAST, so latency to a real LED event is unchanged.
+        POLL_FAST, POLL_IDLE = 0.12, 0.40
+        POLL_SUSPENDED = 0.75
+        poll_delay = POLL_FAST
+        idle_polls = 0
+        self._led_snapshot_serial = None
         while True:
+            # Backend check: if GET_LED not supported, surface status and wait
+            if not self.backend.supports_get_led:
+                self._color_reader_stats["last_error"] = "LEDs not supported on this backend"
+                self._color_reader_stats["connected"] = False
+                await asyncio.sleep(POLL_SUSPENDED)
+                continue
+
+            # v3.3.41: LED capture can be switched off from the overlay. The
+            # loop keeps running but stops issuing GET_LED, so the socket is
+            # left entirely to figure LOAD/REMOVE/MOVE traffic. Toypad
+            # interaction is therefore unaffected by this toggle in either
+            # position, and re-enabling resets the serial gate so the very next
+            # snapshot is accepted rather than being suppressed as unchanged.
+            if not self.config.get("ledEnabled", True):
+                if self._led_snapshot_serial is not None:
+                    self._clear_live_led_state()
+                self._color_reader_stats["suspended"] = True
+                await asyncio.sleep(POLL_SUSPENDED)
+                continue
+            if self._color_reader_stats.get("suspended"):
+                self._color_reader_stats["suspended"] = False
+                self._led_snapshot_serial = None
+                poll_delay = POLL_FAST
+                idle_polls = 0
+
+            # P5: Gate LED polling on in-flight commands
+            since_send = time.monotonic() - self.last_send
+            if self.command_in_flight or since_send < self.COMMAND_GAP:
+                await asyncio.sleep(0.02)
+                continue
+
+            writer = None
             try:
                 reader, writer = await asyncio.wait_for(
                     asyncio.open_connection(self.host, self.port), timeout=2)
-            except (asyncio.TimeoutError, OSError) as exc:
-                # Emulator not up yet, or listener not bound. Retry with
-                # gentle backoff; the user launching the game is the
-                # trigger for a real connect.
-                self._color_reader_stats["last_error"] = "connect: %s" % exc
+                self._color_reader_stats["connects"] += 1
+                self._color_reader_stats["connected"] = True
+                self._color_reader_stats["last_error"] = ""
+                request = bytes((0x04, 0x00, 0x00, 0x00, 0x00))
+                writer.write(request)
+                await writer.drain()
+                serial, regions, raw_resp = await asyncio.wait_for(self._read_led_snapshot(reader), timeout=2)
+                changed = self._parse_led_snapshot(serial, regions, raw_resp)
+                if changed:
+                    self._color_reader_stats["frames_parsed"] += 1
+                    self._color_reader_stats["last_frame_ts"] = time.time()
+                    idle_polls = 0
+                    poll_delay = POLL_FAST
+                else:
+                    idle_polls += 1
+                    # Ramp only after a second of genuine quiet, so a gap
+                    # between two frames of one animation never slows us.
+                    if idle_polls > 8:
+                        poll_delay = min(POLL_IDLE, poll_delay + 0.04)
+                self._color_reader_stats["poll_delay_ms"] = int(poll_delay * 1000)
+                backoff = 0.5
+                await asyncio.sleep(poll_delay)
+            except asyncio.CancelledError:
+                raise
+            except (asyncio.TimeoutError, asyncio.IncompleteReadError, OSError, ValueError) as exc:
+                self._color_reader_stats["last_error"] = "reader: %s" % exc
                 self._color_reader_stats["connected"] = False
+                # v3.3.38: a GET_LED snapshot is live runtime state, not a
+                # persistent LED command. When RPCS3 disappears, invalidate
+                # the cached colours immediately so the Decky Toypad cannot
+                # remain visibly stuck on the game's last colour. Keep the
+                # diagnostic history intact; only the current render state is
+                # cleared. Reset the serial gate so the first snapshot after
+                # reconnect is accepted even if RPCS3 reused the same serial.
+                self._clear_live_led_state()
                 await asyncio.sleep(min(backoff, 5.0))
                 backoff = min(backoff * 1.5, 5.0)
-                continue
-            backoff = 1.0
-            self._color_reader_stats["connects"] += 1
-            self._color_reader_stats["connected"] = True
-            self._color_reader_stats["last_error"] = ""
-            decky.logger.info(
-                "Colour reader connected to %s:%d (connect #%d)",
-                self.host, self.port,
-                self._color_reader_stats["connects"])
-            # v3.3.10 KEY FIX: do NOT send HELLO. The fork's inbound listener
-            # thread parses the first byte we send as a LOAD/REMOVE/MOVE
-            # command byte (0x01/0x02/0x03). 'H' is 0x48, which the fork
-            # treats as unknown and drops the connection - killing the whole
-            # session and preventing outbound colour frames from ever
-            # reaching us. Instead we say nothing on the socket; the fork's
-            # broadcast side (patched in) pushes frames unsolicited as
-            # colour commands arrive. This matches the "cat <&3" tap that
-            # works from the shell.
-            try:
-                await self._parse_color_frames(reader)
-            except asyncio.CancelledError:
-                writer.close()
-                try:
-                    await writer.wait_closed()
-                except Exception:
-                    pass
-                raise
-            except Exception as exc:
-                self._color_reader_stats["last_error"] = "parse: %s" % exc
-                decky.logger.warning("Colour reader disconnected: %s", exc)
             finally:
-                self._color_reader_stats["connected"] = False
-                try:
-                    writer.close()
-                    await writer.wait_closed()
-                except Exception:
-                    pass
-            await asyncio.sleep(1.0)
+                if writer is not None:
+                    try:
+                        writer.close()
+                        await writer.wait_closed()
+                    except Exception:
+                        pass
 
-    async def _parse_color_frames(self, reader):
-        # Resync-on-MAGIC state machine: tolerates stray bytes and unknown
-        # versions/event types by skipping past their payload.
-        import time
-        MAGIC = 0x55
-        VERSION = 0x01
-        while True:
-            # Advance to next magic byte
-            b = await reader.readexactly(1)
-            if b[0] != MAGIC:
-                continue
-            header = await reader.readexactly(4)
-            version, event_type, pad, payload_len = header
-            payload = await reader.readexactly(payload_len)
-            if version != VERSION:
-                continue
-            key = ({0: "0", 1: "1", 2: "2", 0xFF: "all"}).get(pad)
+    def _clear_live_led_state(self):
+        """Invalidate the renderer's current GET_LED state on disconnect."""
+        self.pad_colors = {"0": None, "1": None, "2": None, "all": None}
+        self._last_led_snapshot = None
+        self._led_snapshot_serial = None
+
+    LED_MAGIC = 0x4C
+    LED_V1_SIZE = 30
+    LED_V2_SIZE = 40
+
+    async def _read_led_snapshot(self, reader):
+        head = await reader.readexactly(3)
+        if head[0] != self.LED_MAGIC:
+            raise ValueError(f"bad LED magic {head[0]:02X}")
+
+        serial = head[1]
+        disc = head[2]
+
+        if disc == 0x02:
+            rest = await reader.readexactly(self.LED_V2_SIZE - 3)
+            region_count = rest[0]
+            body, stride, has_from = rest[1:], 12, True
+            raw = head + rest
+        elif disc == 0x03:
+            rest = await reader.readexactly(self.LED_V1_SIZE - 3)
+            region_count = 0x03
+            body, stride, has_from = rest, 9, False
+            raw = head + rest
+        else:
+            raise ValueError(f"unknown LED wire discriminator {disc:02X}")
+
+        if region_count != 0x03:
+            raise ValueError(f"unexpected region count {region_count}")
+
+        regions = []
+        for i in range(3):
+            off = i * stride
+            rec = body[off:off + stride]
+            if has_from:
+                regions.append({
+                    "pad": rec[0], "mode": rec[1],
+                    "r": rec[2], "g": rec[3], "b": rec[4],
+                    "from_r": rec[5], "from_g": rec[6], "from_b": rec[7],
+                    "on_ticks": rec[8], "off_ticks": rec[9],
+                    "count": rec[10], "speed_ticks": rec[11],
+                })
+            else:
+                regions.append({
+                    "pad": rec[0], "mode": rec[1],
+                    "r": rec[2], "g": rec[3], "b": rec[4],
+                    "from_r": None, "from_g": None, "from_b": None,
+                    "on_ticks": rec[5], "off_ticks": rec[6],
+                    "count": rec[7], "speed_ticks": rec[8],
+                })
+
+        return serial, regions, raw
+
+    def _parse_led_snapshot(self, serial, regions, raw_response):
+        """Apply one GET_LED snapshot (v1 30-byte or v2 40-byte)."""
+        self._color_reader_stats["snapshots_seen"] += 1
+        if self._led_snapshot_serial == serial:
+            self._color_reader_stats["led_serial"] = serial
+            return False
+
+        now = time.monotonic()
+        mapping = {1: "0", 2: "1", 3: "2"}
+        mode_names = {0: "off", 1: "color", 2: "flash", 3: "fade"}
+        pads_diag = []
+        previous = self._last_led_snapshot or {}
+        for reg in regions:
+            pad = reg["pad"]
+            key = mapping.get(pad)
+            mode = reg["mode"]
+            r, g, b = reg["r"], reg["g"], reg["b"]
+            from_r, from_g, from_b = reg["from_r"], reg["from_g"], reg["from_b"]
+            on_ticks, off_ticks = reg["on_ticks"], reg["off_ticks"]
+            count, speed_ticks = reg["count"], reg["speed_ticks"]
+            kind = mode_names.get(mode, "unknown")
+            item = {
+                "pad": key if key is not None else str(pad),
+                "padByte": pad, "mode": mode, "kind": kind,
+                "rgb": [r, g, b],
+                "fromRgb": [from_r, from_g, from_b] if from_r is not None else None,
+                "onTicks": on_ticks, "offTicks": off_ticks,
+                "speedTicks": speed_ticks, "count": count,
+                "onMs": on_ticks * self.LED_TICK_MS,
+                "offMs": off_ticks * self.LED_TICK_MS,
+                "speedMs": speed_ticks * self.LED_TICK_MS,
+            }
+            old = previous.get(key) if key is not None else None
+            item["changed"] = old != item
+            pads_diag.append(item)
             if key is None:
                 continue
-            # v3.3.11: store a timestamp on every event so _pad_colors_json
-            # can resolve per-pad vs broadcast by recency rather than the
-            # old "per-pad always wins" rule. This is what makes Locate
-            # Keystone hints usable: game paints per-pad blue, later
-            # broadcasts a reset colour - the reset must actually take
-            # effect on the pads whose per-pad hint has expired.
-            now = time.monotonic()
-            if event_type == 0x01 and payload_len == 3:
-                self.pad_colors[key] = (payload[0], payload[1], payload[2], "color", now)
-                self._color_reader_stats["frames_parsed"] += 1
-                self._color_reader_stats["last_frame_ts"] = time.time()
-            elif event_type == 0x02 and payload_len == 6:
-                # payload: on_ms, off_ms, count, r, g, b
-                self.pad_colors[key] = (payload[3], payload[4], payload[5], "flash", now)
-                self._color_reader_stats["frames_parsed"] += 1
-                self._color_reader_stats["last_frame_ts"] = time.time()
-            # Unknown types skipped silently.
+            self.pad_colors[key] = (
+                r, g, b, kind, now, on_ticks, off_ticks, count,
+                speed_ticks, serial, from_r, from_g, from_b
+            )
+
+        delta = None if self._led_snapshot_serial is None else (serial - int(self._led_snapshot_serial)) % 256
+        self._led_event_seq += 1
+        event = {
+            "seq": self._led_event_seq,
+            "timestamp": time.time(),
+            "serial": serial,
+            "delta": delta,
+            "pads": pads_diag,
+            "raw": raw_response.hex(),
+            "source": "GET_LED snapshot",
+        }
+        if self.config.get("diagnosticsEnabled", False):
+            self._led_events.append(event)
+        self._color_reader_stats["changed_snapshots"] += 1
+        self._last_led_snapshot = {p["pad"]: p for p in pads_diag if p["pad"] in ("0", "1", "2")}
+        self._led_snapshot_serial = serial
+        self._color_reader_stats["led_serial"] = serial
+        return True
 
     def _pad_colors_json(self):
-        """Serialise pad_colors as a shape the frontends can render.
+        """Return renderer-ready three-region LED state.
 
-        v3.3.11: resolve per-pad vs broadcast by recency. Previously the
-        rule was "per-pad always wins if it exists" which stranded stale
-        hints - the game emits a per-pad Colour for a Locate Keystone
-        target, then later broadcasts a reset (Colour All), but the reset
-        was ignored on any pad that had ever received a per-pad command.
-
-        Now each stored event carries a monotonic timestamp; for pads 0/1/2
-        we return whichever of that pad's own event or the last broadcast
-        happened more recently. The `all` key still exposes the raw
-        broadcast for anything that wants to distinguish (e.g. the Setup
-        diagnostic dots).
+        Listener timing values are *Toypad ticks*, not milliseconds. The
+        current RPCS3/Harry implementation documents them as roughly 40 ms per
+        tick; the independent LegoDimensions implementation also models the
+        parameters as tick counts rather than milliseconds. We preserve raw
+        tick values and expose the derived millisecond values separately.
         """
         broadcast = self.pad_colors.get("all")
 
         def _shape(val):
             if val is None:
                 return None
-            r, g, b, kind, _ts = val
-            return {"r": r, "g": g, "b": b,
-                    "hex": "#%02x%02x%02x" % (r, g, b),
-                    "kind": kind}
+            vals = list(val) + [None] * 14
+            r, g, b, kind, ts, on, off, count, speed, serial = vals[:10]
+            from_r = vals[10] if len(vals) > 10 and vals[10] is not None else None
+            from_g = vals[11] if len(vals) > 11 and vals[11] is not None else None
+            from_b = vals[12] if len(vals) > 12 and vals[12] is not None else None
+            on_ticks = int(on or 0)
+            off_ticks = int(off or 0)
+            speed_ticks = int(speed or 0)
+            return {
+                "r": int(r), "g": int(g), "b": int(b),
+                "from_r": from_r, "from_g": from_g, "from_b": from_b,
+                "fromRgb": [from_r, from_g, from_b] if from_r is not None else None,
+                "hex": "#%02x%02x%02x" % (int(r), int(g), int(b)),
+                "kind": kind,
+                "onTicks": on_ticks, "offTicks": off_ticks,
+                "speedTicks": speed_ticks,
+                "onMs": on_ticks * self.LED_TICK_MS,
+                "offMs": off_ticks * self.LED_TICK_MS,
+                "speedMs": speed_ticks * self.LED_TICK_MS,
+                "count": int(count or 0),
+                "rawOn": on_ticks, "rawOff": off_ticks,
+                "rawSpeed": speed_ticks,
+                "serial": serial,
+                "timestamp": float(ts or 0.0),
+            }
 
         def _resolve(pad_key):
             own = self.pad_colors.get(pad_key)
@@ -397,7 +634,6 @@ class Plugin:
                 return broadcast
             if broadcast is None:
                 return own
-            # Both exist - pick the one with the larger timestamp.
             return own if own[4] >= broadcast[4] else broadcast
 
         return {
@@ -405,6 +641,8 @@ class Plugin:
             "1": _shape(_resolve("1")),
             "2": _shape(_resolve("2")),
             "all": _shape(broadcast),
+            "tickMs": self.LED_TICK_MS,
+            "serial": self._color_reader_stats.get("led_serial", 0),
         }
 
     # ---------------------------------------------------------------- config
@@ -650,31 +888,44 @@ class Plugin:
                 kind = "Vehicles"
 
             # Vehicle files carry their build tier as a numeric prefix:
-            # "2. Quinn Ultra Racer" is that vehicle's second build. Strip it
-            # for display and keep the number, the way v1.5 labels them.
+            # v1.8: "Aquaman - 1. Aqua Watercraft"
+            # v1.5: "2. Quinn Ultra Racer" -- keep for older libraries
             build = 1
             display = path.stem
-            m = re.match(r"^(\d+)[.\-]\s*(.+)$", display)
+            owner = ""
+            m = re.match(r"^(.+?)\s*-\s*(\d+)[.\-]\s*(.+)$", display)
             if m:
-                build = int(m.group(1))
-                display = m.group(2).strip()
+                owner, build, display = m.group(1).strip(), int(m.group(2)), m.group(3).strip()
+            else:
+                m = re.match(r"^(\d+)[.\-]\s*(.+)$", display)
+                if m:
+                    build, display = int(m.group(1)), m.group(2).strip()
+
+            family = owner or display
 
             icon = None
+            full_art = None
             for ext in (".png", ".jpg"):
+                full_cand = path.parent / (path.stem + "_full" + ext)
+                if full_cand.is_file() and full_art is None:
+                    full_art = str(full_cand)
                 candidate = path.with_suffix(ext)
-                if candidate.is_file():
+                if candidate.is_file() and icon is None:
                     icon = str(candidate)
-                    break
 
             entries.append({
                 "id": len(entries),
                 "name": display,
+                "owner": owner,
+                "family": family,
                 "build": build,
                 "franchise": franchise,
                 "kind": kind,
                 "path": str(path),
                 "hasIcon": icon is not None,
+                "hasFullArt": full_art is not None,
                 "_icon": icon,
+                "_full_art": full_art,
             })
 
         entries.sort(key=lambda e: (e["franchise"].lower(),
@@ -719,26 +970,30 @@ class Plugin:
 
     async def _send(self, frame: bytes):
         async with self._lock:
-            gap = COMMAND_GAP - (time.monotonic() - self.last_send)
-            if gap > 0:
-                await asyncio.sleep(gap)
+            self.command_in_flight = True
             try:
-                reader, writer = await asyncio.wait_for(
-                    asyncio.open_connection(self.host, self.port), timeout=3)
-                writer.write(frame)
-                await writer.drain()
-                writer.close()
+                gap = self.COMMAND_GAP - (time.monotonic() - self.last_send)
+                if gap > 0:
+                    await asyncio.sleep(gap)
                 try:
-                    await writer.wait_closed()
-                except Exception:
-                    pass
-            except (ConnectionRefusedError, OSError, asyncio.TimeoutError) as exc:
-                raise RuntimeError(
-                    "Nothing listening on %s:%d. Start LEGO Dimensions and get "
-                    "past the intro so the game attaches the toypad."
-                    % (self.host, self.port)) from exc
+                    reader, writer = await asyncio.wait_for(
+                        asyncio.open_connection(self.host, self.port), timeout=3)
+                    writer.write(frame)
+                    await writer.drain()
+                    writer.close()
+                    try:
+                        await writer.wait_closed()
+                    except Exception:
+                        pass
+                except (ConnectionRefusedError, OSError, asyncio.TimeoutError) as exc:
+                    raise RuntimeError(
+                        "Nothing listening on %s:%d. Start LEGO Dimensions and get "
+                        "past the intro so the game attaches the toypad."
+                        % (self.host, self.port)) from exc
+                finally:
+                    self.last_send = time.monotonic()
             finally:
-                self.last_send = time.monotonic()
+                self.command_in_flight = False
 
 
 
@@ -849,6 +1104,22 @@ class Plugin:
                     pics = sorted(logo_dir.glob("*.png"))
                     found = pics[0] if pics else None
                 self.logos[fr] = self._register(found)
+
+        # v3.3.15: franchise logo sources, lowest priority first.
+        #   1. the tag library's own <Franchise>/Logo/*.png (handled above)
+        #   2. artwork bundled with the plugin, in assets/logos/
+        #   3. anything the user drops in ~/toypad/logos/
+        # (2) is how the synthetic "Starters" franchise gets artwork at all -
+        # it has no Logo directory because it is not a real franchise - and
+        # (3) lets that be replaced without touching the install.
+        for source in (Path(__file__).parent / "assets" / "logos",
+                       HOME / "toypad" / "logos"):
+            if not source.is_dir():
+                continue
+            for pic in sorted(source.iterdir()):
+                if pic.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp"):
+                    self.logos[pic.stem] = self._register(pic)
+        self.logos.setdefault("Starters", 0)
 
         # Portraits, and the ring colour that goes with each.
         for entry in self.library:
@@ -964,7 +1235,9 @@ class Plugin:
         if starter_chars or starter_vehicles:
             franchises.insert(0, {
                 "name": "Starters",
-                "logo": self._img_url(0),  # no dedicated logo; UI shows text
+                # v3.3.15: uses ~/toypad/logos/Starters.png when present,
+                # falling back to the text label the web UI already renders.
+                "logo": self._img_url(self.logos.get("Starters", 0)),
                 "characters": starter_chars,
                 "vehicles": starter_vehicles,
             })
@@ -999,10 +1272,10 @@ class Plugin:
         for i, s in enumerate(SLOTS):
             occ = self.pads[i]
             entry = self.library[occ["figure"]] if occ else None
-            # Map the SLOTS pad label ("centre"/"left"/"right") to the
+            # Map the SLOTS zone name ("centre"/"left"/"right") to the
             # 0/1/2 keys the colour reader uses.
             pad_key = {"centre": "0", "center": "0",
-                       "left": "1", "right": "2"}.get(str(s["pad"]).lower())
+                       "left": "1", "right": "2"}.get(str(s["zone"]).lower())
             led = pc.get(pad_key) or broadcast
             # LegoToypad v1.5's phone UI reads `.color` per pad and uses
             # it verbatim for the halo. When we have a live LED colour
@@ -1071,92 +1344,254 @@ class Plugin:
             return raw[:m.end()] + insert + raw[m.end():], True
         return raw.rstrip("\n") + "\n%s:\n  %s: %s\n" % (section, key, value), True
 
-    async def set_sixty_fps(self, enable: bool):
-        """Raise RPCS3's vblank rate, which is what unlocks a 30 fps cap."""
-        targets = self._rpcs3_config_files()
-        if not targets:
-            return {"ok": False,
-                    "error": "No RPCS3 config yet. Run the emulator once."}
-
-        want = 120 if enable else 60
-        touched = []
+    async def install_desktop_shortcut(self):
+        """Write a .desktop entry so the bundled RPCS3 is launchable from
+        Desktop Mode, where the Steam shortcut is not convenient. Points at the
+        AppImage directly so the user can open the RPCS3 GUI and edit their own
+        global or per-game configuration."""
+        rpcs3 = self._rpcs3_binary()
+        if not rpcs3 or not Path(rpcs3).exists():
+            return {"ok": False, "error": "Bundled RPCS3 not found. Run setup first."}
+        apps = HOME / ".local" / "share" / "applications"
         try:
-            for cfg in targets:
-                raw = cfg.read_text()
-                backup = cfg.with_suffix(".yml.bak-toypad")
-                if not backup.exists():
-                    backup.write_text(raw)
-                raw, _ = self._yaml_set(raw, "Video", "Vblank Rate", want)
-                raw, _ = self._yaml_set(raw, "Video", "Aspect ratio", "16:9")
-                raw, _ = self._yaml_set(raw, "Video", "Resolution", "1280x720")
-                raw, _ = self._yaml_set(raw, "Video", "Frame limit", "60" if enable else "Auto")
-                raw, _ = self._yaml_set(raw, "Miscellaneous",
-                                        "Start games in fullscreen mode", "true")
-                cfg.write_text(raw)
-                self._chown_deck(cfg)
-                touched.append(cfg.name)
+            apps.mkdir(parents=True, exist_ok=True)
+            entry = apps / "dimensions-toypad-rpcs3.desktop"
+            entry.write_text(
+                "[Desktop Entry]\n"
+                "Type=Application\n"
+                "Name=RPCS3 (Dimensions Toypad)\n"
+                "Comment=Bundled RPCS3 with Toypad support - open to edit RPCS3 settings\n"
+                "Exec=%s\n"
+                "Icon=applications-games\n"
+                "Terminal=false\n"
+                "Categories=Game;Emulator;\n"
+                % rpcs3)
+            entry.chmod(0o755)
+            self._chown_deck(entry)
         except OSError as exc:
             return {"ok": False, "error": str(exc)}
+        self._log_setup("Desktop shortcut written to %s" % entry)
+        return {"ok": True, "message": "Desktop shortcut created: RPCS3 (Dimensions Toypad)"}
 
-        self._log_setup("VBlank Rate -> %d in %s" % (want, ", ".join(touched)))
-        return {"ok": True,
-                "message": ("60 fps unlocked in %s. If cutscenes run fast, turn "
-                            "this back off." % ", ".join(touched)) if enable
-                           else "Back to the stock 60Hz vblank (%s)"
-                                % ", ".join(touched)}
+    # ---------------------------------------------------------------- hotkey
+    # v3.3.15: SteamClient.Input is a dead end for chords on current SteamOS.
+    # RegisterForControllerStateChanges does not exist, and the three APIs that
+    # do exist hand the callback a bare integer, not button state - the field
+    # diagnostic came back as `raw: 15`. So detection moved here, where we can
+    # read the kernel's evdev stream directly.
+    #
+    # Caveat we cannot resolve from the plugin side: Steam may hold an
+    # EVIOCGRAB on the controller, which routes events only to Steam. The
+    # per-device counters in hotkey_state() make that visible instead of
+    # presenting as another silent failure.
 
-    async def set_fullscreen(self, enable: bool = True):
-        """Make RPCS3 start the game fullscreen.
+    EV_KEY = 0x01
+    # struct input_event: struct timeval (2x long) + u16 type + u16 code + s32 value
+    _EV_FMT = "llHHi"
+    _EV_SIZE = struct.calcsize(_EV_FMT)
 
-        With --no-gui and this off, RPCS3 opens a small window, which in Game
-        Mode gamescope then centres on a black field - the "windowed and
-        shrunken" launch.
+    def _hotkey_start(self):
+        if getattr(self, "_hk_thread", None):
+            return
+        self._hk_held = set()
+        self._hk_fired = 0
+        self._hk_capture = False
+        self._hk_captured = None
+        self._hk_hold_since = 0.0
+        self._hk_devices = {}
+        self._hk_names = {}
+        self._hk_error = ""
+        self._hk_stop = threading.Event()
+        self._hk_thread = threading.Thread(target=self._hotkey_loop, daemon=True)
+        self._hk_thread.start()
+
+    def _hotkey_names(self):
+        """event node -> device name, from /proc/bus/input/devices."""
+        names = {}
+        try:
+            blocks = Path("/proc/bus/input/devices").read_text().split("\n\n")
+        except OSError:
+            return names
+        for block in blocks:
+            name = ""
+            for line in block.splitlines():
+                if line.startswith("N: Name="):
+                    name = line.split("=", 1)[1].strip().strip('"')
+                elif line.startswith("H: Handlers="):
+                    for h in line.split("=", 1)[1].split():
+                        if h.startswith("event"):
+                            names["/dev/input/" + h] = name
+        return names
+
+    def _hotkey_scan(self, have):
+        """Open any evdev node we are not already reading.
+
+        Rescanned periodically on purpose. Steam Input's emulated keyboard is a
+        uinput device that appears *after* the plugin starts, and it is the one
+        realistic route to a chord: Steam holds an EVIOCGRAB on the physical
+        controller, so a grabbed pad delivers nothing to us no matter how the
+        node is opened. A key bound in a Steam controller layout arrives on the
+        virtual keyboard instead, which is not grabbed.
         """
-        targets = self._rpcs3_config_files()
-        if not targets:
-            return {"ok": False, "error": "No RPCS3 config yet. Run it once."}
-        touched = []
+        added = {}
         try:
-            for cfg in targets:
-                raw = cfg.read_text()
-                backup = cfg.with_suffix(".yml.bak-toypad")
-                if not backup.exists():
-                    backup.write_text(raw)
-                raw, _ = self._yaml_set(raw, "Miscellaneous",
-                                        "Start games in fullscreen mode",
-                                        "true" if enable else "false")
-                raw, _ = self._yaml_set(raw, "Video", "Aspect ratio", "16:9")
-                raw, _ = self._yaml_set(raw, "Video", "Resolution", "1280x720")
-                cfg.write_text(raw)
-                self._chown_deck(cfg)
-                touched.append(cfg.name)
+            entries = sorted(os.listdir("/dev/input"))
         except OSError as exc:
-            return {"ok": False, "error": str(exc)}
-        self._log_setup("Fullscreen -> %s in %s" % (enable, ", ".join(touched)))
-        return {"ok": True,
-                "message": "Fullscreen %s in %s"
-                           % ("on" if enable else "off", ", ".join(touched))}
-
-    async def get_sixty_fps(self):
-        supported = True
-        enabled = False
-        fullscreen = False
-        vblank_rate = 60
-        for cfg in self._rpcs3_config_files():
-            try:
-                raw = cfg.read_text()
-            except OSError:
+            self._hk_error = "listdir /dev/input: %s" % exc
+            return added
+        for name in entries:
+            if not name.startswith("event"):
                 continue
-            m = re.search(r"Vblank Rate:\s*(\d+)", raw, re.IGNORECASE)
-            if m:
-                vblank_rate = int(m.group(1))
-                if vblank_rate > 60:
-                    enabled = True
-            if re.search(r"Start games in fullscreen mode:\s*true", raw):
-                fullscreen = True
-        return {"supported": supported, "enabled": enabled,
-                "fullscreen": fullscreen, "vblankRate": vblank_rate,
-                "frameLimit": "60" if enabled else "Auto"}
+            path = "/dev/input/" + name
+            if path in have:
+                continue
+            try:
+                fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK)
+            except OSError:
+                continue           # busy or permission denied
+            added[path] = fd
+        return added
+
+    def _hotkey_loop(self):
+        import select as _select
+        opened = {}                       # path -> fd
+        fds = {}                          # fd -> path
+        last_scan = 0.0
+        while not self._hk_stop.is_set():
+            now = time.monotonic()
+            if now - last_scan > 3.0:
+                last_scan = now
+                for path, fd in self._hotkey_scan(opened).items():
+                    opened[path] = fd
+                    fds[fd] = path
+                    self._hk_devices.setdefault(path, 0)
+                self._hk_names = self._hotkey_names()
+            if not fds:
+                self._hk_error = "no readable /dev/input/event* nodes"
+                self._hk_stop.wait(1.0)
+                continue
+            try:
+                ready, _, _ = _select.select(list(fds.keys()), [], [], 0.25)
+            except (OSError, ValueError) as exc:
+                self._hk_error = "select: %s" % exc
+                self._hk_stop.wait(1.0)
+                continue
+            now = time.monotonic()
+            for fd in ready:
+                try:
+                    data = os.read(fd, self._EV_SIZE * 64)
+                except OSError:
+                    continue
+                for off in range(0, len(data) - self._EV_SIZE + 1, self._EV_SIZE):
+                    _s, _us, etype, code, value = struct.unpack(
+                        self._EV_FMT, data[off:off + self._EV_SIZE])
+                    if etype != self.EV_KEY:
+                        continue
+                    self._hk_devices[fds[fd]] = self._hk_devices.get(fds[fd], 0) + 1
+                    if value == 1:
+                        self._hk_held.add(code)
+                    elif value == 0:
+                        self._hk_held.discard(code)
+            self._hotkey_evaluate(now)
+        for fd in list(fds.keys()):
+            try:
+                os.close(fd)
+            except OSError:
+                pass
+
+    def _hotkey_evaluate(self, now):
+        held = frozenset(self._hk_held)
+        if self._hk_capture:
+            if not held:
+                self._hk_hold_since = 0.0
+                self._hk_pending = None
+                return
+            pending = getattr(self, "_hk_pending", None)
+            if pending != held:
+                self._hk_pending = held
+                self._hk_hold_since = now
+                return
+            if self._hk_hold_since and now - self._hk_hold_since > 0.4:
+                self._hk_captured = sorted(held)
+                self._hk_capture = False
+                self._hk_hold_since = 0.0
+                self._hk_pending = None
+            return
+        chord = self.config.get("hotkeyCodes") or []
+        if not chord or not self.config.get("hotkeyEnabled", True):
+            self._hk_was_down = False
+            return
+        # Subset match: the chord fires when all of its codes are held, so an
+        # extra button riding along does not suppress it.
+        down = all(c in held for c in chord)
+        if down and not getattr(self, "_hk_was_down", False):
+            if now - getattr(self, "_hk_last_fire", 0.0) > 0.5:
+                self._hk_last_fire = now
+                self._hk_fired += 1
+        self._hk_was_down = down
+
+    async def set_diagnostics_enabled(self, enabled: bool = False):
+        """Toggle the LED diagnostics *history*. This is presentation only:
+        pad_colors and therefore the rendered Toypad are untouched, so the pad
+        keeps receiving every colour with diagnostics off."""
+        self.config["diagnosticsEnabled"] = bool(enabled)
+        self._save_config()
+        if not enabled:
+            self._led_events.clear()
+        return {"ok": True, "diagnosticsEnabled": bool(enabled)}
+
+    async def get_diagnostics_enabled(self):
+        return {"diagnosticsEnabled": bool(self.config.get("diagnosticsEnabled", False))}
+
+    async def set_led_enabled(self, enabled: bool = True):
+        """Toggle LED capture. Figure placement, moving, swapping and removal
+        are unaffected - they use the same socket but a different command
+        path."""
+        self.config["ledEnabled"] = bool(enabled)
+        self._save_config()
+        if not enabled:
+            self._clear_live_led_state()
+        return {"ok": True, "ledEnabled": bool(enabled),
+                "message": "LED capture " + ("enabled" if enabled else "disabled")}
+
+    async def get_led_enabled(self):
+        return {"ledEnabled": bool(self.config.get("ledEnabled", True)),
+                "suspended": bool(self._color_reader_stats.get("suspended"))}
+
+    async def hotkey_state(self):
+        """Polled by the frontend. `fired` is a monotonic counter, so the UI
+        can detect an edge without the backend needing to push."""
+        self._hotkey_start()
+        return {
+            "fired": self._hk_fired,
+            "held": sorted(self._hk_held),
+            "capturing": self._hk_capture,
+            "captured": self._hk_captured,
+            "chord": self.config.get("hotkeyCodes") or [],
+            "enabled": bool(self.config.get("hotkeyEnabled", True)),
+            "devices": [{"path": p, "events": n,
+                         "name": self._hk_names.get(p, "")}
+                        for p, n in sorted(self._hk_devices.items()) if n],
+            "nodes": len(self._hk_devices),
+            "names": [self._hk_names.get(p, p.replace("/dev/input/", ""))
+                      for p in sorted(self._hk_devices)][:12],
+            "error": self._hk_error,
+        }
+
+    async def hotkey_capture(self, on: bool = True):
+        self._hotkey_start()
+        self._hk_capture = bool(on)
+        self._hk_captured = None
+        self._hk_hold_since = 0.0
+        self._hk_pending = None
+        return {"ok": True}
+
+    async def hotkey_set(self, codes=None, enabled: bool = True):
+        self.config["hotkeyCodes"] = list(codes or [])
+        self.config["hotkeyEnabled"] = bool(enabled)
+        self._save_config()
+        self._hk_captured = None
+        return {"ok": True, "message": "Hotkey saved"}
 
     # ---------------------------------------------------------------- launching
 
@@ -1432,6 +1867,14 @@ echo "Game: $GAME"
 # is intentionally forced onto XCB because this AppImage's native Wayland
 # Qt path is not reliable on SteamOS/Bazzite.
 export QT_QPA_PLATFORM=xcb
+# v3.3.41: the Steam shortcut always launches fullscreen. This is the only
+# RPCS3 setting the plugin touches - vblank, resolution scale, output scaling
+# and sharpening are left entirely to the user's own global or per-game config.
+for CFG in "$HOME/.config/rpcs3/config.yml" "$HOME/.config/rpcs3/custom_configs/config_BLES02105.yml"; do
+  [ -f "$CFG" ] || continue
+  grep -q 'Start games in fullscreen mode:' "$CFG" && \
+    sed -i 's/^\([[:space:]]*Start games in fullscreen mode:[[:space:]]*\).*/\1true/' "$CFG"
+done
 exec "$RPCS3" --no-gui "$GAME"
 '''.replace("__APP__", app).replace("__GAMES__", games)
         play_script = r'''#!/bin/bash
@@ -1550,6 +1993,12 @@ exec "$RUN_BOTH"
         # 5. Launcher.
         res = await self.install_launcher()
         note("Steam launcher", res.get("ok"),
+             res.get("message") or res.get("error", ""))
+
+        # 6. Desktop Mode shortcut to the bundled RPCS3, so its own settings
+        # remain the user's to configure.
+        res = await self.install_desktop_shortcut()
+        note("Desktop shortcut", res.get("ok"),
              res.get("message") or res.get("error", ""))
 
         ok = all(s["ok"] for s in steps)
@@ -1691,6 +2140,10 @@ exec "$RUN_BOTH"
             # frames, so we can tell "no LED events yet" apart from
             # "reader is broken".
             "colorReader": dict(self._color_reader_stats),
+            "backend": self.backend.key,
+            "padSkin": self.config.get("padSkin", "default"),
+            "soundEffects": self.config.get("soundEffects", True),
+            "confirmButtonSwap": self.config.get("confirmButtonSwap", False),
         }
         # Verifying state is transient - don't cache it as long as the others
         # or the panel will show "verifying..." for 5 seconds after it's done.
@@ -1721,7 +2174,7 @@ exec "$RUN_BOTH"
 
     def _install_web_assets_blocking(self):
         try:
-            self._log_setup("Downloading LegoToypad v1.5 Web/Assets from " + TAG_SOURCE_TARBALL)
+            self._log_setup("Downloading LegoToypad v1.8 Web/Assets from " + TAG_SOURCE_TARBALL)
             blob = self._download_url_blocking(TAG_SOURCE_TARBALL, timeout=180)
             taken = 0
             with tarfile.open(fileobj=io.BytesIO(blob), mode="r:gz") as tar:
@@ -1729,10 +2182,13 @@ exec "$RUN_BOTH"
                     if not member.isfile():
                         continue
                     parts = Path(member.name).parts
-                    if len(parts) < 3 or parts[1] not in ("Assets", "Web"):
+                    if len(parts) == 2 and parts[1] == "vehicles.csv":
+                        dest = WORK_DIR / "vehicles.csv"
+                    elif len(parts) >= 3 and parts[1] in ("Assets", "Web"):
+                        dest_root = ASSET_ROOT if parts[1] == "Assets" else WEB_ROOT
+                        dest = dest_root / Path(*parts[2:])
+                    else:
                         continue
-                    dest_root = ASSET_ROOT if parts[1] == "Assets" else WEB_ROOT
-                    dest = dest_root / Path(*parts[2:])
                     dest.parent.mkdir(parents=True, exist_ok=True)
                     src = tar.extractfile(member)
                     if src is None:
@@ -1740,15 +2196,16 @@ exec "$RUN_BOTH"
                     with dest.open("wb") as fh:
                         shutil.copyfileobj(src, fh)
                     taken += 1
-            for base in (ASSET_ROOT, WEB_ROOT):
+            for base in (ASSET_ROOT, WEB_ROOT, WORK_DIR / "vehicles.csv"):
                 if base.exists():
                     self._chown_deck(base)
-                    for path in base.rglob("*"):
-                        self._chown_deck(path)
+                    if base.is_dir():
+                        for path in base.rglob("*"):
+                            self._chown_deck(path)
             if not self._web_assets_ready():
-                return {"ok": False, "error": "Downloaded LegoToypad v1.5, but its Web UI files were incomplete."}
+                return {"ok": False, "error": "Downloaded LegoToypad v1.8, but its Web UI files were incomplete."}
             self._log_setup("Installed %d LegoToypad Web/Assets files" % taken)
-            return {"ok": True, "message": "LegoToypad v1.5 phone Web UI installed automatically."}
+            return {"ok": True, "message": "LegoToypad v1.8 phone Web UI installed automatically."}
         except Exception as exc:
             self._log_setup("Web UI FAILED: %s" % exc)
             return {"ok": False, "error": str(exc)}
@@ -1787,9 +2244,11 @@ exec "$RUN_BOTH"
                     if not member.isfile():
                         continue
                     parts = Path(member.name).parts
-                    if len(parts) < 3:
+                    if len(parts) == 2 and parts[1] == "vehicles.csv":
+                        dest = WORK_DIR / "vehicles.csv"
+                    elif len(parts) < 3:
                         continue
-                    if parts[1] == TAG_SOURCE_BINS:
+                    elif parts[1] == TAG_SOURCE_BINS:
                         dest = TAG_LIBRARY / Path(*parts[2:])
                     elif parts[1] == "Assets":
                         dest = ASSET_ROOT / Path(*parts[2:])
@@ -1805,12 +2264,13 @@ exec "$RUN_BOTH"
                         shutil.copyfileobj(src, fh)
                     taken += 1
 
-            for base in (TAG_LIBRARY, ASSET_ROOT, WEB_ROOT):
+            for base in (TAG_LIBRARY, ASSET_ROOT, WEB_ROOT, WORK_DIR / "vehicles.csv"):
                 if not base.exists():
                     continue
                 self._chown_deck(base)
-                for path in base.rglob("*"):
-                    self._chown_deck(path)
+                if base.is_dir():
+                    for path in base.rglob("*"):
+                        self._chown_deck(path)
 
             self._log_setup("Extracted %d files to %s" % (taken, TAG_LIBRARY))
             if taken == 0:
@@ -1958,6 +2418,21 @@ exec "$RUN_BOTH"
             "port": self.port,
         }
 
+    async def get_led_diagnostics(self):
+        """Return a bounded stream of changed GET_LED snapshots.
+
+        This proves what the Decky-side listener received, including the raw
+        30-byte response and the mode/timing/RGB fields for all three regions.
+        It is intentionally not labelled as raw game C0-C8 traffic: those
+        commands are interpreted inside RPCS3 before GET_LED exposes state.
+        """
+        return {
+            "readerStats": dict(self._color_reader_stats),
+            "padColors": self._pad_colors_json(),
+            "events": list(self._led_events)[-60:],
+            "lastSeq": self._led_event_seq,
+        }
+
     async def get_pad_colors(self):
         """Live LED state, uncached. Called by the Decky pad view on a fast
         interval so the pad tiles reflect the game's LED commands in real
@@ -1967,28 +2442,125 @@ exec "$RUN_BOTH"
             "readerStats": dict(self._color_reader_stats),
         }
 
+    def _record_recent(self, figure_id: int):
+        if not (0 <= figure_id < len(self.library)):
+            return
+        e = self.library[figure_id]
+        is_vehicle = e["kind"].lower().startswith("vehic")
+        name = e.get("family") if is_vehicle else e["name"]
+        franchise = e["franchise"]
+        recents = [r for r in self.config.get("recents", [])
+                   if not (r.get("franchise", "").lower() == franchise.lower() and
+                           r.get("name", "").lower() == name.lower())]
+        recents.insert(0, {
+            "franchise": franchise,
+            "name": name,
+            "isVehicle": is_vehicle,
+            "figure": figure_id,
+        })
+        limit = self.config.get("recentsLimit", 12)
+        self.config["recents"] = recents[:limit]
+        self._save_config()
+
     async def get_franchises(self):
         seen = {}
         for e in self.library:
             seen.setdefault(e["franchise"], 0)
             seen[e["franchise"]] += 1
-        return [{"name": k, "count": v,
-                 "hasLogo": bool(self.logos.get(k))}
-                for k, v in sorted(seen.items())]
+        out = [{"name": k, "count": v,
+                "hasLogo": bool(self.logos.get(k))}
+               for k, v in sorted(seen.items())]
+
+        starter_names = {(f.lower(), n.lower()) for f, n in STARTERS_ROSTER}
+        n_start = sum(1 for e in self.library
+                      if (e["franchise"].lower(), e["name"].lower()) in starter_names)
+        if n_start:
+            out.insert(0, {"name": "Starters", "count": n_start,
+                           "hasLogo": bool(self.logos.get("Starters"))})
+
+        recents = self.config.get("recents", [])
+        if recents:
+            out.insert(0, {"name": "Recents", "count": len(recents), "hasLogo": False})
+
+        favs = self.config.get("favourites", [])
+        if favs:
+            out.insert(0, {"name": "Favourites", "count": len(favs), "hasLogo": False})
+
+        return out
 
     async def get_figures(self, franchise: str = "", search: str = "",
                           story: bool = False):
         needle = (search or "").strip().lower()
         out = []
+
+        if not story and franchise == "Favourites":
+            favs = self.config.get("favourites", [])
+            chars = []
+            vehs = []
+            for fav in favs:
+                f_fran = fav.get("franchise", "").lower()
+                f_name = fav.get("name", "").lower()
+                is_veh = fav.get("isVehicle", False)
+                matches = []
+                for e in self.library:
+                    if e["franchise"].lower() != f_fran:
+                        continue
+                    if is_veh:
+                        if e.get("family", "").lower() == f_name:
+                            matches.append(e)
+                    else:
+                        if e["name"].lower() == f_name:
+                            matches.append(e)
+                if is_veh:
+                    matches.sort(key=lambda x: x.get("build", 1))
+                    vehs.extend(matches)
+                else:
+                    chars.extend(matches)
+            fav_entries = chars + vehs
+            for e in fav_entries:
+                if needle and needle not in f"{e['name']} {e['franchise']}".lower():
+                    continue
+                out.append({k: e.get(k) for k in ("id", "name", "build", "franchise", "kind", "hasIcon", "owner", "family")})
+                if len(out) >= 400:
+                    break
+            return out
+
+        if not story and franchise == "Recents":
+            recents = self.config.get("recents", [])
+            recent_entries = []
+            for r in recents:
+                fid = r.get("figure")
+                if fid is not None and 0 <= fid < len(self.library):
+                    recent_entries.append(self.library[fid])
+                else:
+                    r_fran = r.get("franchise", "").lower()
+                    r_name = r.get("name", "").lower()
+                    for e in self.library:
+                        if e["franchise"].lower() == r_fran:
+                            if e["name"].lower() == r_name or e.get("family", "").lower() == r_name:
+                                recent_entries.append(e)
+                                break
+            for e in recent_entries:
+                if needle and needle not in f"{e['name']} {e['franchise']}".lower():
+                    continue
+                out.append({k: e.get(k) for k in ("id", "name", "build", "franchise", "kind", "hasIcon", "owner", "family")})
+                if len(out) >= 400:
+                    break
+            return out
+
         for e in self.library:
             if story and (e["franchise"].lower(), e["name"].lower()) not in STORY_ROSTER:
                 continue
-            if not story and franchise and e["franchise"] != franchise:
+            if not story and franchise == "Starters":
+                if (e["franchise"].lower(), e["name"].lower()) not in {
+                        (f.lower(), n.lower()) for f, n in STARTERS_ROSTER}:
+                    continue
+            elif not story and franchise and e["franchise"] != franchise:
                 continue
             if needle and needle not in f"{e['name']} {e['franchise']}".lower():
                 continue
-            out.append({k: e[k] for k in
-                        ("id", "name", "build", "franchise", "kind", "hasIcon")})
+            out.append({k: e.get(k) for k in
+                        ("id", "name", "build", "franchise", "kind", "hasIcon", "owner", "family")})
             if len(out) >= 400:
                 break
         return out
@@ -2009,6 +2581,22 @@ exec "$RUN_BOTH"
         mime = "image/png" if icon.lower().endswith(".png") else "image/jpeg"
         return f"data:{mime};base64,{base64.b64encode(raw).decode('ascii')}"
 
+    async def get_full_art(self, figure_id: int):
+        """Base64 data URL for a figure's full-body artwork, or fallback to head icon."""
+        if not 0 <= figure_id < len(self.library):
+            return ""
+        art = self.library[figure_id].get("_full_art") or self.library[figure_id].get("_icon")
+        if not art:
+            return ""
+        try:
+            raw = Path(art).read_bytes()
+        except OSError:
+            return ""
+        if len(raw) > 1024 * 1024:
+            return ""
+        mime = "image/png" if str(art).lower().endswith(".png") else "image/jpeg"
+        return f"data:{mime};base64,{base64.b64encode(raw).decode('ascii')}"
+
     async def load_figure(self, figure_id: int, slot: int):
         if not 0 <= figure_id < len(self.library):
             return {"ok": False, "error": "That figure is no longer in the library."}
@@ -2027,6 +2615,7 @@ exec "$RUN_BOTH"
             frame = (bytes([CMD_LOAD, s["pad"], s["index"], 0, 0]) + tag
                      + len(encoded).to_bytes(2, "little") + encoded)
             await self._send(frame)
+            self._record_recent(figure_id)
         except RuntimeError as exc:
             return {"ok": False, "error": str(exc)}
 
@@ -2070,17 +2659,40 @@ exec "$RUN_BOTH"
             return {"ok": False, "error": "Nothing on that pad to move."}
 
         a, b = SLOTS[src], SLOTS[dst]
+        moving = self.pads[src]
+        displaced = self.pads[dst]
         try:
+            if displaced is not None:
+                # Preserve an occupied destination instead of allowing the
+                # listener's native MOVE contract to overwrite it. Remove B,
+                # move A -> B, then restore B -> A using the same persistent
+                # working tag file the normal Load path uses.
+                await self._send(bytes([CMD_REMOVE, b["pad"], b["index"], 0, 0]))
+                await self._send(bytes([CMD_MOVE, b["pad"], b["index"],
+                                        a["pad"], a["index"]]))
+                entry = self.library[displaced["figure"]]
+                tag, path = self._resolve_tag(entry)
+                encoded = path.encode("utf-8")
+                frame = (bytes([CMD_LOAD, a["pad"], a["index"], 0, 0]) + tag +
+                         len(encoded).to_bytes(2, "little") + encoded)
+                await self._send(frame)
+                self.pads[src] = displaced
+                self.pads[dst] = moving
+                self.status = f"SWAP sent: {a['label']} <-> {b['label']}"
+                return {"ok": True,
+                        "message": f"{moving['name']} and {displaced['name']} swapped",
+                        "pads": self.pads}
+
             await self._send(bytes([CMD_MOVE, b["pad"], b["index"],
                                     a["pad"], a["index"]]))
         except RuntimeError as exc:
             return {"ok": False, "error": str(exc)}
 
-        self.pads[dst] = self.pads[src]
+        self.pads[dst] = moving
         self.pads[src] = None
         self.status = f"MOVE sent: {a['label']} -> {b['label']}"
         return {"ok": True,
-                "message": f"{self.pads[dst]['name']} moved to {b['label']}",
+                "message": f"{moving['name']} moved to {b['label']}",
                 "pads": self.pads}
 
     async def clear_all(self):
@@ -2135,6 +2747,100 @@ exec "$RUN_BOTH"
             return {"ok": True, "message": f"{entry['name']} had no saved progress"}
         except OSError as exc:
             return {"ok": False, "error": str(exc)}
+
+    async def get_favourites(self):
+        return list(self.config.get("favourites", []))
+
+    async def toggle_favourite(self, franchise: str, name: str, is_vehicle: bool = False):
+        target_name = (name or "").strip().lower()
+        target_fran = (franchise or "").strip().lower()
+        found = False
+        canonical_name = name
+        canonical_fran = franchise
+        for e in self.library:
+            e_fran = e["franchise"].lower()
+            if is_vehicle:
+                if e_fran == target_fran and e.get("family", "").lower() == target_name:
+                    found = True
+                    canonical_name = e.get("family") or e["name"]
+                    canonical_fran = e["franchise"]
+                    break
+            else:
+                if e_fran == target_fran and e["name"].lower() == target_name:
+                    found = True
+                    canonical_name = e["name"]
+                    canonical_fran = e["franchise"]
+                    break
+        if not found:
+            return {"ok": False, "favourited": False, "error": "Figure not found in library"}
+
+        favs = list(self.config.get("favourites", []))
+        idx = -1
+        for i, f in enumerate(favs):
+            if f.get("franchise", "").lower() == target_fran and f.get("name", "").lower() == target_name:
+                idx = i
+                break
+        if idx >= 0:
+            favs.pop(idx)
+            favourited = False
+        else:
+            favs.append({"franchise": canonical_fran, "name": canonical_name, "isVehicle": bool(is_vehicle)})
+            favourited = True
+
+        self.config["favourites"] = favs
+        self._save_config()
+        return {"ok": True, "favourited": favourited, "name": canonical_name}
+
+    async def get_recents(self):
+        return list(self.config.get("recents", []))
+
+    async def clear_recents(self):
+        self.config["recents"] = []
+        self._save_config()
+        return {"ok": True}
+
+    async def get_backends(self):
+        return [
+            {
+                "key": b.key,
+                "label": b.label,
+                "console": b.console,
+                "versionString": b.version_string,
+                "supportsGetLed": b.supports_get_led,
+            }
+            for b in BACKENDS.values()
+        ]
+
+    async def get_current_backend(self):
+        return self.backend.key
+
+    async def set_backend(self, key: str):
+        if key not in BACKENDS:
+            return {"ok": False, "error": f"Unknown backend: {key}"}
+        self.config["backend"] = key
+        self._save_config()
+        self._sync_backend_port()
+        self._clear_live_led_state()
+        return {"ok": True, "backend": key}
+
+    def _sync_backend_port(self):
+        be = self.backend
+        if be.port_env and os.environ.get(be.port_env):
+            self.port = int(os.environ[be.port_env])
+        else:
+            self.port = be.port
+
+    @property
+    def backend(self) -> Backend:
+        return BACKENDS.get(self.config.get("backend", "rpcs3"), BACKENDS["rpcs3"])
+
+    async def get_config_setting(self, key: str, default=None):
+        return self.config.get(key, default)
+
+    async def set_config_setting(self, key: str, val):
+        self.config[key] = val
+        self._save_config()
+        return {"ok": True}
 
 
 # ---------------------------------------------------------------------------

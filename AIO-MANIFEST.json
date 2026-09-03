@@ -1,0 +1,192 @@
+{
+  "version": "toypad-20260903-aio-3.4.1",
+  "rpcs3_sha256": "c9221b0178ec12308638d828408f1a9b638d59de432dc8df45aa9bcaedaaf07b",
+  "rpcs3_size": 93840381,
+  "rpcs3_commit": "6905c5ad82805af216a8addad40ee7dcea49f66b",
+  "tag_source": "https://github.com/harrysof/LegoToypad",
+  "tag_source_version": "v1.8",
+  "plugin_version": "3.4.1",
+  "runtime_policy": "bundled-only-no-fallback",
+  "launcher_chain": "play-dimensions.sh -> run-both.sh -> bundled RPCS3 AppImage --no-gui EBOOT.BIN",
+  "game_display": "16:9 1280x720 via Gamescope when needed; native Steam Gaming Mode compositor when already present",
+  "listener_state": "waiting|connected|not_configured",
+  "credits_file": "CREDITS.md",
+  "sources_file": "SOURCES.md",
+  "source_code_status": "SOURCE-CODE-STATUS.md",
+  "performance_notes": "PERFORMANCE.md",
+  "release_checklist": "RELEASE-CHECKLIST.md",
+  "phone_remote": "automatic upstream LegoToypad v1.5 Web UI provisioning; no separate phone app required",
+  "first_run_setup": "automatic background setup; user supplies only their own game/content files",
+  "rpc3_source_offer": "SOURCE/fetch-upstream-source.sh",
+  "download_policy": "HTTPS via host-trusted curl with Python CA-bundle fallback; TLS verification never disabled",
+  "platforms": "SteamOS/Steam Deck and Bazzite handheld Steam Gaming Mode",
+  "runtime_qt": "Force XCB for bundled AppImage under Gamescope; do not force native Wayland",
+  "changelog_3_3_8": [
+    "Bundled RPCS3 now forwards LED colour/flash commands over the toypad socket",
+    "Live per-pad and broadcast LED colour visible in the Decky QAM panel",
+    "Phone remote catalog gains a synthetic 'Starters' franchise (Batman, Gandalf, Wyldstyle + their vehicles)",
+    "state_json now emits per-pad ledColor for phone UI halo rendering",
+    "phoneRemoteState = ready | no_network so the UI can display an accurate fallback",
+    "Multi-client toypad listener so Decky panel and phone can connect simultaneously"
+  ],
+  "changelog_3_3_9": [
+    "LED colour now paints the pad-slot border in the Decky QAM pad view (not just the Setup diagnostic row)",
+    "Phone remote pad halo now reflects live LED colour instead of the static figure tag colour",
+    "New get_pad_colors RPC + 500ms polling in the pad view for real-time LED updates",
+    "state_json.pad.color is overridden by ledColor when present; original figure colour preserved in tagColor"
+  ],
+  "changelog_3_3_10": [
+    "FIX: colour reader no longer sends HELLO \u2014 the fork's inbound listener treated 'H' as an unknown LOAD/REMOVE/MOVE command and dropped the connection, so no colour frames ever reached the plugin. Without HELLO the reader connects and stays open exactly like the 'xxd' shell tap that worked.",
+    "Colour reader diagnostics: setup panel shows 'reader: connected + N frames' or 'reader: waiting (last error)' so it's obvious whether frames are being received.",
+    "Version detection now reads both stdout and stderr; RPCS3's AppImage-wrapped launcher prints to stderr, so the panel was showing 'version string unavailable' even for correct builds."
+  ],
+  "changelog_3_3_11": [
+    "Per-pad vs broadcast LED colour now resolves by recency, not by 'per-pad always wins'",
+    "Locate Keystone hints stop lingering after the game resets the pads with a Colour All",
+    "No emulator rebuild required - resolution logic is entirely plugin-side"
+  ],
+  "changelog_3_3_12": [
+    "FIX: per-pad LED colours never resolved. Both main.py and the frontend keyed the {centre/left/right -> 0/1/2} lookup off SLOTS['pad'] (an int, 1/2/3) instead of SLOTS['zone'] (the section name). The lookup always missed and silently fell back to the broadcast colour, so Chroma/Locate hints painted every section identically.",
+    "FIX: figure names were shredded to one or two characters per line in the four lower pad cells. Those cells get roughly 30px of width in the QAM, and the label was further clamped to 58% of that to clear the portrait.",
+    "REDESIGN: the portrait is now the tile. No competing name text on occupied slots; empty slots show their section label instead, and a Build number appears as a small corner chip.",
+    "REDESIGN: pad grid is shaped like the hardware - a dark base plate holding two rounded three-slot side sections around a taller rounded centre.",
+    "LED colour now fills the whole cell and the whole zone (tinted background, gradient wash, inner and outer glow) rather than only the border.",
+    "Flash timing is taken from the game. Event 0x02 already carried [on_ms, off_ms, count]; the first three bytes were being discarded. They are now plumbed through to onMs/offMs/count, with rawOn/rawOff exposed for diagnostics.",
+    "Frontend mints one @keyframes per distinct duty cycle in play, so asymmetric blinks (long on / short off) render correctly and a finite count blinks N times then settles lit.",
+    "Safety rails on flash timing: each phase floors at 40ms, and 0/0 falls back to a 250/250 blink.",
+    "FIX: opening the plugin, or any submenu, landed focus on the last button and forced a scroll back up. Each view now has a landing ref re-asserted on a short timer ladder to win the race against Steam's own focus pass.",
+    "NEW: in-game toypad overlay, summoned by a controller chord from anywhere including a running game in Game Mode. Shows the live pad, allows removing a figure, and offers a recent-figures strip for quick placement.",
+    "NEW: hotkey chords are learned, not hardcoded - Setup captures whatever combination you hold and stores the raw button mask, because Steam's button bitmasks shift between client builds.",
+    "NEW: Ctrl+Shift+T keyboard fallback for Desktop Mode and docked play.",
+    "No RPCS3 changes. The bundled AppImage, its SHA256 and its commit are unchanged from 3.3.11.",
+    "REMOVED: fullscreen / windowed toggle. The Steam shortcut now always launches fullscreen, and run-both.sh re-asserts 'Start games in fullscreen mode: true' at launch so a manual RPCS3 GUI session cannot leave it windowed.",
+    "REMOVED: 60 fps toggle. Frame rate is now adjusted live from RPCS3's in-game home menu (Start + Select together) instead of a Decky switch that rewrote config behind the running game.",
+    "NEW: single fixed display profile replaces all three toggles - Vblank Rate 120, Resolution Scale 140%, Output Scaling Mode Bilinear, CAS Sharpening Intensity 50, 16:9 @ 1280x720, Frame limit Auto, fullscreen on.",
+    "NEW RPC: apply_display_profile / get_display_profile replace set_sixty_fps, set_fullscreen and get_sixty_fps. The profile is applied as step 6 of run_setup and is idempotent.",
+    "NOTE: RPCS3 gates CAS sharpening behind FidelityFX output scaling. With Output Scaling Mode set to Bilinear the sharpening value is written but inert. Switch output scaling to FidelityFX in the home menu if you want it active."
+  ],
+  "display_profile": {
+    "vblank_rate": 120,
+    "resolution_scale": 140,
+    "resolution_scale_threshold": 16,
+    "output_scaling_mode": "Bilinear",
+    "fidelityfx_cas_sharpening_intensity": 50,
+    "aspect_ratio": "16:9",
+    "resolution": "1280x720",
+    "frame_limit": "Auto",
+    "start_games_in_fullscreen_mode": true,
+    "note": "Applied by run_setup and re-asserted by run-both.sh at every launch. Frame rate is adjusted live from RPCS3's in-game home menu (Start + Select), not from Decky."
+  },
+  "changelog_3_3_13": [
+    "FIX: entering the plugin still landed on Browse figures. 3.3.12 put the landing ref on the PadGrid *wrapper*, but Steam only honours focus() on an element its navigation layer has made a focus target. A Focusable that merely contains other Focusables is not one, so the call was a silent no-op. The ref now lands on the first pad cell, which is a real target.",
+    "FIX: focus helper handles the wrapper shapes Steam uses across builds (el, el.element, el.m_element) and scrolls the target into view; the retry ladder extends to 1100ms.",
+    "FIX: 'Set hotkey chord' hung on Listening... forever. The watcher assumed one API name and one field layout and failed mute when either was wrong.",
+    "Chord watcher now probes RegisterForControllerStateChanges, RegisterForControllerInputMessages, RegisterForControllerCommandMessages and RegisterForControllerAnalogInputMessages, attaching to every one that accepts a callback.",
+    "Button fields are normalised across layouts (ulButtons/unButtons/buttons, ulUpperButtons/unUpperButtons/upperButtons) and one level of nesting (.state, .controllerState).",
+    "NEW: live diagnostic line under the Hotkey section - attach state, which API bound, event count, live button mask and any error, plus a probe list of which API names exist on this build.",
+    "NEW: capture times out after 15 seconds instead of hanging, and the button doubles as a cancel while listening.",
+    "NEW: 'Open overlay now (test)' button so the overlay can be verified independently of the chord.",
+    "KNOWN: the Ctrl+Shift+T keyboard fallback does not work when bound to a Steam back-button. Steam delivers those key events to the focused application, which in Game Mode is the game, not the SteamUI context the plugin listens in."
+  ],
+  "changelog_3_3_14": [
+    "FIX: the overlay had no gamepad focus - B did nothing and nothing was navigable. It was mounted with routerHook.addGlobalComponent, which renders a component but never gives it controller focus. Replaced with DFL.showModal + ModalRoot, the supported route for a focus-owning modal; ModalRoot wires B and Escape to close.",
+    "NEW: the overlay is fully interactive. Tap an occupied pad to lift the figure off; tap an empty pad to open a searchable picker.",
+    "NEW: figure search inside the overlay via TextField, which raises the Steam virtual keyboard in Game Mode. Debounced at 220ms, capped at 60 results.",
+    "NEW: Move and Remove modes and Clear all, all inside the overlay. Existing pad styling, LED wash and portraits are used unchanged.",
+    "FIX: hotkey capture never resolved because RegisterForControllerStateChanges does not exist on current SteamOS, and the three APIs that do exist deliver discrete input messages whose field names did not match anything the parser looked for.",
+    "REWORK: chords are no longer parsed by field name at all. Each event is flattened to a map of path -> number; capture records which paths go hot while a combination is held, and the chord fires when those same paths go hot again. This needs no knowledge of the payload shape.",
+    "Capture now intersects samples across the hold window, keeping only paths whose value held steady, so a churning counter is dropped instead of blocking capture. Time/packet/serial/battery-like keys are filtered up front.",
+    "Runtime matching is a subset test rather than exact signature equality, so unrelated hot paths riding along do not suppress the chord.",
+    "NEW diagnostics: the Hotkey section now prints the hot path list and a truncated raw payload, which is what identifies the real event shape. The previous build collected the key list but never rendered it.",
+    "REMOVED: routerHook global component registration, now unused."
+  ],
+  "changelog_3_3_15": [
+    "FINDING: SteamClient.Input cannot supply chords on current SteamOS. RegisterForControllerStateChanges does not exist, and the three APIs that do exist hand the callback a bare integer - the field diagnostic returned `raw: 15`, with `hot: v=15` being the flattener wrapping a scalar. The captured chord therefore matched almost every event and fired at random, which is why the overlay took ~15s and needed a stray button press.",
+    "REWORK: hotkey detection moved into main.py and reads /dev/input/event* directly. All readable event nodes are opened non-blocking and polled with select(); EV_KEY press/release maintains a held-code set. No dependency on any Steam API.",
+    "Chord matching is a subset test on kernel keycodes, with a 0.5s re-fire guard. Capture requires the same combination held for 0.4s.",
+    "The chord is stored in the plugin config, not browser localStorage, so it survives a Steam client data wipe.",
+    "Frontend polls hotkey_state at 120ms and edge-detects a monotonic fire counter; the first reading only primes it, so reloading the plugin cannot trigger a phantom open. Worst-case latency to the modal is about an eighth of a second, against ~15s before.",
+    "Hotkey now toggles: pressing it with the overlay open closes it rather than stacking a second modal. The watcher keeps running either way.",
+    "Keycodes are shown by name (A/B/X/Y, L1-R2, L4-R5, Start, Select) rather than as hex.",
+    "NEW diagnostics: per-device key-event counts. If no device produces events, Steam holds an exclusive grab - that is now stated plainly instead of failing silently.",
+    "NEW: franchise grid replaces the flat figure list in the overlay. Five tiles across, wrapping and scrollable by controller, using each franchise's existing logo artwork with a name fallback.",
+    "Selecting a franchise opens its characters, matching the panel's browse flow. B steps back one level at a time: figures -> franchises -> pad -> closed.",
+    "Search sits above the grid and always wins - typing drops results straight down as a navigable list. Scoped to the current franchise when inside one, global from the grid.",
+    "NEW: Starters is now a real selectable franchise in the Decky grid, pinned first, not just a phone-remote synthetic.",
+    "NEW: franchise logo overrides. Any PNG or JPG in ~/toypad/logos/<Franchise>.png wins over the tag-library logo, and is the only way to give Starters artwork since it has no Logo directory. The phone remote reads the same override.",
+    "LED polling in the overlay raised to 250ms so flashes and Chroma hints render at the rate the game sends them.",
+    "The Quick Access panel now stands down while the overlay is open - it stops polling LEDs and shows a handoff message instead of rendering a second live pad, so one toypad is never driven by two poll loops."
+  ],
+  "changelog_3_3_16": [
+    "NEW: Starters artwork ships with the plugin at assets/logos/Starters.jpg (512x288, 47KB) and is picked up automatically - no manual file drop needed. The Decky franchise grid and the phone remote's Starters category both read it.",
+    "Logo precedence is now explicit, lowest first: tag-library <Franchise>/Logo/*.png, then plugin assets/logos/, then user overrides in ~/toypad/logos/. Any of png/jpg/jpeg/webp is accepted.",
+    "Franchise tiles scale artwork to the whole slot with object-fit contain, so 16:9 key art and transparent wordmarks both render intact without cropping. The figure count moved to a corner chip.",
+    "LED sampling in the overlay raised from 250ms to 150ms. The strobe itself is rendered locally from onMs/offMs, so the poll only has to catch a change of colour or kind - 150ms means a short 3-blink warning burst is caught near its start.",
+    "CLARIFICATION: 'the panel stands down' means the Quick Access sidebar stops its own polling while the overlay is open. The overlay carries the full live LED state - same PadGrid component, same per-pad and broadcast routing, same flash keyframes. Nothing about the pad itself is suspended."
+  ],
+  "changelog_3_3_17": [
+    "CONFIRMED: Steam holds an EVIOCGRAB on the Deck's controller. The evdev reader opens the nodes fine but receives zero key events, which is what 'evdev OK / key events 0' meant. No plugin-side read of the physical pad can work around a grab.",
+    "REWORK: the hotkey is now a *key* bound in a Steam controller layout, not a raw button chord. Steam Input's emulated keyboard is a uinput device that Steam does not grab, so its events do reach the plugin. Bind e.g. F13 to a back button in Steam's layout editor, then capture it in the plugin.",
+    "The evdev reader rescans /dev/input every 3 seconds. Steam's virtual keyboard appears after the plugin starts, so a one-shot scan at boot could never have found it.",
+    "Device nodes are now resolved to names via /proc/bus/input/devices, so the diagnostic reads 'Steam Virtual Keyboard:14' instead of 'event14:14'.",
+    "Diagnostic distinguishes 'no nodes opened' from 'nodes open but grabbed', and states the fix inline rather than leaving it as an error string.",
+    "UI: modal is centred with a fixed 660px/92vw width and 88vh cap, laid out as a column so the pad keeps its size and only the list below scrolls. The modal no longer changes height as results come and go.",
+    "UI: all hard borders removed. Modal chrome, pad base plate, idle zone outlines, franchise tiles, figure rows and action buttons are transparent or translucent; only a live LED still draws a coloured edge.",
+    "FIX: franchise tiles painted over the modal edge mid-scroll. Scroll containers now carry position/isolation/contain:paint and clip horizontally, so nothing renders outside the modal during a scroll transition."
+  ],
+  "changelog_3_3_19": [
+    "LED FIX: the bundled RPCS3 AppImage uses the legacy push Colour/Flash listener; it does not implement GET_LED 0x04. The reader no longer probes 0x04 and returns to the proven 3.3.10 no-HELLO push-stream connection model.",
+    "LED FIX: preserves the verified 40 ms Toypad-tick timing conversion from 3.3.18 while removing the incompatible snapshot path.",
+    "Bundled RPCS3 AppImage is unchanged byte-for-byte; SHA256 remains 1f2ce02de8bf361834bcb38e1e92d0f9ee138bc71e1c271628b55eed437f2e71."
+  ],
+  "changelog_3_3_18": [
+    "Toypad UI consolidation: the sidebar no longer renders or polls a second live Toypad; the overlay is the single authoritative interactive Toypad surface.",
+    "FIX: Back/B now walks the overlay navigation stack (search -> figures -> franchise -> Toypad) and closes only at the root.",
+    "FIX: redundant modal/background boxes removed; franchise grid is centered to the search width and uses a stable five-column grid.",
+    "FIX: search/franchise/roster scrolling no longer relies on nested Focusable wrappers that caused icon jumping during navigation.",
+    "FIX: Move preserves an occupied destination by performing a plugin-side swap using the existing Toypad LOAD/REMOVE/MOVE protocol.",
+    "FIX: Clear All updates the local pad model from the backend response so stale figures are not left visually behind.",
+    "FIX: DeLorean removed from the synthetic Starters roster; Back to the Future remains its franchise source.",
+    "LED timing corrected: flash/fade duration fields are Toypad ticks, using approximately 40 ms per tick rather than the previous 62.5 ms guess; raw tick values remain available for diagnostics.",
+    "LED mirror now consumes the newer GET_LED 30-byte snapshot when available and falls back to the legacy push-event stream for compatibility.",
+    "LED animation no longer restarts on every 30 Hz snapshot when the LED state is unchanged; the snapshot bytes are compared before mutating timestamps/state.",
+    "LED renderer follows three physical regions (left/centre/right), supports solid/flash/fade, retains explicit OFF, and layers game colour over a soft powered Toypad base glow.",
+    "Hotkey setup messaging now explicitly explains release-before-capture and the Steam Input/evdev fallback path.",
+    "No RPCS3/AppImage rebuild: the bundled AppImage is retained byte-for-byte and remains the runtime binary."
+  ],
+  "led_runtime": "RPCS3 Seamless Toypad v1.2 GET_LED snapshot; 30-byte 0x4C response; 120ms polling; no HELLO",
+  "changelog_3_3_20": [
+    "Replace the pre-LED RPCS3 AppImage (commit 797f1e41 / 3.3.11 runtime) with the actual NeverCookFirst v1.2 Linux x64 clang build at commit 6905c5ad, which contains the LED mirroring implementation.",
+    "Use the documented GET_LED 0x04 request and 30-byte 0x4C snapshot response, matching the current Windows implementation byte-for-byte.",
+    "Map RPCS3 LED regions 1=center, 2=left, 3=right into the plugin 0/1/2 renderer keys.",
+    "Retain the 40ms Toypad tick conversion and flash/fade/off rendering already present in the 3.3.18/3.3.19 frontend/backend.",
+    "Do not send HELLO. The LED reader performs a request/response transaction only."
+  ],
+  "changelog_3_3_33": [
+    "LED diagnostics: records changed GET_LED snapshots with serial/delta, C/L/R RGB, mode, timing/count and raw 30-byte RX.",
+    "Diagnostics explicitly identifies the stream as listener GET_LED state, not raw C0-C8 game packets.",
+    "Diagnostics is isolated from normal Toypad rendering and bounded to a short history."
+  ],
+  "changelog_3_3_39": [
+    "FIX: LED colours were rendered as if the wire carried sRGB. The game drives the Toypad's physical RGB LED against a per-channel calibration white point of (255,110,24), so drive levels were being painted straight to the screen.",
+    "getLedRgb now divides each channel by its calibration maximum. Portal chamber 2 renders yellow / turquoise / magenta as intended instead of orange / dark green / red; channel ratios normalise to exactly [1,1,0], [0,1,1], [1,0,1].",
+    "Side effect: the 'power-on orange' glow was always neutral white - (153,66,14) normalises to #999995, white at 60 percent.",
+    "Applied at the single wire-to-display conversion point, so fade interpolation, flash presentation and diffusion inherit it unchanged. Clamped so no channel overflows.",
+    "Nothing else altered: AppImage and SHA-256, GET_LED protocol and decoder, 40ms tick, renderer, pad mapping, modal layout, diagnostics and controller handling are untouched."
+  ],
+  "changelog_3_3_40": [
+    "FIX: flash was rendered as opacity animation on a glow layer tinted with the LED colour, so a flash whose colour matched its background animated something invisible. Black-on-dark and white-on-white produced no visible pulse, which is why coloured keystone flashes showed and swap/build flashes did not.",
+    "A companion keyframe now modulates tile brightness (1.0 -> 0.34) on the cell root, which is colour-independent, so a flash of any colour is visible. The original opacity keyframe is retained so coloured flashes are unchanged.",
+    "PERF: adaptive polling. The listener needs one connection per request, so a fixed 120ms poll meant ~8 TCP connect/close cycles per second, almost all returning unchanged snapshots. Idle now ramps to 400ms after 8 consecutive unchanged polls and snaps back to 120ms on any change - 2.5 connects/sec at idle, with no change to latency during an active sequence.",
+    "poll_delay_ms exposed in the LED diagnostics.",
+    "Unchanged: 3.3.39 white-point calibration, AppImage and SHA-256, GET_LED protocol and decoder, 40ms tick, pad mapping, fade/diffusion rendering, modal layout, controller handling, tag .bin library handling."
+  ],
+  "changelog_3_3_41": [
+    "NEW: LED lighting toggle in the overlay. Off stops all GET_LED traffic and clears live colour state; on resets the serial gate so the next snapshot is accepted rather than suppressed as unchanged. Figure LOAD/REMOVE/MOVE use a different command path on the same socket and are unaffected in either position.",
+    "NEW: LED diagnostics toggle in the sidebar. Recording only - pad_colors is written before the diagnostics gate, so the pad receives every colour with diagnostics off.",
+    "NEW: Desktop Mode shortcut to the bundled RPCS3 at ~/.local/share/applications/dimensions-toypad-rpcs3.desktop, written during setup.",
+    "REMOVED: the RPCS3 display profile (vblank 120, 140 percent render scale, bilinear, CAS 50). RPCS3 global and per-game configuration is now entirely user-owned. The only RPCS3 setting the plugin still touches is 'Start games in fullscreen mode', re-asserted by the launcher.",
+    "REMOVED: 'Open RPCS3 interface' button from the sidebar, superseded by the desktop shortcut.",
+    "PACKAGING: release archive trimmed to the AppImage, the plugin and a docs folder. Consolidated changelog, install guide and build guide added. A separate full repository archive is published alongside."
+  ]
+}

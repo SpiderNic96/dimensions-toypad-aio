@@ -1,9 +1,24 @@
 # Local build output
 build/
-dist/
 node_modules/
-upstream-source/
 release-staging/
+__pycache__/
+*.pyc
+source-plugin-3.3.11/
 *.orig
 *.log
 .DS_Store
+
+# dist/ is build output, with one exception: dist/index.js is the plugin's
+# shipped frontend and stays committed until the src/ rebuild is verified
+# on hardware (ROADMAP-3.4.1 section 2).
+dist/*
+!dist/index.js
+
+# Emulator runtimes are release attachments, never committed.
+# RPCS3 alone is ~94 MB; GitHub warns above 50 MB and rejects above 100 MB.
+rpcs3/*.AppImage
+xenia/*.AppImage
+cemu/*.AppImage
+*.AppImage
+upstream-source/
