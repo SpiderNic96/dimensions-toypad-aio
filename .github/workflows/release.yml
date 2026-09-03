@@ -1,19 +1,33 @@
 name: Publish release
 
-# Fires on any v* tag, wherever that tag lives - a tag on a feature branch
-# publishes a pre-release test build off that branch without anything having
-# to be merged to main first. The workflow that runs is the one at the tagged
-# commit, so the tag must point at a commit that contains this file.
+# Two ways in, because pushing a tag is not always available:
+#
+#   1. Push a v* tag. The workflow that runs is the one at the tagged commit,
+#      so a tag on a feature branch publishes a build off that branch with
+#      nothing merged to main.
+#   2. Push a commit whose message contains [release]. The version then comes
+#      from plugin.json and the workflow creates the tag itself, at the pushed
+#      commit, via `gh release create --target`. This is the path to use when
+#      the tag ref namespace is not writable from where you are pushing.
+#
+# Either way, a commit that is not reachable from the default branch is
+# published as a pre-release, so a branch test build never becomes "Latest".
 on:
   push:
     tags:
       - 'v*'
+    branches:
+      - '**'
 
 permissions:
   contents: write
 
 jobs:
   release:
+    # A branch push only cuts a release when the commit explicitly asks for one.
+    if: >-
+      startsWith(github.ref, 'refs/tags/v') ||
+      contains(github.event.head_commit.message, '[release]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,9 +47,32 @@ jobs:
           npm run build
           node --check dist/index.js
 
+      # A tag names its own version; a [release] commit takes plugin.json's,
+      # which is the file the Decky loader actually reads.
       - name: Resolve version
         id: ver
-        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        run: |
+          set -euo pipefail
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            V="${GITHUB_REF_NAME#v}"
+          else
+            V="$(node -p "require('./plugin.json').version")"
+          fi
+          echo "Releasing $V"
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          echo "tag=v$V" >> "$GITHUB_OUTPUT"
+
+      # Cutting the same version twice is a mistake, not an update: fail loudly
+      # rather than half-overwriting an existing release's assets.
+      - name: Refuse to overwrite an existing release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if gh release view "${{ steps.ver.outputs.tag }}" >/dev/null 2>&1; then
+            echo "::error::Release ${{ steps.ver.outputs.tag }} already exists. Bump the version in plugin.json, or delete that release first."
+            exit 1
+          fi
 
       # Same staging as package-release.yml: plugin runtime only, no bundled
       # emulator AppImages - install_backend() in main.py fetches those
@@ -97,7 +134,7 @@ jobs:
           else
             ARGS+=(--generate-notes)
           fi
-          gh release create "$GITHUB_REF_NAME" \
+          gh release create "${{ steps.ver.outputs.tag }}" \
             --title "dimensions-toypad $V" \
             --target "$GITHUB_SHA" \
             "${ARGS[@]}" \
