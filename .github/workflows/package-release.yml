@@ -1,0 +1,53 @@
+name: Package release archive
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version string for the archive name, e.g. 3.4.1'
+        required: true
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package.json
+
+      - name: Install dependencies and build
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+          node --check dist/index.js
+
+      - name: Assemble archive contents
+        run: |
+          set -euo pipefail
+          STAGE="build/dimensions-toypad"
+          rm -rf build
+          mkdir -p "$STAGE"
+          # Plugin runtime only - no bundled emulator AppImages. install_backend()
+          # in main.py fetches those separately at setup time, hash-verified
+          # against the pinned Backend.appimage_sha256 (see R1/R1b/R6).
+          cp main.py plugin.json package.json README.md LICENSE setup-licenses.sh "$STAGE/"
+          cp -r dist assets docs source LICENSES "$STAGE/"
+          rm -rf "$STAGE/dist/index.js.map"
+
+      - name: Zip archive
+        run: |
+          set -euo pipefail
+          cd build
+          zip -qr "dimensions-toypad-AIO-${{ inputs.version }}.zip" dimensions-toypad
+          sha256sum "dimensions-toypad-AIO-${{ inputs.version }}.zip" | tee "dimensions-toypad-AIO-${{ inputs.version }}.zip.sha256"
+
+      - name: Upload archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: dimensions-toypad-AIO-${{ inputs.version }}
+          path: |
+            build/dimensions-toypad-AIO-${{ inputs.version }}.zip
+            build/dimensions-toypad-AIO-${{ inputs.version }}.zip.sha256
