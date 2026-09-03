@@ -65,8 +65,10 @@ SLOTS = [
 
 # The emulator sleeps internally between the lift and the re-place on a MOVE,
 # mimicking a hand moving a figure. Commands fired faster than this make the
-# game miss transitions.
-COMMAND_GAP = 0.35
+# game miss transitions. MOVE needs longer than LOAD/REMOVE to cover the
+# ~500ms server-side pickup delay; gate on the *previous* command's type.
+GAP_AFTER_MOVE = 0.55
+GAP_AFTER_SIMPLE = 0.35   # start at the current value; drop to 0.05 after hardware testing
 
 # Decky runs as root; the Deck user's home is where everything actually lives.
 DECK_HOME = Path("/home/deck")
@@ -248,8 +250,8 @@ class Plugin:
         self.library = []
         self.library_root = None
         self.last_send = 0.0
+        self.last_cmd = None
         self.command_in_flight = False
-        self.COMMAND_GAP = 0.35
         self._lock = asyncio.Lock()
         self._httpd = None
         self._busy = ""
@@ -416,7 +418,8 @@ class Plugin:
 
             # P5: Gate LED polling on in-flight commands
             since_send = time.monotonic() - self.last_send
-            if self.command_in_flight or since_send < self.COMMAND_GAP:
+            gap_required = GAP_AFTER_MOVE if self.last_cmd == CMD_MOVE else GAP_AFTER_SIMPLE
+            if self.command_in_flight or since_send < gap_required:
                 await asyncio.sleep(0.02)
                 continue
 
@@ -971,7 +974,8 @@ class Plugin:
         async with self._lock:
             self.command_in_flight = True
             try:
-                gap = self.COMMAND_GAP - (time.monotonic() - self.last_send)
+                gap_required = GAP_AFTER_MOVE if self.last_cmd == CMD_MOVE else GAP_AFTER_SIMPLE
+                gap = gap_required - (time.monotonic() - self.last_send)
                 if gap > 0:
                     await asyncio.sleep(gap)
                 try:
@@ -991,6 +995,7 @@ class Plugin:
                         % (self.host, self.port)) from exc
                 finally:
                     self.last_send = time.monotonic()
+                    self.last_cmd = frame[0]
             finally:
                 self.command_in_flight = False
 
