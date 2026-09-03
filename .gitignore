@@ -22,3 +22,7 @@ xenia/*.AppImage
 cemu/*.AppImage
 *.AppImage
 upstream-source/
+
+# Published release artifacts belong on the GitHub Releases page, not the tree.
+release/artifacts/
+release/source/
