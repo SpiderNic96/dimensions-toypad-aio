@@ -81,8 +81,11 @@ TAG_CACHE = WORK_DIR / "tags"
 TAG_LIBRARY = WORK_DIR / "library"
 CONFIG_FILE = WORK_DIR / "config.json"
 SETUP_LOG = WORK_DIR / "setup.log"
-LAUNCHER = HOME / "toypad" / "play-dimensions.sh"
-RUN_BOTH = HOME / "toypad" / "run-both.sh"
+# One play-<key>.sh (Game Mode AND Desktop-play shortcuts both point at the
+# same file) and one gui-<key>.sh (emulator's own settings UI, no game path)
+# per backend - never a single shared launcher, so RPCS3 and Xenia can coexist
+# as separate Steam library entries.
+LAUNCHER_DIR = HOME / "toypad"
 
 PLUGIN_ROOT = Path(__file__).resolve().parent
 # Every backend gets its own AppImage + config + cache + content, never inside
@@ -346,7 +349,7 @@ class Plugin:
 
     def _auto_setup_complete(self):
         return bool(self.library and self._web_assets_ready() and
-                    LAUNCHER.is_file() and RUN_BOTH.is_file())
+                    self._launcher_paths()["play"].is_file())
 
     async def _auto_setup(self):
         try:
@@ -1619,27 +1622,35 @@ class Plugin:
     # ---------------------------------------------------------------- launching
 
     async def launch_emulator_gui(self):
-        """Open the selected emulator's own interface.
+        """Open the selected emulator's own interface, isolated the same way
+        the game launcher is.
 
         Decky's backend runs as root with no session environment, so a GUI
         process spawned from here has no display to draw on. Hand it the deck
         user's session explicitly. In Game Mode there is no desktop for it to
         appear on at all, which is worth saying rather than looking broken.
+
+        Goes through the generated gui-<key>.sh rather than spawning the bare
+        AppImage directly - the bare binary has no XDG_CONFIG_HOME (RPCS3) or
+        --config= (Xenia), so it would silently read/write the user's own
+        standalone install instead of backends/<key>/config/.
         """
         import subprocess
-        cmd = self._launch_command()
-        if not cmd:
-            return {"ok": False, "error": "No patched RPCS3 found."}
+        key = self.backend.key
+        res = await self.install_launcher(key)
+        if not res.get("ok"):
+            return res
+        gui_script = self._launcher_paths(key)["gui"]
 
         env = dict(os.environ)
         env.setdefault("XDG_RUNTIME_DIR", "/run/user/1000")
         env.setdefault("HOME", str(HOME))
-        env["APPIMAGE_EXTRACT_AND_RUN"] = "1"
         if "WAYLAND_DISPLAY" not in env and "DISPLAY" not in env:
             # Desktop Mode's session; harmless if it isn't the live one.
             env["DISPLAY"] = ":0"
 
         # Drop to the deck user so config files stay owned correctly.
+        cmd = [str(gui_script)]
         argv = ["sudo", "-u", "deck", "-E"] + cmd if os.geteuid() == 0 else cmd
 
         try:
@@ -1648,11 +1659,10 @@ class Plugin:
         except Exception as exc:
             return {"ok": False, "error": str(exc)}
 
-        gamemode = not env.get("DISPLAY") and not env.get("WAYLAND_DISPLAY")
         return {"ok": True,
-                "message": "RPCS3 starting. In Game Mode there's no desktop "
+                "message": "%s starting. In Game Mode there's no desktop "
                            "for it to appear on - switch to Desktop Mode for "
-                           "the emulator's own interface."}
+                           "the emulator's own interface." % self.backend.label}
 
     # ---------------------------------------------------------------- backend runtime (fetch, verify, install)
 
@@ -1822,15 +1832,149 @@ class Plugin:
     def _backend_is_managed(self, key=None):
         return self._backend_binary(key).is_file()
 
-    def _launch_command(self):
-        binary = self._backend_binary()
-        if not binary.is_file():
-            return []
-        try:
-            binary.chmod(0o755)
-        except OSError:
-            pass
-        return [str(binary)] if os.access(binary, os.X_OK) else []
+    def _launcher_paths(self, key=None):
+        key = key or self.backend.key
+        return {
+            "play": LAUNCHER_DIR / ("play-%s.sh" % key),
+            "gui": LAUNCHER_DIR / ("gui-%s.sh" % key),
+            "play_log": LAUNCHER_DIR / ("last-run-%s.log" % key),
+            "play_lock": LAUNCHER_DIR / (".lock-%s" % key),
+            "gui_log": LAUNCHER_DIR / ("last-gui-%s.log" % key),
+            "gui_lock": LAUNCHER_DIR / (".lock-gui-%s" % key),
+        }
+
+    def _isolation_flag(self, backend):
+        """CLI flag needed to point this backend at its own isolated config,
+        for backends that don't honour XDG_CONFIG_HOME the way RPCS3 does.
+
+        Confirmed against the actual xenia_canary.exe string table (not
+        guessed): the string "Specifies the target config to load." is
+        immediately followed by the cvar name "config" in the binary's
+        string table, and the parser accepts gflags-style --name=value."""
+        if backend.key == "xenia":
+            config_path = BACKEND_ROOT / backend.key / "config" / "xenia-canary.config.toml"
+            return '--config="%s"' % config_path
+        return ""
+
+    def _xdg_block(self, backend):
+        """RPCS3 honours XDG_CONFIG_HOME/XDG_CACHE_HOME natively - reliable,
+        needs no CLI flag. Xenia isolates via _isolation_flag() instead."""
+        if backend.key != "rpcs3":
+            return ""
+        config_dir = BACKEND_ROOT / backend.key / "config"
+        cache_dir = BACKEND_ROOT / backend.key / "cache"
+        return ('export XDG_CONFIG_HOME="%s"\nexport XDG_CACHE_HOME="%s"'
+                % (config_dir, cache_dir))
+
+    def _qt_block(self, backend):
+        # In Steam Gaming Mode, Gamescope provides XWayland; RPCS3 is
+        # intentionally forced onto XCB because its native Wayland Qt path is
+        # not reliable on SteamOS/Bazzite. QT_QPA_PLATFORM is RPCS3-only -
+        # Xenia is not Qt; do not export it there.
+        if backend.key != "rpcs3":
+            return ""
+        return "export QT_QPA_PLATFORM=xcb"
+
+    def _fullscreen_block(self, backend):
+        # v3.3.41: the Steam shortcut always launches fullscreen. This is the
+        # only RPCS3 setting the plugin touches - vblank, resolution scale,
+        # output scaling and sharpening are left entirely to the user's own
+        # global or per-game config. Reads from the isolated config root now,
+        # not $HOME/.config/rpcs3 - RPCS3 nests one level under XDG_CONFIG_HOME.
+        if backend.key != "rpcs3":
+            return ""
+        config_dir = BACKEND_ROOT / backend.key / "config"
+        return (
+            '# v3.3.41: the Steam shortcut always launches fullscreen. This is the\n'
+            '# only RPCS3 setting the plugin touches - vblank, resolution scale,\n'
+            '# output scaling and sharpening are left entirely to the user\'s own\n'
+            '# global or per-game config.\n'
+            'for CFG in "%s/rpcs3/config.yml" "%s/rpcs3/custom_configs/config_BLES02105.yml"; do\n'
+            '  [ -f "$CFG" ] || continue\n'
+            '  grep -q \'Start games in fullscreen mode:\' "$CFG" && \\\n'
+            '    sed -i \'s/^\\([[:space:]]*Start games in fullscreen mode:[[:space:]]*\\).*/\\1true/\' "$CFG"\n'
+            'done'
+        ) % (config_dir, config_dir)
+
+    def _pre_exec_block(self, backend):
+        """Env exports that must happen before the final exec regardless of
+        whether gamescope wraps it - currently just the port-override guard
+        for backends that honour one (only Xenia; see R5)."""
+        if backend.port_env:
+            return 'export %s="${%s:-%d}"' % (backend.port_env, backend.port_env, backend.port)
+        return ""
+
+    def _play_argv(self, backend):
+        """The emulator command line as a single string - flags before the
+        game path, the rule RPCS3's shape was already written to and every
+        backend follows. Used both for a direct exec and inside a gamescope
+        wrapper, so it deliberately has no leading "exec"."""
+        isolation = self._isolation_flag(backend)
+        if backend.key == "rpcs3":
+            # Unchanged, it works.
+            return '"$APP" --no-gui "$GAME"'
+        if backend.key == "xenia":
+            # Xenia has no --no-gui: passing a game path already boots
+            # straight into it, and its window IS the emulator. Going
+            # fullscreen with no manager window is the equivalent.
+            # --license_mask is repeated here as a guard even though the
+            # config profile sets it too - 0 locks every DLC and story pack,
+            # and the shipped config had it wrong once already.
+            return ('"$APP" %s --gpu=vulkan --fullscreen=true --toypad_emulation=true '
+                    '--license_mask=-1 "$GAME"' % isolation)
+        raise ValueError("No launch template for backend %r" % backend.key)
+
+    def _gui_argv(self, backend):
+        isolation = self._isolation_flag(backend)
+        return ('"$APP" %s' % isolation).strip()
+
+    def _game_find_block(self, backend):
+        """Derived from Backend.game_globs, the single source of truth also
+        used for game discovery elsewhere - not hand-duplicated per backend."""
+        lines = []
+        first = True
+        for glob in backend.game_globs:
+            cond = ("-ipath '%s'" % glob) if "/" in glob else ("-iname '%s'" % glob)
+            if first:
+                lines.append('GAME=$(find "$GAMES" %s -print -quit 2>/dev/null)' % cond)
+                first = False
+            else:
+                lines.append('[ -z "$GAME" ] && GAME=$(find "$GAMES" %s -print -quit 2>/dev/null)' % cond)
+        return "\n".join(lines)
+
+    def _generate_play_script(self, backend):
+        app = str(self._backend_binary(backend.key))
+        games = str(self.config.get("gamePath", ""))
+        paths = self._launcher_paths(backend.key)
+        script = PLAY_SCRIPT_TEMPLATE
+        script = script.replace("__APP__", app)
+        script = script.replace("__GAMES__", games)
+        script = script.replace("__LOG__", str(paths["play_log"]))
+        script = script.replace("__LOCK__", str(paths["play_lock"]))
+        script = script.replace("__BACKEND_LABEL__", backend.label)
+        script = script.replace("__FIND_BLOCK__", self._game_find_block(backend))
+        script = script.replace("__XDG_BLOCK__", self._xdg_block(backend))
+        script = script.replace("__QT_BLOCK__", self._qt_block(backend))
+        script = script.replace("__FULLSCREEN_BLOCK__", self._fullscreen_block(backend))
+        script = script.replace("__PRE_EXEC__", self._pre_exec_block(backend))
+        # No game found: still isolated (the config-flag backends need it on
+        # every invocation, not just when a game path is present), but with
+        # none of the play-specific flags.
+        script = script.replace("__NOGAME_ARGV__", self._gui_argv(backend))
+        script = script.replace("__ARGV__", self._play_argv(backend))
+        return script
+
+    def _generate_gui_script(self, backend):
+        app = str(self._backend_binary(backend.key))
+        paths = self._launcher_paths(backend.key)
+        script = GUI_SCRIPT_TEMPLATE
+        script = script.replace("__APP__", app)
+        script = script.replace("__LOG__", str(paths["gui_log"]))
+        script = script.replace("__LOCK__", str(paths["gui_lock"]))
+        script = script.replace("__BACKEND_LABEL__", backend.label)
+        script = script.replace("__XDG_BLOCK__", self._xdg_block(backend))
+        script = script.replace("__ARGV__", self._gui_argv(backend))
+        return script
 
     def _resolve_release_asset(self, backend):
         """Query release_api for the latest release and return the
@@ -2027,100 +2171,45 @@ class Plugin:
         return await self.install_backend("rpcs3")
 
 
-    async def install_launcher(self):
-        """Write the Steam/Game Mode launcher pair using only the bundled AppImage."""
-        cmd = self._launch_command()
-        if not cmd:
-            return {"ok": False, "error": "Bundled RPCS3 AppImage is missing or not executable. Expected: " + str(self._backend_binary("rpcs3"))}
-        app = str(self._backend_binary("rpcs3"))
-        games = str(self.config.get("gamePath", ""))
-        run_script = r'''#!/bin/bash
-# Generated by Dimensions Toypad AIO. This is the only RPCS3 runtime.
-set -u
-RPCS3="__APP__"
-GAMES="__GAMES__"
-if [ ! -f "$RPCS3" ]; then echo "ERROR: bundled RPCS3 AppImage is missing: $RPCS3" >&2; exit 1; fi
-chmod +x "$RPCS3" 2>/dev/null || true
-if [ ! -x "$RPCS3" ]; then echo "ERROR: bundled RPCS3 AppImage is not executable: $RPCS3" >&2; exit 1; fi
-GAME=$(find "$GAMES" -ipath '*PS3_GAME/USRDIR/EBOOT.BIN' -print -quit 2>/dev/null)
-[ -z "$GAME" ] && GAME=$(find "$GAMES" -iname 'EBOOT.BIN' -print -quit 2>/dev/null)
-export APPIMAGE_EXTRACT_AND_RUN=1
-if [ -z "$GAME" ]; then echo "No EBOOT.BIN under $GAMES - showing bundled RPCS3 game list."; exec "$RPCS3"; fi
-echo "RPCS3 bundled AppImage: $RPCS3"
-echo "Game: $GAME"
-# RPCS3's AppImage is launched directly into the game. Keep --no-gui
-# BEFORE the EBOOT path; this is the canonical RPCS3 CLI form used by
-# Steam/EmuDeck-style shortcuts and prevents the RPCS3 manager window
-# from becoming the Steam shortcut's visible application.
-# In Steam Gaming Mode, Gamescope provides XWayland; the bundled AppImage
-# is intentionally forced onto XCB because this AppImage's native Wayland
-# Qt path is not reliable on SteamOS/Bazzite.
-export QT_QPA_PLATFORM=xcb
-# v3.3.41: the Steam shortcut always launches fullscreen. This is the only
-# RPCS3 setting the plugin touches - vblank, resolution scale, output scaling
-# and sharpening are left entirely to the user's own global or per-game config.
-for CFG in "$HOME/.config/rpcs3/config.yml" "$HOME/.config/rpcs3/custom_configs/config_BLES02105.yml"; do
-  [ -f "$CFG" ] || continue
-  grep -q 'Start games in fullscreen mode:' "$CFG" && \
-    sed -i 's/^\([[:space:]]*Start games in fullscreen mode:[[:space:]]*\).*/\1true/' "$CFG"
-done
-exec "$RPCS3" --no-gui "$GAME"
-'''.replace("__APP__", app).replace("__GAMES__", games)
-        play_script = r'''#!/bin/bash
-# Generated by Dimensions Toypad AIO. Steam/Game Mode entry point.
-set -u
-RUN_BOTH="$HOME/toypad/run-both.sh"
-if [ ! -x "$RUN_BOTH" ]; then echo "ERROR: launcher component missing: $RUN_BOTH" >&2; exit 1; fi
-# When Steam Game Mode launches this, we are ALREADY inside gamescope - it is
-# Steam's own compositor. Nesting another gamescope leaves RPCS3's Vulkan
-# swapchain unhooked by the outer one and triggers the "Creating swapchain
-# for non-Gamescope swapchain / Hooking has failed somewhere" dialog. The
-# right thing is to detect the outer gamescope and just exec the runner.
-#
-# Detection: Steam sets GAMESCOPE_WAYLAND_DISPLAY (and various SteamOS-specific
-# vars) when running inside gamescope. Fall back to a general xdg check so
-# Desktop Mode users still get a wrapping gamescope when there isn't one.
-in_gamescope() {
-    [ -n "${GAMESCOPE_WAYLAND_DISPLAY:-}" ] && return 0
-    [ "${XDG_CURRENT_DESKTOP:-}" = "gamescope" ] && return 0
-    [ "${XDG_SESSION_DESKTOP:-}" = "gamescope" ] && return 0
-    [ "${DESKTOP_SESSION:-}" = "gamescope" ] && return 0
-    [ -n "${STEAM_GAMESCOPE:-}" ] && return 0
+    async def install_launcher(self, key: str = None):
+        """Write this backend's Game Mode/Desktop-play script and its Desktop
+        settings-UI script, generated from one shared template.
 
-    # Environment variables are not identical on SteamOS and Bazzite. Walk
-    # the process tree as a second, distro-neutral indication that Steam has
-    # already placed us inside its Gamescope session. This prevents the old
-    # failure mode where a Game Mode shortcut accidentally nested Gamescope.
-    pid=$$
-    i=0
-    while [ "$i" -lt 12 ] && [ -r "/proc/$pid/stat" ]; do
-        ppid=$(awk '{print $4}' "/proc/$pid/stat" 2>/dev/null || echo 1)
-        [ "$ppid" = "1" ] && break
-        if [ -r "/proc/$ppid/cmdline" ]; then
-            cmd=$(tr '\0' ' ' < "/proc/$ppid/cmdline" 2>/dev/null || true)
-            case "$cmd" in
-                *gamescope-session*|*gamescope*) return 0 ;;
-            esac
-        fi
-        pid="$ppid"
-        i=$((i + 1))
-    done
-    return 1
-}
-if in_gamescope; then
-    exec "$RUN_BOTH"
-fi
-if command -v gamescope >/dev/null 2>&1; then
-    exec gamescope -w 1280 -h 720 -f -- "$RUN_BOTH"
-fi
-exec "$RUN_BOTH"
-'''
+        Xenia gets its own exec shape - no --no-gui (a game path already
+        boots straight into it; --fullscreen=true is the equivalent with no
+        manager window) and no QT_QPA_PLATFORM, which is RPCS3-only since
+        Xenia is not Qt."""
+        key = key or self.backend.key
+        if key not in BACKENDS:
+            return {"ok": False, "error": "Unknown backend: %s" % key}
+        backend = BACKENDS[key]
+        binary = self._backend_binary(key)
+        if not binary.is_file():
+            return {"ok": False,
+                    "error": "%s AppImage is missing or not executable. Expected: %s" % (backend.label, binary)}
         try:
-            LAUNCHER.parent.mkdir(parents=True, exist_ok=True)
-            RUN_BOTH.write_text(run_script); RUN_BOTH.chmod(0o755); self._chown_deck(RUN_BOTH)
-            LAUNCHER.write_text(play_script); LAUNCHER.chmod(0o755); self._chown_deck(LAUNCHER); self._chown_deck(LAUNCHER.parent)
-            self._log_setup("Wrote Game Mode chain: %s -> %s -> %s" % (LAUNCHER, RUN_BOTH, self._backend_binary("rpcs3")))
-            return {"ok": True, "message": "Steam launcher uses bundled RPCS3 via play-dimensions.sh -> run-both.sh"}
+            binary.chmod(0o755)
+        except OSError:
+            pass
+        if not os.access(binary, os.X_OK):
+            return {"ok": False, "error": "%s AppImage is not executable: %s" % (backend.label, binary)}
+
+        paths = self._launcher_paths(key)
+        play_script = self._generate_play_script(backend)
+        gui_script = self._generate_gui_script(backend)
+        try:
+            LAUNCHER_DIR.mkdir(parents=True, exist_ok=True)
+            paths["play"].write_text(play_script)
+            paths["play"].chmod(0o755)
+            self._chown_deck(paths["play"])
+            paths["gui"].write_text(gui_script)
+            paths["gui"].chmod(0o755)
+            self._chown_deck(paths["gui"])
+            self._chown_deck(LAUNCHER_DIR)
+            self._log_setup("Wrote %s launchers: %s, %s" % (backend.label, paths["play"], paths["gui"]))
+            return {"ok": True,
+                    "message": "%s launcher written: %s (Game Mode / Desktop play), %s (settings)"
+                               % (backend.label, paths["play"].name, paths["gui"].name)}
         except OSError as exc:
             return {"ok": False, "error": str(exc)}
 
@@ -2297,8 +2386,12 @@ exec "$RUN_BOTH"
         listener_state = "connected" if listener else ("waiting" if rpcs3_ok else "not_configured")
         web_assets_ok = self._web_assets_ready()
         web_ok = bool(self._httpd is not None and web_assets_ok)
-        setup_complete = bool(rpcs3_ok and self.library and game
-                              and LAUNCHER.is_file() and RUN_BOTH.is_file() and web_ok)
+        # launcherOk/launcherPath track the *active* backend's play script -
+        # the shortcut button below points Steam at whichever backend is
+        # currently selected, not always RPCS3.
+        active_launcher = self._launcher_paths()["play"]
+        launcher_ok = active_launcher.is_file()
+        setup_complete = bool(rpcs3_ok and self.library and game and launcher_ok and web_ok)
         result = {
             "rpcs3Ok": rpcs3_ok, "rpcs3State": rpcs3_state,
             "rpcs3Path": str(self._backend_binary("rpcs3")), "rpcs3ResolvedPath": str(self._backend_binary("rpcs3")),
@@ -2307,7 +2400,7 @@ exec "$RUN_BOTH"
             "rpcs3ExpectedSha256": BACKENDS["rpcs3"].appimage_sha256, "rpcs3Verified": info["verified"],
             "tagsOk": bool(self.library), "tagCount": len(self.library),
             "tagRoot": self.library_root or "", "gameOk": bool(game), "gamePath": game, "gameRoot": str(game_root),
-            "launcherOk": LAUNCHER.is_file() and RUN_BOTH.is_file(), "launcherPath": str(LAUNCHER), "runBothPath": str(RUN_BOTH), "webOk": web_ok, "webPort": port,
+            "launcherOk": launcher_ok, "launcherPath": str(active_launcher), "webOk": web_ok, "webPort": port,
             "webEnabled": bool(self.config.get("webEnabled", True)),
             # v3.3.8: previously always shaped as "http://<deck-ip>:PORT" when
             # no LAN interface was detected. That looked broken to the user.
@@ -3033,53 +3126,117 @@ exec "$RUN_BOTH"
         return {"ok": True}
 
 
-# ---------------------------------------------------------------------------
-# Steam launcher template
-# ---------------------------------------------------------------------------
-
-LAUNCHER_TEMPLATE = """#!/bin/bash
-# LEGO Dimensions launcher - generated by Dimensions Toypad AIO.
-# The bundled AppImage below is the only allowed RPCS3 runtime.
-
+PLAY_SCRIPT_TEMPLATE = r'''#!/bin/bash
+# Generated by Dimensions Toypad AIO. __BACKEND_LABEL__ Game Mode / Desktop play.
 set -u
-RPCS3={command}
-GAMES="{games}"
-LOG="$HOME/toypad/last-run.log"
+
+APP="__APP__"
+GAMES="__GAMES__"
+LOG="__LOG__"
+LOCK="__LOCK__"
+
 mkdir -p "$(dirname "$LOG")"
 exec > >(tee "$LOG") 2>&1
-echo "=== $(date) ==="
-echo "RPCS3 bundled AppImage: $RPCS3"
+echo "=== $(date) - __BACKEND_LABEL__ ==="
 
-if [ ! -f "$RPCS3" ]; then
-    echo "ERROR: bundled RPCS3 AppImage is missing: $RPCS3" >&2
-    exit 1
-fi
-chmod +x "$RPCS3" 2>/dev/null || true
-if [ ! -x "$RPCS3" ]; then
-    echo "ERROR: bundled RPCS3 AppImage is not executable: $RPCS3" >&2
-    exit 1
+# Single instance - a second launch while one is already running would open
+# a second listener on the same port and fight the first for it.
+exec 9>"$LOCK"
+if ! flock -n 9; then
+    echo "__BACKEND_LABEL__ is already running."
+    exit 0
 fi
 
-GAME=$(find "$GAMES" -ipath '*PS3_GAME/USRDIR/EBOOT.BIN' -print -quit 2>/dev/null)
-[ -z "$GAME" ] && GAME=$(find "$GAMES" -iname 'EBOOT.BIN' -print -quit 2>/dev/null)
+if [ ! -f "$APP" ]; then echo "ERROR: __BACKEND_LABEL__ AppImage is missing: $APP" >&2; exit 1; fi
+chmod +x "$APP" 2>/dev/null || true
+if [ ! -x "$APP" ]; then echo "ERROR: __BACKEND_LABEL__ AppImage is not executable: $APP" >&2; exit 1; fi
 
-# Execute the AppImage itself; this variable only tells its runtime to unpack
-# its own payload when FUSE is unavailable. It never selects another RPCS3.
+# Execute the AppImage itself; this only tells its runtime to unpack its own
+# payload when FUSE is unavailable. It never selects another install.
 export APPIMAGE_EXTRACT_AND_RUN=1
-
+__XDG_BLOCK__
+__FIND_BLOCK__
 if [ -z "$GAME" ]; then
-    echo "No EBOOT.BIN under $GAMES - showing the bundled RPCS3 game list."
-    exec "$RPCS3"
+    echo "No game found under $GAMES - showing __BACKEND_LABEL__'s own game list."
+    exec __NOGAME_ARGV__
+fi
+echo "__BACKEND_LABEL__ AppImage: $APP"
+echo "Game: $GAME"
+__QT_BLOCK__
+__FULLSCREEN_BLOCK__
+__PRE_EXEC__
+# When Steam Game Mode launches this, we are ALREADY inside gamescope - it is
+# Steam's own compositor. Nesting another gamescope leaves the emulator's
+# Vulkan swapchain unhooked by the outer one and triggers a "Hooking has
+# failed somewhere" dialog. The right thing is to detect the outer gamescope
+# and exec directly; only wrap in our own gamescope when launched from
+# Desktop Mode, where there isn't one yet.
+in_gamescope() {
+    [ -n "${GAMESCOPE_WAYLAND_DISPLAY:-}" ] && return 0
+    [ "${XDG_CURRENT_DESKTOP:-}" = "gamescope" ] && return 0
+    [ "${XDG_SESSION_DESKTOP:-}" = "gamescope" ] && return 0
+    [ "${DESKTOP_SESSION:-}" = "gamescope" ] && return 0
+    [ -n "${STEAM_GAMESCOPE:-}" ] && return 0
+
+    # Environment variables are not identical on SteamOS and Bazzite. Walk
+    # the process tree as a second, distro-neutral indication that Steam has
+    # already placed us inside its Gamescope session. This prevents the old
+    # failure mode where a Game Mode shortcut accidentally nested Gamescope.
+    pid=$$
+    i=0
+    while [ "$i" -lt 12 ] && [ -r "/proc/$pid/stat" ]; do
+        ppid=$(awk '{print $4}' "/proc/$pid/stat" 2>/dev/null || echo 1)
+        [ "$ppid" = "1" ] && break
+        if [ -r "/proc/$ppid/cmdline" ]; then
+            cmd=$(tr '\0' ' ' < "/proc/$ppid/cmdline" 2>/dev/null || true)
+            case "$cmd" in
+                *gamescope-session*|*gamescope*) return 0 ;;
+            esac
+        fi
+        pid="$ppid"
+        i=$((i + 1))
+    done
+    return 1
+}
+
+if in_gamescope; then
+    exec __ARGV__
+fi
+if command -v gamescope >/dev/null 2>&1; then
+    exec gamescope -w 1280 -h 720 -f -- __ARGV__
+fi
+exec __ARGV__
+'''
+
+GUI_SCRIPT_TEMPLATE = r'''#!/bin/bash
+# Generated by Dimensions Toypad AIO. __BACKEND_LABEL__ settings UI - no game,
+# no toypad flags. Opens the emulator's own configuration screens, isolated
+# the same way the game launcher is so a setting change here can never land
+# in the wrong config file.
+set -u
+
+APP="__APP__"
+LOG="__LOG__"
+LOCK="__LOCK__"
+
+mkdir -p "$(dirname "$LOG")"
+exec > >(tee "$LOG") 2>&1
+echo "=== $(date) - __BACKEND_LABEL__ settings ==="
+
+exec 9>"$LOCK"
+if ! flock -n 9; then
+    echo "__BACKEND_LABEL__ is already running."
+    exit 0
 fi
 
-echo "Game: $GAME"
-export QT_QPA_PLATFORM=xcb
-if command -v gamescope >/dev/null 2>&1; then
-    exec gamescope -w 1280 -h 720 -f -- "$RPCS3" --no-gui "$GAME"
-else
-    exec "$RPCS3" --no-gui "$GAME"
-fi
-"""
+if [ ! -f "$APP" ]; then echo "ERROR: __BACKEND_LABEL__ AppImage is missing: $APP" >&2; exit 1; fi
+chmod +x "$APP" 2>/dev/null || true
+if [ ! -x "$APP" ]; then echo "ERROR: __BACKEND_LABEL__ AppImage is not executable: $APP" >&2; exit 1; fi
+
+export APPIMAGE_EXTRACT_AND_RUN=1
+__XDG_BLOCK__
+exec __ARGV__
+'''
 
 
 # ---------------------------------------------------------------------------
