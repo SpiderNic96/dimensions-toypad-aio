@@ -1370,34 +1370,79 @@ class Plugin:
             return raw[:m.end()] + insert + raw[m.end():], True
         return raw.rstrip("\n") + "\n%s:\n  %s: %s\n" % (section, key, value), True
 
-    async def install_desktop_shortcut(self):
-        """Write a .desktop entry so the bundled RPCS3 is launchable from
-        Desktop Mode, where the Steam shortcut is not convenient. Points at the
-        AppImage directly so the user can open the RPCS3 GUI and edit their own
-        global or per-game configuration."""
-        rpcs3 = self._backend_binary_if_present("rpcs3")
-        if not rpcs3:
-            return {"ok": False, "error": "Bundled RPCS3 not found. Run setup first."}
-        apps = HOME / ".local" / "share" / "applications"
+    async def install_shortcuts(self, key: str = None, desktop_gui: bool = True, desktop_play: bool = False):
+        """Write the Desktop Mode .desktop entries this backend can offer.
+
+        Three shortcut kinds exist in total, only two of which Python can
+        create:
+          - Game Mode play: added by the frontend via SteamClient.Apps.
+            AddShortcut, which writes Steam's shortcuts.vdf - no Python API
+            for that exists, so this method never touches it.
+          - Desktop, emulator GUI (desktop_gui): the emulator's own settings
+            screens, no game path.
+          - Desktop, play (desktop_play): the same play-<key>.sh script the
+            Game Mode shortcut points at, for testing outside Game Mode.
+
+        Both entries point at the generated play-<key>.sh/gui-<key>.sh
+        scripts, never the bare AppImage - the bare binary has no
+        XDG_CONFIG_HOME/--config= isolation at all, so opening it directly
+        would read/write the user's own standalone install instead of
+        backends/<key>/config/."""
+        key = key or self.backend.key
+        if key not in BACKENDS:
+            return {"ok": False, "error": "Unknown backend: %s" % key}
+        backend = BACKENDS[key]
+        if not desktop_gui and not desktop_play:
+            return {"ok": False, "error": "Nothing selected to create."}
+        # "RPCS3 (PS3)" -> "RPCS3" - keeps entry names matching the
+        # "LEGO Dimensions (RPCS3) / (Xenia)" shape multiple backends need to
+        # read distinctly in the library, rather than nesting label's own
+        # parenthetical console name inside another.
+        short_name = backend.label.split(" (")[0]
+
+        launch_res = await self.install_launcher(key)
+        if not launch_res.get("ok"):
+            return launch_res
+        paths = self._launcher_paths(key)
+
+        apps_dir = HOME / ".local" / "share" / "applications"
+        written = []
         try:
-            apps.mkdir(parents=True, exist_ok=True)
-            entry = apps / "dimensions-toypad-rpcs3.desktop"
-            entry.write_text(
-                "[Desktop Entry]\n"
-                "Type=Application\n"
-                "Name=RPCS3 (Dimensions Toypad)\n"
-                "Comment=Bundled RPCS3 with Toypad support - open to edit RPCS3 settings\n"
-                "Exec=%s\n"
-                "Icon=applications-games\n"
-                "Terminal=false\n"
-                "Categories=Game;Emulator;\n"
-                % rpcs3)
-            entry.chmod(0o755)
-            self._chown_deck(entry)
+            apps_dir.mkdir(parents=True, exist_ok=True)
+            if desktop_gui:
+                entry = apps_dir / ("dimensions-toypad-%s-gui.desktop" % key)
+                entry.write_text(
+                    "[Desktop Entry]\n"
+                    "Type=Application\n"
+                    "Name=%s Settings (Dimensions Toypad)\n"
+                    "Comment=Open %s's own settings - global/per-game config, not touched by the plugin\n"
+                    "Exec=%s\n"
+                    "Icon=applications-games\n"
+                    "Terminal=false\n"
+                    "Categories=Game;Emulator;\n"
+                    % (short_name, backend.label, paths["gui"]))
+                entry.chmod(0o755)
+                self._chown_deck(entry)
+                written.append(entry.name)
+            if desktop_play:
+                entry = apps_dir / ("dimensions-toypad-%s-play.desktop" % key)
+                entry.write_text(
+                    "[Desktop Entry]\n"
+                    "Type=Application\n"
+                    "Name=LEGO Dimensions (%s, Desktop)\n"
+                    "Comment=Boots straight into the game, for testing outside Game Mode\n"
+                    "Exec=%s\n"
+                    "Icon=applications-games\n"
+                    "Terminal=false\n"
+                    "Categories=Game;Emulator;\n"
+                    % (short_name, paths["play"]))
+                entry.chmod(0o755)
+                self._chown_deck(entry)
+                written.append(entry.name)
         except OSError as exc:
             return {"ok": False, "error": str(exc)}
-        self._log_setup("Desktop shortcut written to %s" % entry)
-        return {"ok": True, "message": "Desktop shortcut created: RPCS3 (Dimensions Toypad)"}
+        self._log_setup("Desktop shortcuts written: %s" % ", ".join(written))
+        return {"ok": True, "message": "Desktop shortcut(s) created: %s" % ", ".join(written)}
 
     # ---------------------------------------------------------------- hotkey
     # v3.3.15: SteamClient.Input is a dead end for chords on current SteamOS.
@@ -2274,9 +2319,9 @@ class Plugin:
         note("Steam launcher", res.get("ok"),
              res.get("message") or res.get("error", ""))
 
-        # 6. Desktop Mode shortcut to the bundled RPCS3, so its own settings
-        # remain the user's to configure.
-        res = await self.install_desktop_shortcut()
+        # 6. Desktop Mode shortcut to the emulator's own settings UI, so its
+        # own configuration remains the user's to edit.
+        res = await self.install_shortcuts(desktop_gui=True)
         note("Desktop shortcut", res.get("ok"),
              res.get("message") or res.get("error", ""))
 

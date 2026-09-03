@@ -26,6 +26,7 @@ import {
   hotkeySet,
   installTags,
   installLauncher,
+  installShortcuts,
   setWeb,
   checkRpcs3Release,
   installRpcs3,
@@ -127,6 +128,11 @@ const Content = () => {
     const [working, setWorking] = useState("");
     const [release, setRelease] = useState<any>(null);
     const [shortcutMsg, setShortcutMsg] = useState("");
+    // R2b: three independent shortcut kinds per backend - Game Mode play
+    // defaults on, the two Desktop Mode entries default off.
+    const [gmPlayChecked, setGmPlayChecked] = useState(true);
+    const [desktopGuiChecked, setDesktopGuiChecked] = useState(false);
+    const [desktopPlayChecked, setDesktopPlayChecked] = useState(false);
     // v3.3.12: one landing ref per view so entering the plugin, or any of its
     // submenus, puts the cursor on the content instead of the last button.
     const padRef = useRef(null);
@@ -447,31 +453,75 @@ const Content = () => {
                     </DFL.PanelSection>
                     <DFL.PanelSection title="Play">
                         <DFL.PanelSectionRow>
-                            <DFL.ButtonItem layout="below" onClick={async () => {
-                                setShortcutMsg("Adding...");
-                                try {
-                                    // Steam's own shortcut API - this is what "Add a Non-Steam
-                                    // Game" calls, so the entry behaves like any other.
-                                    const name = "LEGO Dimensions";
-                                    const exe = setup?.launcherPath ?? "";
-                                    if (!exe) {
-                                        setShortcutMsg("Write the launcher first.");
-                                        return;
+                            <DFL.ToggleField
+                                label="Game Mode — play"
+                                description="Boots straight into the game, no GUI. Added to Steam's library."
+                                checked={gmPlayChecked}
+                                onChange={setGmPlayChecked}
+                            />
+                        </DFL.PanelSectionRow>
+                        <DFL.PanelSectionRow>
+                            <DFL.ToggleField
+                                label="Desktop — emulator GUI"
+                                description="Opens the emulator's own settings screens, no game."
+                                checked={desktopGuiChecked}
+                                onChange={setDesktopGuiChecked}
+                            />
+                        </DFL.PanelSectionRow>
+                        <DFL.PanelSectionRow>
+                            <DFL.ToggleField
+                                label="Desktop — play"
+                                description="Same script as Game Mode play, for testing outside Game Mode."
+                                checked={desktopPlayChecked}
+                                onChange={setDesktopPlayChecked}
+                            />
+                        </DFL.PanelSectionRow>
+                        <DFL.PanelSectionRow>
+                            <div style={{ fontSize: "10px", opacity: 0.6, lineHeight: 1.4, padding: "2px 0" }}>
+                                {(setup?.backend || "rpcs3") === "xenia"
+                                    ? "Xenia's GUI is controller-navigable: Display → Internal Resolution, Display → Toggle 60 FPS Unlock, Performance on Right Shift."
+                                    : "RPCS3's Qt UI is mouse-oriented — the GUI shortcut may need a mouse or trackpad, not just a stick."}
+                            </div>
+                        </DFL.PanelSectionRow>
+                        <DFL.PanelSectionRow>
+                            <DFL.ButtonItem
+                                layout="below"
+                                disabled={!gmPlayChecked && !desktopGuiChecked && !desktopPlayChecked}
+                                onClick={async () => {
+                                    setShortcutMsg("Creating...");
+                                    const backendKey = setup?.backend || "rpcs3";
+                                    const shortName = backendKey === "xenia" ? "Xenia" : "RPCS3";
+                                    const messages: string[] = [];
+                                    if (gmPlayChecked) {
+                                        try {
+                                            // Steam's own shortcut API - this is what "Add a Non-Steam
+                                            // Game" calls, so the entry behaves like any other. No
+                                            // Python API writes shortcuts.vdf directly.
+                                            const name = `LEGO Dimensions (${shortName})`;
+                                            const exe = setup?.launcherPath ?? "";
+                                            if (!exe) {
+                                                messages.push("Write the launcher first.");
+                                            } else {
+                                                const appId = await SteamClient.Apps.AddShortcut(name, exe, "", "");
+                                                if (appId) {
+                                                    await SteamClient.Apps.SetShortcutName(appId, name);
+                                                    messages.push(`Added "${name}" — restart Steam to see it in your library.`);
+                                                } else {
+                                                    messages.push("Steam refused the shortcut. Add it manually.");
+                                                }
+                                            }
+                                        } catch (e: any) {
+                                            messages.push(`Couldn't add the Game Mode shortcut: ${e?.message ?? e}`);
+                                        }
                                     }
-                                    const appId = await SteamClient.Apps.AddShortcut(name, exe, "", "");
-                                    if (appId) {
-                                        await SteamClient.Apps.SetShortcutName(appId, name);
-                                        setShortcutMsg(`Added "${name}" to your library.`);
+                                    if (desktopGuiChecked || desktopPlayChecked) {
+                                        const res = await installShortcuts(backendKey, desktopGuiChecked, desktopPlayChecked);
+                                        messages.push((res && (res.message || res.error)) || "");
                                     }
-                                    else {
-                                        setShortcutMsg("Steam refused the shortcut. Add it manually.");
-                                    }
-                                }
-                                catch (e: any) {
-                                    setShortcutMsg(`Couldn't add it: ${e?.message ?? e}`);
-                                }
-                            }}>
-                                Add game shortcut to Steam
+                                    setShortcutMsg(messages.filter(Boolean).join(" "));
+                                }}
+                            >
+                                Create shortcuts
                             </DFL.ButtonItem>
                         </DFL.PanelSectionRow>
                         {shortcutMsg ? (
@@ -483,7 +533,7 @@ const Content = () => {
                     <DFL.PanelSection title="After setup">
                         <DFL.PanelSectionRow>
                             <div style={{ fontSize: "11px", opacity: 0.7, lineHeight: 1.5 }}>
-                                Use Add game shortcut to Steam. Launch LEGO Dimensions from Steam; the shortcut starts the bundled RPCS3 directly in Game Mode. The RPCS3 GUI remains available from Setup.
+                                Use Create shortcuts above. Launch LEGO Dimensions from Steam; the Game Mode shortcut boots straight into the game. The emulator's own settings remain available via the Desktop — emulator GUI shortcut.
                             </div>
                         </DFL.PanelSectionRow>
                     </DFL.PanelSection>

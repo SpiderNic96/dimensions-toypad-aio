@@ -24,6 +24,7 @@ export const hotkeyCapture = rpc("hotkey_capture");
 export const hotkeySet = rpc("hotkey_set");
 export const installTags = rpc("install_tags");
 export const installLauncher = rpc("install_launcher");
+export const installShortcuts = rpc("install_shortcuts");
 export const setWeb = rpc("set_web");
 export const checkRpcs3Release = rpc("check_rpcs3_release");
 export const installRpcs3 = rpc("install_rpcs3");
