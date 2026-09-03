@@ -196,12 +196,13 @@ BACKENDS = {
         source_commit="6905c5ad82805af216a8addad40ee7dcea49f66b",
         game_globs=("*PS3_GAME/USRDIR/EBOOT.BIN", "*EBOOT.BIN"),
         launch_args=("--no-gui",),
-        # Points at harrysof's v0.3 lineage (R6's target), not the NeverCookFirst
-        # v0.2 build source_commit/appimage_sha256 are still pinned to above -
-        # release_api is for "Check for updates" only. Until R6 repins the hash
-        # to match a real harrysof v0.3 release, install_backend("rpcs3") will
-        # correctly refuse: the resolved asset won't match the pinned hash.
-        release_api="https://api.github.com/repos/harrysof/RPCS3-Seamless-Toypad-Build/releases/latest",
+        # R6: harrysof's v0.3 release (dfe6a7e4) only ships a Windows zip, no
+        # Linux AppImage - and a full source compare shows it's unnecessary
+        # anyway: 6905c5ad is NeverCookFirst merging harrysof's own LED PR one
+        # day later, byte-identical trees, zero file diff. The AppImage built
+        # from that commit is already published and hash-pinned below; point
+        # release_api at that release rather than harrysof's Windows-only one.
+        release_api="https://api.github.com/repos/SpiderNic96/dimensions-toypad-aio/releases/tags/backends",
         asset_pattern="*.AppImage",
     ),
     "xenia": Backend(
