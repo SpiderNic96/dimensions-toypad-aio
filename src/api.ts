@@ -1,0 +1,48 @@
+// SPDX-License-Identifier: MIT
+import { callable } from "@decky/api";
+
+const rpc = callable as (<T = any>(name: string) => (...args: any[]) => Promise<T>);
+
+export const getState = rpc("get_state");
+export const getFranchises = rpc("get_franchises");
+export const getFigures = rpc("get_figures");
+export const getIcon = rpc("get_icon");
+export const getFranchiseLogo = rpc("get_franchise_logo");
+export const loadFigure = rpc("load_figure");
+export const removeFigure = rpc("remove_figure");
+export const moveFigure = rpc("move_figure");
+export const clearAll = rpc("clear_all");
+export const resync = rpc("resync");
+export const rescan = rpc("rescan");
+export const checkListener = rpc("check_listener");
+rpc("reset_progress");
+export const setupStatus = rpc("setup_status");
+export const getPadColors = rpc("get_pad_colors");
+export const getLedDiagnostics = rpc("get_led_diagnostics");
+export const hotkeyState = rpc("hotkey_state");
+export const hotkeyCapture = rpc("hotkey_capture");
+export const hotkeySet = rpc("hotkey_set");
+export const installTags = rpc("install_tags");
+export const installLauncher = rpc("install_launcher");
+export const installShortcuts = rpc("install_shortcuts");
+export const setWeb = rpc("set_web");
+export const checkRpcs3Release = rpc("check_rpcs3_release");
+export const installRpcs3 = rpc("install_rpcs3");
+export const launchEmulatorGui = rpc("launch_emulator_gui");
+export const setLedEnabled = rpc("set_led_enabled");
+export const getLedEnabled = rpc("get_led_enabled");
+export const setDiagnosticsEnabled = rpc("set_diagnostics_enabled");
+export const getDiagnosticsEnabled = rpc("get_diagnostics_enabled");
+export const setRpcs3Path = rpc("set_rpcs3_path");
+export const resetPaths = rpc("reset_paths");
+export const runSetup = rpc("run_setup");
+export const getFullArt = rpc("get_full_art");
+export const getFavourites = rpc("get_favourites");
+export const toggleFavourite = rpc("toggle_favourite");
+export const getRecents = rpc("get_recents");
+export const clearRecents = rpc("clear_recents");
+export const getBackends = rpc("get_backends");
+export const getCurrentBackend = rpc("get_current_backend");
+export const setBackend = rpc("set_backend");
+export const getConfigSetting = rpc("get_config_setting");
+export const setConfigSetting = rpc("set_config_setting");

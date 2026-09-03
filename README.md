@@ -1,151 +1,61 @@
-# LEGO Dimensions Toypad — Steam Deck RPCS3 AIO 3.3.11
+# Dimensions Toypad
 
-[CEMU VERSION - COMING SOON]
+LEGO Dimensions Toy Pad emulation for the Steam Deck as a Decky Loader plugin, with multi-backend emulator support (RPCS3 and Xenia Canary).
 
-An unofficial community Steam Deck/Decky integration for LEGO Dimensions, combining a Decky Loader plugin, an emulated Toypad bridge, the upstream LegoToypad v1.5 phone UI, and a bundled patched RPCS3 Linux AppImage.
+> [!WARNING]
+> **Hardware Status: UNTESTED ON PHYSICAL HARDWARE**
+> This release (v3.4.1) represents a comprehensive overhaul featuring multi-backend architecture, protocol updates, rebuilt TypeScript source, and significant feature additions. While all backend Python and frontend TypeScript/React components have passed clean compilation and static verification, **this version has not yet been validated on a physical Steam Deck**. Testing on real Deck hardware is pending. Please file issues and feedback on the issue tracker.
 
-> **This repository preserves the supplied 3.3.11 release and its source distribution. It does not claim that a bit-for-bit source rebuild was completed in this environment. See [`docs/BUILD-ATTEMPT.md`](docs/BUILD-ATTEMPT.md).**
+---
 
-## What the app is
+## Documentation
 
-The app is a Steam Deck-focused control and integration layer for LEGO Dimensions. It lets the game run against an emulated Toypad while the Decky Quick Access Menu provides figure/pad management and live Toypad LED visualisation. A phone can also act as the remote through the upstream LegoToypad v1.5 web UI.
+- **Installation Guide:** [`docs/INSTALL.md`](docs/INSTALL.md)
+- **Full Changelog:** [`docs/CHANGELOG.md`](docs/CHANGELOG.md)
+- **Building & Protocol Reference:** [`docs/BUILD.md`](docs/BUILD.md)
+- **Written Source Offer (GPL):** [`docs/SOURCE-OFFER.md`](docs/SOURCE-OFFER.md)
+- **Third-Party Notices & Licenses:** [`docs/THIRD-PARTY-NOTICES.md`](docs/THIRD-PARTY-NOTICES.md)
+- **Phone Remote Usage:** [`docs/PHONE-REMOTE.md`](docs/PHONE-REMOTE.md)
 
-![Plugin UI - Demo](source/docs/Plugin%20UI%20-%20Demo.jpg)
+---
 
-*Demo: the Decky Toypad interface running alongside LEGO Dimensions, showing live figure slots and Toypad controls.*
+## What's New in v3.4.1 (Changes from Last Public Release)
 
-The supplied AIO is intentionally **bundled-runtime only**: the plugin verifies the exact bundled RPCS3 AppImage SHA-256 and refuses to silently substitute a system, PATH, container, or development RPCS3.
+### 1. Multi-Backend Architecture
+* **Xenia Canary Support**: Full integration with the Xbox 360 backend alongside RPCS3 (PS3). Automatically enforces `license_mask = -1` in Linux Xenia configurations for title launch compatibility.
+* **Backend Abstraction & Runtime Switcher**: Switch between active backends directly within the Decky Quick Access Menu (QAM) under *Setup & Preferences*. Extensible foundation for future backends (Cemu, shadPS4).
 
-## What it does
+### 2. Legal & Licensing Compliance
+* **Definitive GPL Compliance**: Accompanying written offer ([`docs/SOURCE-OFFER.md`](docs/SOURCE-OFFER.md)) and complete corresponding source fetcher ([`source/fetch-upstream-source.sh`](source/fetch-upstream-source.sh)) aligned to authoritative binary commit `6905c5ad` and verified SHA-256 (`c9221b0178ec12308638d828408f1a9b638d59de432dc8df45aa9bcaedaaf07b`).
+* **Clean Component Separation**: Plugin source (`main.py`, `src/`) clearly demarcated under the MIT license; Decky Loader shim and UI bindings documented under LGPL-2.1; emulator licenses comprehensively disclosed in [`docs/THIRD-PARTY-NOTICES.md`](docs/THIRD-PARTY-NOTICES.md) and [`LICENSES/`](LICENSES/).
 
-- launches LEGO Dimensions through a bundled patched RPCS3 AppImage
-- exposes LOAD, MOVE, REMOVE and CLEAR operations to the Toypad listener
-- displays a 7-slot pad layout in Decky
-- forwards emulator LED colour/flash events to the plugin
-- paints live per-pad LED colours in the QAM panel and phone UI
-- provisions the LegoToypad v1.5 web remote and assets when required
-- provides setup diagnostics, runtime verification and launcher generation
-- supports Steam Gaming Mode/Gamescope-aware launch behaviour
-- provides 60 FPS/VBlank and stock/30 FPS configuration paths
+### 3. Protocol & LED Pipeline Enhancements (P1–P7)
+* **P1 sRGB Gamma Correction**: Implemented standard display gamma encoding over hardware-calibrated white points `(255, 110, 24)`, eliminating muddy/dim tones in favor of vibrant, true-to-game hues.
+* **P2 GET_LED Protocol v2**: Native 40-byte snapshot decoding capturing initial transition colors (`from_r`, `from_g`, `from_b`), with seamless fallback to legacy 30-byte v1 snapshots.
+* **P3 True Cross-Fade Rendering**: Smooth frame-interpolated color transitions replacing abrupt snap fades.
+* **P4 Command Gap Timing**: Adaptive timing safeguards preventing emulator socket buffer flooding.
+* **P5 Command Gating**: In-flight command locking pauses polling during tag placement, movement, and removal.
+* **P7 High-Res Figure Artwork**: Support for full-body `_full.png` artwork, uncropped display cards, and head-icon fallbacks.
 
-The project does **not** distribute LEGO game files, DLC or PS3 firmware.
+### 4. New Quality-of-Life Features (F1–F8)
+* **F1 LegoToypad v1.8 Naming Compatibility**: Parses upstream v1.8 `Owner - Build. Name.bin` vehicle files, correctly extracting character ownership and build numbers.
+* **F2 Favourites Shelf**: Press `X` (or click the star icon) on any figure to favourite it. Favourites appear pinned in a dedicated category at the top of the grid.
+* **F3 Vehicle Multi-Build Selector**: Vehicle families are grouped into single cards that expand into a dedicated drawer for selecting Builds 1, 2, or 3.
+* **F4 Recents Tracking**: Recently loaded characters and vehicles are automatically pinned to a "Recents" category for rapid summoning.
+* **F5 Synthetic LED Demo Mode**: Test and validate pad lighting animations, colors, and white-point calibrations directly from the Toypad overlay without launching a game.
+* **F6 Custom Pad Skins**: Cycle between visual pad styles (`Default`, `Plain`, `Old`).
+* **F7 Sound Effects Preference**: Configurable sound feedback toggle.
+* **F8 Confirm Button Swap**: Configurable swap of A/B button behavior in modal pickers.
 
-## How it operates
+### 5. Rebuilt Frontend Source (`src/index.tsx`)
+* Fully reconstructed, human-readable TypeScript/React source code matching the shipped distribution.
+* Zero build errors and full Rollup packaging pipeline (`npm run build`).
 
-1. Steam invokes the generated `play-dimensions.sh` launcher.
-2. The launcher resolves the AIO-bundled AppImage and the user's EBOOT.BIN.
-3. RPCS3 runs the game and emulates the Toypad path.
-4. The patched listener on `127.0.0.1:9191` accepts companion clients.
-5. LOAD/MOVE/REMOVE commands travel from the plugin to the emulator.
-6. Colour/flash commands generated by the game are turned into Toypad Event Protocol v1 frames and broadcast back out.
-7. `main.py` parses those frames and stores the latest state per pad or as a broadcast colour.
-8. `dist/index.js` renders the QAM panel from backend RPCs; the phone UI reads the same backend state over HTTP.
+---
 
-The full architecture is in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+## Licensing
 
-## The plugin
-
-### Backend
-
-`source/plugin/main.py` is the Python backend executed by Decky Loader. It is responsible for setup, the bundled-runtime hash check, launcher generation, tag/Web provisioning, the phone HTTP server, RPCS3 command transport, and LED event parsing.
-
-The runtime pins these values from the AIO manifest:
-
-- plugin: `3.3.11`
-- RPCS3 commit: `797f1e417f736a04e43319f27812228c4c8dbf6e`
-- AppImage SHA-256: `1f2ce02de8bf361834bcb38e1e92d0f9ee138bc71e1c271628b55eed437f2e71`
-- phone UI: LegoToypad `v1.5`
-
-### Frontend
-
-`source/plugin/src/index.tsx` is the reconstructed TypeScript/React source. The supplied source package explicitly records it as a reconstruction of the historical shipping bundle, with `dist-reference-index.js` retained as the release reference. Decky actually loads `dist/index.js`.
-
-The UI includes setup checks, LED diagnostics, action buttons, and the 7-slot pad grid. Live LED colours are polled through `get_pad_colors` roughly every 500 ms.
-
-## Where the Linux code came from
-
-The Linux path is layered rather than a separate emulator. It starts with RPCS3's existing Linux support, uses the `NeverCookFirst/RPCS3-Seamless-Toypad-Build` fork, and adds a small colour/event forwarding patch to the RPCS3 Toypad listener/Dimensions code. The patch is intentionally additive: it leaves the game's existing USB acknowledgement path intact while adding a loopback TCP broadcast path.
-
-See [`docs/LINUX-CODE-LINEAGE.md`](docs/LINUX-CODE-LINEAGE.md) and [`source/docs/PATCH-NOTES.md`](source/docs/PATCH-NOTES.md).
-
-## Sources and provenance
-
-The project combines code from several upstream projects:
-
-- **RPCS3** — PlayStation 3 emulator/debugger, mostly GPL-2.0-only.
-- **NeverCookFirst/RPCS3-Seamless-Toypad-Build** — exact fork/commit used for the runtime.
-- **harrysof/LegoToypad v1.5** — phone/web UI, tag/data pipeline, related Toypad functionality.
-- **Decky Loader** — Steam Deck plugin framework.
-
-The repository includes the supplied provenance files under `source/`, including `SOURCES.md`, `CREDITS.md`, `SOURCE-CODE-STATUS.md`, `THIRD-PARTY-NOTICES.md`, and the GPL text.
-
-Current RPCS3 upstream documentation confirms RPCS3 supports Linux and that most files use GPL-2.0-only licensing, with file-level notices taking precedence.
-
-## Development acknowledgement
-
-This project has been developed with AI-assisted research and engineering contributions from **Claude (Anthropic), including Claude Opus**, alongside the human project author. Claude/Opus has contributed to code analysis, troubleshooting, documentation, architecture review, and investigation of LEGO Dimensions Toypad/emulation behaviour. Where AI-assisted analysis produced experimental findings or proposed fixes, those findings are treated as development research rather than established upstream Cemu/RPCS3 facts and remain subject to testing and verification.
-
-## Reference AIO
-
-`release/reference/dimensions-toypad-AIO-3.3.11.zip` is the exact AIO ZIP supplied for this repository build-out.
-
-SHA-256:
-
-```text
-7a57a02a8b6133fed712842ee7b60e2eb7514cd71333811be0c71d73a75a351f
-```
-
-The bundled AppImage inside that ZIP has SHA-256:
-
-```text
-1f2ce02de8bf361834bcb38e1e92d0f9ee138bc71e1c271628b55eed437f2e71
-```
-
-## Source package
-
-`release/source/dimensions-toypad-SOURCE-3.3.11.zip` preserves the supplied source distribution.
-
-SHA-256:
-
-```text
-cd58bad52fbfe95a6ac3b3a4ad59c9e07650fa0380330f43be99b9fe66df516a
-```
-
-It contains the plugin source, protocol specification and reference implementations, RPCS3 patch, build/install documentation, and provenance material.
-
-## Build status
-
-### Passed locally
-
-- Python backend syntax check
-- JavaScript reference bundle syntax check
-- AIO manifest JSON validation
-- bundled AppImage hash verification
-- reference AIO unpack/repack preparation
-
-### Blocked locally
-
-- npm dependency installation timed out because network access was unavailable
-- RPCS3 source clone failed because `github.com` could not be resolved
-- Fedora 41/Distrobox was not installed, so the documented AppImage source build could not be executed here
-
-A GitHub Actions workflow is included for the proper networked source-build path.
-
-## Rebuild flow
-
-1. Build the plugin frontend with Node/npm using `source/plugin/package.json`.
-2. Fetch the exact RPCS3 fork commit.
-3. Apply the colour-forwarding patch.
-4. Build RPCS3 in a controlled Fedora 41 environment.
-5. Package the resulting Linux binary as an AppImage.
-6. Verify its hash and version.
-7. Assemble the AIO ZIP.
-8. Compare the built AppImage against the reference hash and record the result.
-
-See `source/docs/BUILDING-PLUGIN.md`, `source/docs/BUILDING-RPCS3.md`, `source/docs/BUILDING-APPIMAGE.md`, and the workflows under `.github/workflows/`.
-
-## Legal
-
-Unofficial community project. LEGO, LEGO Dimensions and related marks belong to their respective owners. No affiliation with LEGO, Valve, RPCS3, or Decky Loader is claimed.
-
-See `source/CREDITS.md`, `source/SOURCES.md`, and `source/THIRD-PARTY-NOTICES.md`.
+* **Dimensions Toypad Plugin**: [MIT License](LICENSE) (c) MetalNic96 (SpiderNic96).
+* **Bundled RPCS3 AppImage**: [GPL-2.0](docs/COPYING.GPL-2.0). Source offer provided in [`docs/SOURCE-OFFER.md`](docs/SOURCE-OFFER.md).
+* **Xenia Canary (Modified)**: [BSD-3-Clause](LICENSES/BSD-3-Clause-Xenia.txt).
+* **LegoToypad Library & Assets**: [MIT License](LICENSES/MIT-LegoToypad.txt) (c) Sofiane Belkacem Nacer.

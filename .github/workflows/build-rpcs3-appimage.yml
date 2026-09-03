@@ -31,16 +31,25 @@ jobs:
 
               rm -rf /tmp/rpcs3-dist /workspace/build/source-rpcs3 /workspace/build/appimage
               mkdir -p /tmp/rpcs3-dist /workspace/build/source-rpcs3 /workspace/build/appimage
-              git clone https://github.com/NeverCookFirst/RPCS3-Seamless-Toypad-Build.git /tmp/rpcs3-dist/rpcs3
+              git clone https://github.com/SpiderNic96/RPCS3-Seamless-Toypad-Build.git /tmp/rpcs3-dist/rpcs3
               cd /tmp/rpcs3-dist/rpcs3
-              git checkout 797f1e417f736a04e43319f27812228c4c8dbf6e
+              git checkout dfe6a7e4bdc17cec31097aec4cb248679bcc023b
               git submodule update --init --recursive --depth 1
 
               sed -i '"'"'/^#include <QMainWindow>/a #include <unordered_set>'"'"' rpcs3qt/game_list_frame.h || true
               sed -i '"'"'/^#include "config_database.h"/a #include <QJsonDocument>\n#include <QJsonObject>'"'"' rpcs3qt/config_database.cpp || true
               sed -i '"'"'s|QString(msg).arg(entry->name)|QString(msg).arg(QString::fromStdString(entry->name))|'"'"' rpcs3qt/game_list_actions.cpp || true
 
-              ROOT=/tmp/rpcs3-dist bash /workspace/scripts/../source/rpcs3-patch/apply-color-forwarding.sh
+              # R6: this source (harrysof v0.3 lineage, dfe6a7e4) already calls
+              # g_dimensionstoypad.handle_led_command(buf, buf_size) natively
+              # inside the 0xC0-0xC8 case block - GET_LED v1 (30-byte snapshot)
+              # is first-class here, not bolted on. apply-color-forwarding.sh
+              # was written against NeverCookFirst's older case-block shape (no
+              # handle_led_command call there) and its regex anchor does not
+              # match this source; it also adds a push-based broadcast protocol
+              # the plugin backend never consumed (GET_LED is poll-based). Not
+              # run for this source - confirmed by diffing rpcs3/Emu/Io/
+              # Dimensions.cpp against the patch's regex before this change.
 
               mkdir -p /tmp/rpcs3-dist/build
               cd /tmp/rpcs3-dist/build

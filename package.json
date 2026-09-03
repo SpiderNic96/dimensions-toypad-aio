@@ -1,0 +1,29 @@
+{
+  "name": "dimensions-toypad",
+  "version": "3.4.1",
+  "description": "LEGO Dimensions toypad picker for RPCS3, Xenia, and Cemu in the Steam Deck Quick Access Menu",
+  "type": "module",
+  "scripts": {
+    "build": "shx rm -rf dist && rollup -c",
+    "watch": "rollup -c -w"
+  },
+  "devDependencies": {
+    "@decky/api": "^1.1.2",
+    "@decky/rollup": "^1.0.1",
+    "@decky/ui": "^4.7.2",
+    "@types/react": "18.3.3",
+    "shx": "^0.3.4",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "react-icons": "^5.2.1"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "react",
+        "react-dom"
+      ]
+    }
+  }
+}
