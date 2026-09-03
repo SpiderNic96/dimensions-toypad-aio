@@ -4,6 +4,42 @@ Consolidated history from the v3.3.11 GitHub release to current.
 
 ---
 
+## 3.4.1 — Multi-backend, licensing compliance, protocol fixes P1–P7, features F1–F8
+
+> **Note:** Untested on physical Steam Deck hardware. Verification on real Deck hardware is pending.
+
+**Multi-Backend**
+- Integrated Xenia Canary alongside RPCS3.
+- Enforced `license_mask = -1` for Linux Xenia setups.
+- Runtime backend switching in Quick Access Menu Setup panel.
+
+**Licensing & Integrity**
+- Written GPL source offer and fetch script aligned to commit `6905c5ad` and verified SHA-256 (`c9221b0178ec12308638d828408f1a9b638d59de432dc8df45aa9bcaedaaf07b`).
+- Clean separation of plugin (MIT), Decky shims (LGPL-2.1), and emulator components.
+
+**Protocol & Rendering Patches**
+- **P1**: sRGB display gamma encoding over hardware-calibrated white point.
+- **P2**: GET_LED v2 protocol reader (40-byte snapshot with initial color decoding) + v1 fallback.
+- **P3**: True cross-fade color interpolation for smooth transitions.
+- **P4**: Command gap timing safeguards.
+- **P5**: Polling pause during in-flight tag commands.
+- **P7**: Full-body artwork detection (`_full.png`) with icon fallback and uncropped display cards.
+
+**New Features**
+- **F1**: Vehicle build filename parsing for LegoToypad v1.8 (`Owner - Build. Name.bin`).
+- **F2**: Favourites shelf pinned to top of grid with quick-toggle (`X` / star button).
+- **F3**: Multi-build selector drawer for vehicle families (Builds 1, 2, 3).
+- **F4**: Recents category for rapid summoning of previously placed figures.
+- **F5**: Synthetic LED demo loop in Toypad overlay to test colors and animations without launching the game.
+- **F6**: Pad skins (Default, Plain, Old).
+- **F7**: Sound effects preference toggle.
+- **F8**: Confirm button swap option (A/B swap).
+
+**Rebuilt Source**
+- Clean reconstruction of `src/index.tsx` matching all functionality. Builds cleanly via Rollup.
+
+---
+
 ## 3.3.41 — Toggles, packaging, config ownership
 
 **Added**
