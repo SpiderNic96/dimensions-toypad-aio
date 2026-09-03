@@ -185,7 +185,6 @@ BACKENDS = {
         version_probe=("--version",),
         source_repo="https://github.com/NeverCookFirst/RPCS3-Seamless-Toypad-Build",
         source_commit="6905c5ad82805af216a8addad40ee7dcea49f66b",
-        port_env="RPCS3_TOYPAD_PORT",
         game_globs=("*PS3_GAME/USRDIR/EBOOT.BIN", "*EBOOT.BIN"),
         launch_args=("--no-gui",),
     ),
@@ -244,7 +243,7 @@ class Plugin:
     async def _main(self):
         self.loop = asyncio.get_running_loop()
         self.host = "127.0.0.1"
-        self.port = int(os.environ.get("RPCS3_TOYPAD_PORT", 9191))
+        self.port = 9191
         self.pads = [None] * 7
         self.library = []
         self.library_root = None

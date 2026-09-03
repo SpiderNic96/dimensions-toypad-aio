@@ -58,7 +58,7 @@ grep rpcs3_sha256 AIO-MANIFEST.json
 
 ## Protocol reference
 
-The plugin speaks to the patched RPCS3 over TCP on `127.0.0.1:9191`, overridable via `RPCS3_TOYPAD_PORT`. The listener handles **one command per client connection**, so every request opens a fresh connection.
+The plugin speaks to the patched RPCS3 over TCP on `127.0.0.1:9191` — RPCS3's `DimensionsListener.cpp` binds a fixed port and reads no environment variable, so this is not configurable. The listener handles **one command per client connection**, so every request opens a fresh connection.
 
 **Outbound** — figure LOAD / REMOVE / MOVE frames.
 
