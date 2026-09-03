@@ -15,11 +15,10 @@ source-plugin-3.3.11/
 dist/*
 !dist/index.js
 
-# Emulator runtimes are release attachments, never committed.
-# RPCS3 alone is ~94 MB; GitHub warns above 50 MB and rejects above 100 MB.
-rpcs3/*.AppImage
-xenia/*.AppImage
-cemu/*.AppImage
+# Emulator runtimes are release attachments, never committed. install_backend()
+# fetches them into ~/.local/share/dimensions-toypad/backends/<key>/, outside
+# the repo entirely - RPCS3 alone is ~94 MB; GitHub warns above 50 MB and
+# rejects above 100 MB. This is a safety net in case one ever lands in-tree.
 *.AppImage
 upstream-source/
 

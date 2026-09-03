@@ -24,6 +24,8 @@ authoritative, so progress accumulates.
 
 import asyncio
 import base64
+import fnmatch
+import hashlib
 import io
 import json
 import os
@@ -82,13 +84,13 @@ SETUP_LOG = WORK_DIR / "setup.log"
 LAUNCHER = HOME / "toypad" / "play-dimensions.sh"
 RUN_BOTH = HOME / "toypad" / "run-both.sh"
 
-RPCS3_REPO = "https://github.com/NeverCookFirst/RPCS3-Seamless-Toypad-Build"
-
-# AIO runtime: this exact AppImage is the only RPCS3 source allowed at runtime.
 PLUGIN_ROOT = Path(__file__).resolve().parent
-BUNDLED_RPCS3 = PLUGIN_ROOT / "rpcs3" / "RPCS3-Toypad-x86_64.AppImage"
-BUNDLED_RPCS3_SHA256 = "c9221b0178ec12308638d828408f1a9b638d59de432dc8df45aa9bcaedaaf07b"
-BUNDLED_RPCS3_VERSION = "toypad-20260827 / 0.0.42-7-6905c5ad+LED"
+# Every backend gets its own AppImage + config + cache + content, never inside
+# the plugin dir (wiped on update) and never colliding with a standalone
+# install of the same emulator. Populated by install_backend(); the pinned
+# hash in BACKENDS[key].appimage_sha256 is what gets enforced, not whatever
+# release_api currently calls "latest".
+BACKEND_ROOT = WORK_DIR / "backends"
 AIO_PLUGIN_VERSION = "3.4.1"
 WEB_UI_VERSION = "LegoToypad v1.8"
 
@@ -174,6 +176,8 @@ class Backend:
     content_root: Path | None = None
     launch_args: tuple[str, ...] = ()
     settings_profile: dict = field(default_factory=dict)
+    release_api: str = ""     # GitHub releases/latest API URL, used to resolve the download
+    asset_pattern: str = ""   # fnmatch pattern for the release asset, e.g. "*.AppImage"
 
 
 BACKENDS = {
@@ -189,6 +193,13 @@ BACKENDS = {
         source_commit="6905c5ad82805af216a8addad40ee7dcea49f66b",
         game_globs=("*PS3_GAME/USRDIR/EBOOT.BIN", "*EBOOT.BIN"),
         launch_args=("--no-gui",),
+        # Points at harrysof's v0.3 lineage (R6's target), not the NeverCookFirst
+        # v0.2 build source_commit/appimage_sha256 are still pinned to above -
+        # release_api is for "Check for updates" only. Until R6 repins the hash
+        # to match a real harrysof v0.3 release, install_backend("rpcs3") will
+        # correctly refuse: the resolved asset won't match the pinned hash.
+        release_api="https://api.github.com/repos/harrysof/RPCS3-Seamless-Toypad-Build/releases/latest",
+        asset_pattern="*.AppImage",
     ),
     "xenia": Backend(
         key="xenia",
@@ -217,6 +228,11 @@ BACKENDS = {
             "clear_memory_page_state": False,
             "use_shm_open": False,
         },
+        # SpiderNic96's fork, not NeverCookFirst's upstream - matches source_repo
+        # above. NeverCookFirst's Linux CI doesn't build yet (see D3); this fork
+        # is the one that actually publishes a working linux-toypad AppImage.
+        release_api="https://api.github.com/repos/SpiderNic96/Xenia-Seamless-Toypad-Build/releases/latest",
+        asset_pattern="*linux*.AppImage",
     ),
 }
 
@@ -260,10 +276,9 @@ class Plugin:
         self.ui = {}
         self.logos = {}
         self.status = "Ready."
-        self._rpcs3_info_cache = None
         self._setup_status_cache = None
         self._setup_status_cache_at = 0.0
-        self._verify_task = None
+        self._verify_tasks = {}   # backend key -> in-flight verify Task
         self._game_cache = ("", 0.0)
 
         # v3.3.8: colour forwarding. The patched RPCS3 emits Colour/Flash
@@ -292,16 +307,20 @@ class Plugin:
 
         WORK_DIR.mkdir(parents=True, exist_ok=True)
         TAG_CACHE.mkdir(parents=True, exist_ok=True)
+        BACKEND_ROOT.mkdir(parents=True, exist_ok=True)
         self.config = self._load_config()
 
         self._scan()
-        if BUNDLED_RPCS3.is_file():
+        binary = self._backend_binary()
+        if binary.is_file():
             try:
-                BUNDLED_RPCS3.chmod(0o755)
+                binary.chmod(0o755)
             except OSError as exc:
-                decky.logger.warning("Bundled RPCS3 could not be made executable: %s", exc)
+                decky.logger.warning("%s could not be made executable: %s", self.backend.label, exc)
         else:
-            decky.logger.error("Bundled RPCS3 AppImage missing; expected %s", BUNDLED_RPCS3)
+            # Not an error: a fresh install has nothing under backends/<key>/
+            # until the user runs setup and install_backend() fetches it.
+            decky.logger.info("%s AppImage not installed yet; expected %s", self.backend.label, binary)
         if self.config.get("webEnabled", True):
             self._start_web()
 
@@ -1353,8 +1372,8 @@ class Plugin:
         Desktop Mode, where the Steam shortcut is not convenient. Points at the
         AppImage directly so the user can open the RPCS3 GUI and edit their own
         global or per-game configuration."""
-        rpcs3 = self._rpcs3_binary()
-        if not rpcs3 or not Path(rpcs3).exists():
+        rpcs3 = self._backend_binary_if_present("rpcs3")
+        if not rpcs3:
             return {"ok": False, "error": "Bundled RPCS3 not found. Run setup first."}
         apps = HOME / ".local" / "share" / "applications"
         try:
@@ -1635,14 +1654,16 @@ class Plugin:
                            "for it to appear on - switch to Desktop Mode for "
                            "the emulator's own interface."}
 
-    # ---------------------------------------------------------------- bundled RPCS3 runtime
+    # ---------------------------------------------------------------- backend runtime (fetch, verify, install)
 
-    # Verification is expensive - full SHA256 of a 175MB file plus `--version`
-    # on an AppImage that must extract its squashfs first. Both must run off
-    # the asyncio event loop, and both are cached to disk so panel opens after
-    # the first install are instant.
-    def _verify_cache_path(self):
-        return WORK_DIR / "rpcs3-verify.json"
+    # Verification is expensive - full SHA256 of a 90-175MB file plus a
+    # version probe on an AppImage that must extract its squashfs first. Both
+    # must run off the asyncio event loop, and both are cached to disk so
+    # panel opens after the first install are instant. Cache lives per
+    # backend under BACKEND_ROOT so wiping one backend can't invalidate
+    # another's.
+    def _verify_cache_path(self, key):
+        return BACKEND_ROOT / key / "verify.json"
 
     def _verify_cache_key(self, path):
         try:
@@ -1651,28 +1672,38 @@ class Plugin:
         except OSError:
             return ""
 
-    def _load_verify_cache(self):
+    def _load_verify_cache(self, key):
         try:
-            data = json.loads(self._verify_cache_path().read_text())
+            data = json.loads(self._verify_cache_path(key).read_text())
             if isinstance(data, dict):
                 return data
         except (OSError, ValueError):
             pass
         return {}
 
-    def _save_verify_cache(self, data):
+    def _save_verify_cache(self, key, data):
         try:
-            path = self._verify_cache_path()
+            path = self._verify_cache_path(key)
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(json.dumps(data, indent=2))
             self._chown_deck(path)
         except OSError:
             pass
 
-    def _bundled_rpcs3_meta(self):
+    def _backend_binary(self, key=None):
+        """Where this backend's AppImage lives (or would live once installed).
+        Always under BACKEND_ROOT/<key>/ - never the plugin dir (wiped on
+        update), never a standalone install the user already has."""
+        backend = BACKENDS[key or self.backend.key]
+        return BACKEND_ROOT / backend.key / backend.appimage_name
+
+    def _backend_meta(self, key=None):
         """Cheap: exists, executable, size. No hashing, no subprocess. Safe on
         the event loop and safe to call every panel poll."""
-        info = {"path": str(BUNDLED_RPCS3), "exists": BUNDLED_RPCS3.is_file(),
+        key = key or self.backend.key
+        backend = BACKENDS[key]
+        binary = self._backend_binary(key)
+        info = {"path": str(binary), "exists": binary.is_file(),
                 "executable": False, "sha256": "", "version": "unknown",
                 "verified": False}
         if not info["exists"]:
@@ -1680,32 +1711,35 @@ class Plugin:
         # Chmod is a metadata op - cheap - and lets a freshly extracted zip
         # become launchable without a separate ceremony.
         try:
-            BUNDLED_RPCS3.chmod(0o755)
+            binary.chmod(0o755)
         except OSError:
             pass
-        info["executable"] = os.access(BUNDLED_RPCS3, os.X_OK)
+        info["executable"] = os.access(binary, os.X_OK)
 
-        # Read whatever we already verified for this exact file. Cache is keyed
-        # by size + mtime so a replaced AppImage forces a re-verify.
-        key = self._verify_cache_key(BUNDLED_RPCS3)
-        cached = self._load_verify_cache().get(key)
+        # Read whatever we already verified for this exact file. Cache is
+        # keyed by size + mtime so a replaced AppImage forces a re-verify.
+        cache_key = self._verify_cache_key(binary)
+        cached = self._load_verify_cache(key).get(cache_key)
         if cached:
             info["sha256"] = cached.get("sha256", "")
             info["version"] = cached.get("version", "unknown")
-            info["verified"] = info["sha256"].lower() == BUNDLED_RPCS3_SHA256
+            info["verified"] = bool(backend.appimage_sha256) and info["sha256"].lower() == backend.appimage_sha256.lower()
         return info
 
-    def _bundled_rpcs3_verify_blocking(self):
-        """Heavy: SHA256 + --version. Runs in a thread; result is persisted so
-        this only executes on first install and after AppImage replacement."""
-        import hashlib, subprocess
-        info = self._bundled_rpcs3_meta()
+    def _backend_verify_blocking(self, key=None):
+        """Heavy: SHA256 + a version probe. Runs in a thread; result is
+        persisted so this only executes on first install and after the
+        AppImage is replaced."""
+        key = key or self.backend.key
+        backend = BACKENDS[key]
+        binary = self._backend_binary(key)
+        info = self._backend_meta(key)
         if not info["exists"]:
             return info
-        key = self._verify_cache_key(BUNDLED_RPCS3)
+        cache_key = self._verify_cache_key(binary)
         try:
             h = hashlib.sha256()
-            with BUNDLED_RPCS3.open("rb") as fh:
+            with binary.open("rb") as fh:
                 for chunk in iter(lambda: fh.read(1 << 20), b""):
                     h.update(chunk)
             info["sha256"] = h.hexdigest()
@@ -1717,17 +1751,16 @@ class Plugin:
             env = dict(os.environ)
             env["APPIMAGE_EXTRACT_AND_RUN"] = "1"
             env["QT_QPA_PLATFORM"] = "offscreen"
-            # Generous timeout because first-run extraction of a 175MB squashfs
-            # on Deck internal storage regularly exceeds 30s.
-            proc = subprocess.run([str(BUNDLED_RPCS3), "--version"],
+            # Generous timeout because first-run extraction of a 90-175MB
+            # squashfs on Deck internal storage regularly exceeds 30s.
+            proc = subprocess.run([str(binary), *backend.version_probe],
                                   capture_output=True, text=True,
                                   timeout=180, env=env)
-            # RPCS3 prints its version to stdout. When stdout is empty it's
-            # usually because the AppImage's wrapper shell hit a readline/glibc
-            # symbol mismatch on the host - noisy on stderr, harmless for
-            # actual RPCS3 execution, and not something a user should see in
-            # the panel. Fall through to a neutral label instead of surfacing
-            # that noise as a "version".
+            # Some builds print their version to stdout, some to stderr, and a
+            # readline/glibc symbol mismatch on the host can spam stderr with
+            # noise that is not a version string. Filter to lines that
+            # plausibly ARE one rather than surfacing shell/loader errors in
+            # the panel.
             def _looks_like_version(line):
                 s = line.strip()
                 if not s:
@@ -1743,111 +1776,263 @@ class Plugin:
                    for x in ((proc.stdout or "") + "\n" + (proc.stderr or "")).splitlines()
                    if _looks_like_version(x)]
             if out:
-                info["version"] = next((x for x in out if x.startswith("RPCS3 ")), out[-1])
+                marker = backend.label.split(" ")[0].lower()
+                info["version"] = next((x for x in out if marker in x.lower()), out[-1])
             else:
                 # No usable version string, but the binary still runs. Report a
                 # clean fallback so the panel doesn't display shell error text.
-                info["version"] = "RPCS3 (bundled, version string unavailable)"
+                info["version"] = "%s (installed, version string unavailable)" % backend.label
         except subprocess.TimeoutExpired:
             info["version"] = "unavailable: timed out"
         except Exception as exc:
             info["version"] = "unavailable: %s" % exc
-        info["verified"] = info["sha256"].lower() == BUNDLED_RPCS3_SHA256
+        info["verified"] = bool(backend.appimage_sha256) and info["sha256"].lower() == backend.appimage_sha256.lower()
 
-        cache = self._load_verify_cache()
-        cache[key] = {"sha256": info["sha256"], "version": info["version"]}
+        cache = self._load_verify_cache(key)
+        cache[cache_key] = {"sha256": info["sha256"], "version": info["version"]}
         # One entry per file identity; older ones are dead weight.
         if len(cache) > 8:
-            cache = {key: cache[key]}
-        self._save_verify_cache(cache)
+            cache = {cache_key: cache[cache_key]}
+        self._save_verify_cache(key, cache)
         return info
 
-    async def _bundled_rpcs3_verify(self):
+    async def _backend_verify(self, key=None):
         """Async wrapper: returns cached verify if available, otherwise runs
-        the heavy check in a thread. Multiple concurrent callers share one run."""
-        info = self._bundled_rpcs3_meta()
+        the heavy check in a thread. Multiple concurrent callers for the same
+        backend share one run; different backends never coalesce."""
+        key = key or self.backend.key
+        info = self._backend_meta(key)
         if info["verified"] or not info["exists"]:
             return info
-        # Coalesce: if a verify is already in flight, await the same future.
-        if self._verify_task is None or self._verify_task.done():
-            self._verify_task = self.loop.run_in_executor(
-                None, self._bundled_rpcs3_verify_blocking)
+        task = self._verify_tasks.get(key)
+        if task is None or task.done():
+            task = self.loop.run_in_executor(None, self._backend_verify_blocking, key)
+            self._verify_tasks[key] = task
         try:
-            return await self._verify_task
+            return await task
         except Exception as exc:
             info["version"] = "unavailable: %s" % exc
             return info
 
-    def _bundled_rpcs3_info(self):
-        """Legacy shape kept for anywhere still calling it. Returns whatever
-        the cheap check knows - never blocks."""
-        return self._bundled_rpcs3_meta()
+    def _backend_binary_if_present(self, key=None):
+        """Return the AppImage path only if it's actually installed."""
+        binary = self._backend_binary(key)
+        return binary if binary.is_file() else None
 
-    def _rpcs3_binary(self):
-        """Return only the AIO-bundled AppImage. Never discover another RPCS3."""
-        return BUNDLED_RPCS3 if BUNDLED_RPCS3.is_file() else None
-
-    def _rpcs3_is_managed(self):
-        return BUNDLED_RPCS3.is_file()
+    def _backend_is_managed(self, key=None):
+        return self._backend_binary(key).is_file()
 
     def _launch_command(self):
-        if not BUNDLED_RPCS3.is_file():
+        binary = self._backend_binary()
+        if not binary.is_file():
             return []
         try:
-            BUNDLED_RPCS3.chmod(0o755)
+            binary.chmod(0o755)
         except OSError:
             pass
-        return [str(BUNDLED_RPCS3)] if os.access(BUNDLED_RPCS3, os.X_OK) else []
+        return [str(binary)] if os.access(binary, os.X_OK) else []
 
-    async def _install_bundled_rpcs3(self):
-        if not BUNDLED_RPCS3.is_file():
-            return {"ok": False, "error": "Bundled RPCS3 AppImage is missing. Expected: %s" % BUNDLED_RPCS3}
-        try:
-            BUNDLED_RPCS3.chmod(0o755)
-        except OSError:
-            pass
-        if not os.access(BUNDLED_RPCS3, os.X_OK):
-            return {"ok": False, "error": "Bundled RPCS3 AppImage is not executable: %s" % BUNDLED_RPCS3}
-        # The heavy work happens in a thread. First call after a fresh install
-        # can take a minute or two while the AppImage extracts; subsequent
-        # calls hit the disk cache and return instantly.
-        info = await self._bundled_rpcs3_verify()
-        if info["sha256"].lower() != BUNDLED_RPCS3_SHA256:
+    def _resolve_release_asset(self, backend):
+        """Query release_api for the latest release and return the
+        browser_download_url of the asset matching asset_pattern.
+
+        This resolves *latest*, not a pinned build - the SHA-256 check in
+        install_backend() is what actually gates whether it gets kept. A
+        mismatch (upstream published something new, or nothing is pinned yet)
+        is refused, never silently accepted. Runs blocking network I/O; call
+        it off the event loop."""
+        if not backend.release_api:
+            raise ValueError("%s has no release_api configured." % backend.label)
+        blob = self._download_url_blocking(backend.release_api, timeout=30)
+        release = json.loads(blob.decode("utf-8"))
+        assets = release.get("assets") or []
+        pattern = backend.asset_pattern or "*.AppImage"
+        for asset in assets:
+            name = asset.get("name", "")
+            if fnmatch.fnmatch(name, pattern):
+                url = asset.get("browser_download_url")
+                if url:
+                    return url, name, release.get("tag_name", "")
+        raise ValueError("No asset matching %r in the latest %s release." % (pattern, backend.label))
+
+    async def install_backend(self, key: str):
+        """Fetch the backend's AppImage into BACKEND_ROOT/<key>/, verify its
+        SHA-256 against the pinned Backend.appimage_sha256, chmod +x, and seed
+        its config/cache/content directories. Refuses to keep a binary whose
+        hash does not match - never runs an unverified binary."""
+        if key not in BACKENDS:
+            return {"ok": False, "error": "Unknown backend: %s" % key}
+        backend = BACKENDS[key]
+        if self._busy:
+            return {"ok": False, "error": "Already " + self._busy}
+        if not backend.appimage_sha256:
             return {"ok": False,
-                    "error": "Bundled RPCS3 checksum mismatch; refusing to run it. Got: %s" % info["sha256"]}
-        # Bust the cached setup_status so the panel sees the new state at once.
-        self._setup_status_cache = None
-        return {"ok": True, "message": "Bundled RPCS3 verified: %s" % BUNDLED_RPCS3}
+                    "error": "%s has no pinned release yet - nothing to verify against, refusing to install."
+                             % backend.label}
+        self._busy = "installing %s" % backend.label
+        try:
+            backend_root = BACKEND_ROOT / key
+            backend_root.mkdir(parents=True, exist_ok=True)
+            try:
+                url, asset_name, tag = await self.loop.run_in_executor(
+                    None, self._resolve_release_asset, backend)
+            except Exception as exc:
+                return {"ok": False, "error": "Could not resolve a %s release: %s" % (backend.label, exc)}
+            self._log_setup("Downloading %s (%s @ %s) from %s" % (backend.label, asset_name, tag, url))
+            try:
+                blob = await self.loop.run_in_executor(
+                    None, self._download_url_blocking, url, 300)
+            except Exception as exc:
+                return {"ok": False, "error": "Download failed: %s" % exc}
+            # Hashing a 90-190MB blob and writing it back out are both real
+            # blocking work - keep them off the event loop, same as verify.
+            got_sha256 = await self.loop.run_in_executor(None, lambda: hashlib.sha256(blob).hexdigest())
+            if got_sha256.lower() != backend.appimage_sha256.lower():
+                return {"ok": False,
+                        "error": ("Downloaded %s does not match the pinned hash; refusing to install. "
+                                  "Expected %s, got %s. Upstream may have published a new release - "
+                                  "use Check for updates rather than reporting a bug.")
+                                 % (backend.label, backend.appimage_sha256, got_sha256)}
+            binary = self._backend_binary(key)
+            await self.loop.run_in_executor(None, binary.write_bytes, blob)
+            binary.chmod(0o755)
+            self._chown_deck(binary)
+            self._chown_deck(backend_root)
+            self._seed_backend_config(key)
+            # Force a fresh verify against the file we just wrote, rather than
+            # trusting the hash we already computed - belt and suspenders
+            # against a write that silently truncated.
+            self._verify_tasks.pop(key, None)
+            info = await self._backend_verify(key)
+            if not info["verified"]:
+                return {"ok": False, "error": "Installed %s but on-disk verify failed; try again." % backend.label}
+            self._setup_status_cache = None
+            return {"ok": True, "message": "%s installed and verified: %s" % (backend.label, binary)}
+        finally:
+            self._busy = ""
+
+    def _seed_backend_config(self, key):
+        """Create backends/<key>/{config,cache,content}/ and, for backends
+        that need a config file to isolate themselves (Xenia), write one on
+        first install. Never overwrites an existing file - the user may have
+        tuned it since. RPCS3 needs no file here: XDG_CONFIG_HOME/XDG_CACHE_HOME
+        at launch (R2a) is sufficient and reliable on its own."""
+        backend_root = BACKEND_ROOT / key
+        config_dir = backend_root / "config"
+        cache_dir = backend_root / "cache"
+        content_dir = backend_root / "content"
+        for d in (config_dir, cache_dir, content_dir):
+            d.mkdir(parents=True, exist_ok=True)
+            self._chown_deck(d)
+        if key == "xenia":
+            self._seed_xenia_config(BACKENDS[key], backend_root, config_dir, cache_dir, content_dir)
+
+    # Section -> key mapping taken from the shipped xenia-canary.config.toml
+    # (Content, GPU, Storage). use_shm_open is not present in the reference
+    # config we could check and is placed under Kernel as a best guess -
+    # verify on hardware.
+    XENIA_TOML_SECTIONS = {
+        "license_mask": "Content",
+        "draw_resolution_scale_x": "GPU",
+        "draw_resolution_scale_y": "GPU",
+        "readback_memexport": "GPU",
+        "readback_resolve": "GPU",
+        "readback_resolve_max_kb": "GPU",
+        "vsync": "GPU",
+        "framerate_limit": "GPU",
+        "clear_memory_page_state": "GPU",
+        "use_shm_open": "Kernel",
+    }
+
+    @staticmethod
+    def _toml_value(v):
+        if isinstance(v, bool):
+            return "true" if v else "false"
+        if isinstance(v, str):
+            return json.dumps(v)
+        return str(v)
+
+    def _seed_xenia_config(self, backend, backend_root, config_dir, cache_dir, content_dir):
+        config_path = config_dir / "xenia-canary.config.toml"
+        if config_path.is_file():
+            return
+        sections = {}
+        for k, v in backend.settings_profile.items():
+            section = self.XENIA_TOML_SECTIONS.get(k)
+            if section is None:
+                continue
+            sections.setdefault(section, {})[k] = v
+        storage = sections.setdefault("Storage", {})
+        # Split roots, not a single portable.txt-relative directory - keeps
+        # config/cache/content isolated from each other the same way
+        # BACKEND_ROOT already separates them for RPCS3.
+        storage["storage_root"] = str(config_dir)
+        storage["cache_root"] = str(cache_dir)
+        storage["content_root"] = str(content_dir)
+        lines = []
+        for section in ("Content", "GPU", "Kernel", "Storage"):
+            kv = sections.get(section)
+            if not kv:
+                continue
+            lines.append("[%s]" % section)
+            for k, v in kv.items():
+                lines.append("%s = %s" % (k, self._toml_value(v)))
+            lines.append("")
+        try:
+            config_path.write_text("\n".join(lines))
+            self._chown_deck(config_path)
+            self._log_setup("Seeded Xenia config: %s" % config_path)
+        except OSError as exc:
+            decky.logger.warning("Could not seed Xenia config: %s", exc)
+
+    async def check_backend_release(self, key: str = None):
+        """Report whether a newer release exists upstream, without installing
+        it. Never auto-installs an unpinned binary - that is how the
+        toypad-less 6dd3bfb Xenia shipped."""
+        key = key or self.backend.key
+        if key not in BACKENDS:
+            return {"ok": False, "error": "Unknown backend: %s" % key}
+        backend = BACKENDS[key]
+        if not backend.release_api:
+            return {"ok": False, "error": "%s has no release feed configured." % backend.label}
+        try:
+            _url, asset_name, tag = await self.loop.run_in_executor(
+                None, self._resolve_release_asset, backend)
+        except Exception as exc:
+            return {"ok": False, "error": str(exc)}
+        info = self._backend_meta(key)
+        return {"ok": True, "latestTag": tag, "latestAsset": asset_name,
+                "pinnedSha256": backend.appimage_sha256, "installedSha256": info["sha256"],
+                "upToDate": bool(info["sha256"]) and info["sha256"].lower() == backend.appimage_sha256.lower()}
 
     async def check_rpcs3_release(self):
-        info = self._bundled_rpcs3_meta()
+        """Back-compat wrapper for the existing frontend RPC name; behaves
+        like the pre-multi-backend "is the bundled AppImage good" check but
+        now against whatever is installed under backends/rpcs3/."""
+        info = self._backend_meta("rpcs3")
+        backend = BACKENDS["rpcs3"]
+        binary = self._backend_binary("rpcs3")
         if not info["exists"]:
-            return {"ok": False, "error": "Bundled RPCS3 AppImage is missing. Expected: %s" % BUNDLED_RPCS3}
-        # If we haven't verified this exact file yet, do it now. This is what
-        # the user pressed the button to trigger, so awaiting is correct.
+            return {"ok": False, "error": "RPCS3 AppImage is not installed. Expected: %s" % binary}
         if not info["verified"]:
-            info = await self._bundled_rpcs3_verify()
-        if info["sha256"].lower() != BUNDLED_RPCS3_SHA256:
-            return {"ok": False, "error": "Bundled RPCS3 checksum mismatch; refusing to use it."}
-        return {"ok": True, "version": BUNDLED_RPCS3_VERSION, "sizeMB": BUNDLED_RPCS3.stat().st_size // (1 << 20),
-                "notes": "Bundled, Deck-tested RPCS3 Toypad AppImage.", "path": info["path"],
+            info = await self._backend_verify("rpcs3")
+        if not info["verified"]:
+            return {"ok": False, "error": "RPCS3 checksum mismatch; refusing to use it."}
+        return {"ok": True, "version": backend.version_string, "sizeMB": binary.stat().st_size // (1 << 20),
+                "notes": "Deck-tested RPCS3 Toypad AppImage.", "path": info["path"],
                 "sha256": info["sha256"], "executable": info["executable"], "runtimeVersion": info["version"]}
 
     async def install_rpcs3(self):
-        if self._busy:
-            return {"ok": False, "error": "Already " + self._busy}
-        self._busy = "verifying bundled RPCS3"
-        try:
-            return await self._install_bundled_rpcs3()
-        finally:
-            self._busy = ""
+        """Back-compat wrapper for the existing frontend RPC name."""
+        return await self.install_backend("rpcs3")
+
 
     async def install_launcher(self):
         """Write the Steam/Game Mode launcher pair using only the bundled AppImage."""
         cmd = self._launch_command()
         if not cmd:
-            return {"ok": False, "error": "Bundled RPCS3 AppImage is missing or not executable. Expected: " + str(BUNDLED_RPCS3)}
-        app = str(BUNDLED_RPCS3)
+            return {"ok": False, "error": "Bundled RPCS3 AppImage is missing or not executable. Expected: " + str(self._backend_binary("rpcs3"))}
+        app = str(self._backend_binary("rpcs3"))
         games = str(self.config.get("gamePath", ""))
         run_script = r'''#!/bin/bash
 # Generated by Dimensions Toypad AIO. This is the only RPCS3 runtime.
@@ -1934,13 +2119,13 @@ exec "$RUN_BOTH"
             LAUNCHER.parent.mkdir(parents=True, exist_ok=True)
             RUN_BOTH.write_text(run_script); RUN_BOTH.chmod(0o755); self._chown_deck(RUN_BOTH)
             LAUNCHER.write_text(play_script); LAUNCHER.chmod(0o755); self._chown_deck(LAUNCHER); self._chown_deck(LAUNCHER.parent)
-            self._log_setup("Wrote Game Mode chain: %s -> %s -> %s" % (LAUNCHER, RUN_BOTH, BUNDLED_RPCS3))
+            self._log_setup("Wrote Game Mode chain: %s -> %s -> %s" % (LAUNCHER, RUN_BOTH, self._backend_binary("rpcs3")))
             return {"ok": True, "message": "Steam launcher uses bundled RPCS3 via play-dimensions.sh -> run-both.sh"}
         except OSError as exc:
             return {"ok": False, "error": str(exc)}
 
     async def set_rpcs3_path(self, command: str):
-        return {"ok": False, "error": "Manual RPCS3 paths are disabled. This AIO uses only the bundled AppImage: " + str(BUNDLED_RPCS3)}
+        return {"ok": False, "error": "Manual RPCS3 paths are disabled. This AIO uses only the fetched, verified AppImage: " + str(self._backend_binary("rpcs3"))}
 
     async def reset_paths(self):
         self.config["rpcs3Path"] = ""
@@ -1959,11 +2144,12 @@ exec "$RUN_BOTH"
         def note(label, ok, detail=""):
             steps.append({"label": label, "ok": bool(ok), "detail": detail})
 
-        # 1. The exact AppImage shipped inside the AIO. No fallback is permitted.
-        res = await self._install_bundled_rpcs3()
-        note("Bundled RPCS3", res.get("ok"), res.get("message") or res.get("error", ""))
+        # 1. Fetch and verify the active backend's AppImage. No fallback is
+        # permitted - a hash mismatch refuses rather than running unverified.
+        res = await self.install_backend(self.backend.key)
+        note(self.backend.label, res.get("ok"), res.get("message") or res.get("error", ""))
         if not res.get("ok"):
-            return {"ok": False, "steps": steps, "error": res.get("error", "Bundled RPCS3 unavailable.")}
+            return {"ok": False, "steps": steps, "error": res.get("error", "%s unavailable." % self.backend.label)}
 
         # 2. Tags + the v1.5 phone WebUI assets. Preserve an existing tag
         # library, but repair a missing Web/Assets payload so the phone remote
@@ -2066,16 +2252,17 @@ exec "$RUN_BOTH"
         now = time.monotonic()
         if self._setup_status_cache is not None and now - self._setup_status_cache_at < 5.0:
             return dict(self._setup_status_cache)
-        info = self._bundled_rpcs3_meta()
+        info = self._backend_meta("rpcs3")
 
         # If the AppImage is present but not yet verified, kick off the check
         # in the background so a later poll sees it green without the user
         # having to press anything. The current response is not blocked on it.
         if info["exists"] and not info["verified"]:
-            if self._verify_task is None or self._verify_task.done():
+            task = self._verify_tasks.get("rpcs3")
+            if task is None or task.done():
                 try:
-                    self._verify_task = self.loop.run_in_executor(
-                        None, self._bundled_rpcs3_verify_blocking)
+                    self._verify_tasks["rpcs3"] = self.loop.run_in_executor(
+                        None, self._backend_verify_blocking, "rpcs3")
                 except Exception:
                     pass
 
@@ -2095,8 +2282,7 @@ exec "$RUN_BOTH"
         ip = self._lan_ip()
         # Executable + correct hash is the bar for "usable". Version string is
         # informational; the AppImage is valid before its first --version run.
-        rpcs3_ok = bool(info["exists"] and info["executable"]
-                        and info["sha256"].lower() == BUNDLED_RPCS3_SHA256)
+        rpcs3_ok = bool(info["exists"] and info["executable"] and info["verified"])
         # Distinguish "we haven't checked yet" from "we checked and it's wrong"
         # so the frontend can show a pending state instead of a red X on first
         # panel open after install.
@@ -2115,10 +2301,10 @@ exec "$RUN_BOTH"
                               and LAUNCHER.is_file() and RUN_BOTH.is_file() and web_ok)
         result = {
             "rpcs3Ok": rpcs3_ok, "rpcs3State": rpcs3_state,
-            "rpcs3Path": str(BUNDLED_RPCS3), "rpcs3ResolvedPath": str(BUNDLED_RPCS3),
-            "rpcs3Executed": str(BUNDLED_RPCS3), "rpcs3Managed": rpcs3_ok, "rpcs3Custom": "", "rpcs3Fallback": False,
+            "rpcs3Path": str(self._backend_binary("rpcs3")), "rpcs3ResolvedPath": str(self._backend_binary("rpcs3")),
+            "rpcs3Executed": str(self._backend_binary("rpcs3")), "rpcs3Managed": rpcs3_ok, "rpcs3Custom": "", "rpcs3Fallback": False,
             "rpcs3Executable": info["executable"], "rpcs3Version": info["version"], "rpcs3Sha256": info["sha256"],
-            "rpcs3ExpectedSha256": BUNDLED_RPCS3_SHA256, "rpcs3Verified": info["verified"],
+            "rpcs3ExpectedSha256": BACKENDS["rpcs3"].appimage_sha256, "rpcs3Verified": info["verified"],
             "tagsOk": bool(self.library), "tagCount": len(self.library),
             "tagRoot": self.library_root or "", "gameOk": bool(game), "gamePath": game, "gameRoot": str(game_root),
             "launcherOk": LAUNCHER.is_file() and RUN_BOTH.is_file(), "launcherPath": str(LAUNCHER), "runBothPath": str(RUN_BOTH), "webOk": web_ok, "webPort": port,
@@ -2132,8 +2318,8 @@ exec "$RUN_BOTH"
             "phoneRemoteState": "ready" if ip else "no_network",
             "listenerOk": listener, "listenerState": listener_state, "listenerPort": self.port,
             "setupComplete": setup_complete, "busy": self._busy,
-            "aioVersion": AIO_PLUGIN_VERSION, "rpcs3ExpectedPath": str(BUNDLED_RPCS3),
-            "rpcs3ActualPath": str(BUNDLED_RPCS3) if info["exists"] else "",
+            "aioVersion": AIO_PLUGIN_VERSION, "rpcs3ExpectedPath": str(self._backend_binary("rpcs3")),
+            "rpcs3ActualPath": str(self._backend_binary("rpcs3")) if info["exists"] else "",
             # v3.3.8: live LED state from the patched emulator. Keys "0",
             # "1", "2" are per-pad centre/left/right; "all" is the last
             # broadcast. Frontend renders coloured dots per pad and paints
