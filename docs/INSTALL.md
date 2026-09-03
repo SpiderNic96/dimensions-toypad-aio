@@ -2,11 +2,13 @@
 
 ## What you need
 
-- Steam Deck with **Decky Loader** installed
-- A legally obtained LEGO Dimensions PS3 disc image
-- Roughly 1 GB free for the plugin and bundled emulator
-
-The bundled RPCS3 AppImage ships inside this archive. You do **not** need a separate RPCS3 install.
+- Steam Deck with **Decky Loader** installed, **Developer Mode** enabled in
+  Decky's settings (Decky → Settings → General → Developer Mode) — required
+  for any plugin installed outside the official plugin store, including this one
+- A legally obtained game dump for whichever backend you choose (LEGO
+  Dimensions PS3 disc image for RPCS3, or the Xbox 360 version for Xenia)
+- Roughly 100–200 MB free for the plugin and the emulator AppImage it fetches;
+  no emulator is bundled in this archive
 
 ## Install
 
@@ -20,29 +22,25 @@ The bundled RPCS3 AppImage ships inside this archive. You do **not** need a sepa
 
    Final path: `~/homebrew/plugins/dimensions-toypad/`
 
-4. Make the emulator executable:
-
-   ```
-   chmod +x ~/homebrew/plugins/dimensions-toypad/rpcs3/RPCS3-Toypad-x86_64.AppImage
-   ```
-
-5. Restart Decky, or reboot.
+4. Restart Decky, or reboot.
 
    **Restarting Decky matters.** A frontend-only refresh leaves the old `main.py` running, and backend changes will not take effect.
 
 ## First run
 
-Open **STEAM → Decky (plug icon) → Dimensions Toypad → Setup & phone remote → Set everything up**.
+Open **STEAM → Decky (plug icon) → Dimensions Toypad → Setup & phone remote**.
+Pick a backend (RPCS3 or Xenia) and run **Set everything up**.
 
 Setup will:
 
-- Verify the bundled RPCS3
+- Download and SHA-256-verify the chosen backend's AppImage — never bundled,
+  never trusted on "latest" alone, refused outright if the hash doesn't match
+  what the plugin has pinned
 - Download the tag library (the `.bin` files that identify each figure)
 - Find your game files
-- Write the Steam launcher shortcut
-- Write a Desktop Mode shortcut for RPCS3
+- Write the Steam launcher shortcut(s) for that backend
 
-If a step fails, the panel names which one. You can rerun setup as many times as you like — it is idempotent.
+If a step fails, the panel names which one. You can rerun setup as many times as you like — it is idempotent. You can install and switch between both backends from the same Setup panel.
 
 ## Game files
 
@@ -50,9 +48,9 @@ The plugin does not supply the game. Point it at your own dump. If setup reports
 
 ## Playing
 
-Launch **LEGO Dimensions** from your Steam library. The shortcut starts the bundled RPCS3 directly in Game Mode, always fullscreen.
+Launch **LEGO Dimensions (RPCS3)** or **LEGO Dimensions (Xenia)** from your Steam library, depending on which backend's shortcut you created in Setup. Each starts that backend directly in Game Mode, in its own isolated config — the two never share settings or collide with a standalone install of either emulator.
 
-Everything else about RPCS3 — vblank, resolution scale, output scaling, sharpening — is yours to set. Open **RPCS3 (Dimensions Toypad)** from the Desktop Mode application menu to configure it globally or per-game. The plugin will not overwrite your choices.
+Everything else about the emulator is yours to set. Open the matching Desktop Mode shortcut (created in Setup) to configure it globally or per-game — RPCS3's Qt UI is mouse-oriented, Xenia's is controller-navigable. The plugin will not overwrite your choices.
 
 ## Using the Toypad
 
