@@ -108,6 +108,7 @@ const installTags = rpc("install_tags");
 const installLauncher = rpc("install_launcher");
 const installShortcuts = rpc("install_shortcuts");
 const setWeb = rpc("set_web");
+const seedRpcs3Profile = rpc("seed_rpcs3_profile");
 const checkRpcs3Release = rpc("check_rpcs3_release");
 const installRpcs3 = rpc("install_rpcs3");
 rpc("launch_emulator_gui");
@@ -902,7 +903,18 @@ const Content = () => {
                                     } }) }), SP_JSX.jsx(DFL.PanelSectionRow, { children: SP_JSX.jsx(DFL.ToggleField, { label: "Confirm Button Swap (Swap A/B)", checked: setup?.confirmButtonSwap === true, onChange: async (val) => {
                                         await setConfigSetting("confirmButtonSwap", val);
                                         await refresh();
-                                    } }) })] }), SP_JSX.jsxs(DFL.PanelSection, { title: "RPCS3", children: [SP_JSX.jsx(DFL.PanelSectionRow, { children: SP_JSX.jsx("div", { style: { fontSize: "11px", opacity: 0.7, lineHeight: 1.4 }, children: setup?.rpcs3Ok
+                                    } }) }), SP_JSX.jsx(DFL.PanelSectionRow, { children: SP_JSX.jsx(DFL.ToggleField, { label: "Use my existing RPCS3 setup", description: "Off: the plugin keeps RPCS3 in its own profile. On: RPCS3 reads and writes your own ~/.config/rpcs3, including the settings profile you already tuned.", checked: setup?.isolateBackendConfig === false, onChange: async (val) => {
+                                        await setConfigSetting("isolateBackendConfig", !val);
+                                        await installLauncher().catch(() => { });
+                                        await refresh();
+                                    } }) }), setup?.isolateBackendConfig === false ? null : (SP_JSX.jsx(DFL.PanelSectionRow, { children: SP_JSX.jsx(DFL.ButtonItem, { layout: "below", onClick: async () => {
+                                        const res = await seedRpcs3Profile().catch((e) => ({ ok: false, error: String(e) }));
+                                        toaster.toast({
+                                            title: "RPCS3 profile",
+                                            body: (res && (res.message || res.error)) || "Nothing to do.",
+                                        });
+                                        await refresh();
+                                    }, children: "Carry my RPCS3 firmware & controls into the plugin profile" }) }))] }), SP_JSX.jsxs(DFL.PanelSection, { title: "RPCS3", children: [SP_JSX.jsx(DFL.PanelSectionRow, { children: SP_JSX.jsx("div", { style: { fontSize: "11px", opacity: 0.7, lineHeight: 1.4 }, children: setup?.rpcs3Ok
                                         ? `RPCS3 ✓ Bundled AppImage · ${setup.rpcs3Version}`
                                         : `RPCS3 ✗ Bundled AppImage missing · expected ${setup?.rpcs3ExpectedPath || setup?.rpcs3Path || "bundled/rpcs3/RPCS3-Toypad-x86_64.AppImage"}` }) }), !setup?.rpcs3Ok && release && release.ok ? (SP_JSX.jsx(DFL.PanelSectionRow, { children: SP_JSX.jsxs(DFL.ButtonItem, { layout: "below", disabled: working !== "", onClick: async () => {
                                         setWorking("Downloading RPCS3, this takes a few minutes...");

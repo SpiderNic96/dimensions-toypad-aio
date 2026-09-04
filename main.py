@@ -256,6 +256,11 @@ DEFAULT_CONFIG = {
     "padSkin": "default",
     "soundEffects": False,
     "confirmButtonSwap": False,
+    # P1: isolation is the safe default for a machine with no RPCS3 of its own,
+    # but it is the wrong one for a machine that already runs RPCS3 well. When
+    # False the launcher omits the XDG_* exports entirely and RPCS3 uses
+    # ~/.config/rpcs3 exactly as it did before the plugin existed.
+    "isolateBackendConfig": True,
 }
 
 
@@ -1902,10 +1907,29 @@ class Plugin:
             return '--config="%s"' % config_path
         return ""
 
+    def _isolating(self):
+        """P1: whether the plugin gives backends their own config root at all.
+
+        False means "use my existing RPCS3 setup" - the launcher exports no
+        XDG_* at all and every path the plugin reads or writes is the user's
+        own, including the Deck settings profile they already tuned."""
+        return bool(self.config.get("isolateBackendConfig", True))
+
+    def _rpcs3_config_root(self):
+        """The directory RPCS3 treats as XDG_CONFIG_HOME. RPCS3 nests one
+        level below it, so the profile itself is always <root>/rpcs3."""
+        if self._isolating():
+            return BACKEND_ROOT / "rpcs3" / "config"
+        return HOME / ".config"
+
     def _xdg_block(self, backend):
         """RPCS3 honours XDG_CONFIG_HOME/XDG_CACHE_HOME natively - reliable,
-        needs no CLI flag. Xenia isolates via _isolation_flag() instead."""
-        if backend.key != "rpcs3":
+        needs no CLI flag. Xenia isolates via _isolation_flag() instead.
+
+        Emitting nothing when isolation is off is the whole mechanism: RPCS3
+        then falls back to its own defaults, which is what a user with a
+        working install wants."""
+        if backend.key != "rpcs3" or not self._isolating():
             return ""
         config_dir = BACKEND_ROOT / backend.key / "config"
         cache_dir = BACKEND_ROOT / backend.key / "cache"
@@ -1929,7 +1953,10 @@ class Plugin:
         # not $HOME/.config/rpcs3 - RPCS3 nests one level under XDG_CONFIG_HOME.
         if backend.key != "rpcs3":
             return ""
-        config_dir = BACKEND_ROOT / backend.key / "config"
+        # P1: follows the isolation toggle, so with isolation off this rewrites
+        # the user's own config.yml rather than an isolated copy RPCS3 will
+        # never read.
+        config_dir = self._rpcs3_config_root()
         return (
             '# v3.3.41: the Steam shortcut always launches fullscreen. This is the\n'
             '# only RPCS3 setting the plugin touches - vblank, resolution scale,\n'
@@ -2105,8 +2132,14 @@ class Plugin:
         """Create backends/<key>/{config,cache,content}/ and, for backends
         that need a config file to isolate themselves (Xenia), write one on
         first install. Never overwrites an existing file - the user may have
-        tuned it since. RPCS3 needs no file here: XDG_CONFIG_HOME/XDG_CACHE_HOME
-        at launch (R2a) is sufficient and reliable on its own."""
+        tuned it since.
+
+        P1: RPCS3 used to be skipped here on the grounds that XDG_CONFIG_HOME
+        at launch (R2a) is sufficient. That is true of isolation and false of
+        usability - an empty config root is a pristine profile, so RPCS3 asks
+        for firmware, shows its first-run dialog over the game, and has no pad
+        bound. Isolation without seeding reads to the user as the plugin
+        breaking a setup that worked."""
         backend_root = BACKEND_ROOT / key
         config_dir = backend_root / "config"
         cache_dir = backend_root / "cache"
@@ -2116,6 +2149,71 @@ class Plugin:
             self._chown_deck(d)
         if key == "xenia":
             self._seed_xenia_config(BACKENDS[key], backend_root, config_dir, cache_dir, content_dir)
+        if key == "rpcs3":
+            self._seed_rpcs3_config(config_dir)
+
+    def _chown_deck_tree(self, root):
+        """_chown_deck takes one path; a copied tree needs every entry. Decky
+        runs as root, so anything left root-owned is a directory the user
+        cannot edit from their own session."""
+        self._chown_deck(root)
+        for base, dirs, files in os.walk(str(root)):
+            for name in dirs + files:
+                self._chown_deck(Path(base) / name)
+
+    def _seed_rpcs3_config(self, config_dir):
+        """Carry the user's existing RPCS3 state into the isolated profile.
+
+        RPCS3 nests one level under XDG_CONFIG_HOME, so the profile root is
+        config_dir/rpcs3. Only ever fills in what is missing: anything already
+        in the isolated profile has been tuned there and is left alone."""
+        prof = config_dir / "rpcs3"
+        prof.mkdir(parents=True, exist_ok=True)
+        src = HOME / ".config" / "rpcs3"
+        seeded = []
+
+        # dev_flash is the decrypted firmware, ~200 MB. Symlink rather than
+        # copy: one firmware install serves every profile, and it is not
+        # something the plugin should ever let diverge from the user's own.
+        # is_symlink() as well as exists() - a broken link is still a name in
+        # the way, and symlink_to would raise FileExistsError on it.
+        flash = prof / "dev_flash"
+        if (src / "dev_flash").is_dir() and not (flash.exists() or flash.is_symlink()):
+            try:
+                flash.symlink_to(src / "dev_flash")
+                seeded.append("dev_flash (linked)")
+            except OSError as exc:
+                decky.logger.warning("Could not link dev_flash: %s", exc)
+
+        # Pad bindings and GUI state are small and may reasonably be tuned per
+        # profile, so copy rather than link.
+        for sub in ("input_configs", "GuiConfigs"):
+            if (src / sub).is_dir() and not (prof / sub).exists():
+                try:
+                    shutil.copytree(src / sub, prof / sub)
+                    self._chown_deck_tree(prof / sub)
+                    seeded.append(sub)
+                except OSError as exc:
+                    decky.logger.warning("Could not copy %s: %s", sub, exc)
+
+        # Fallback for a machine with no prior RPCS3 to copy from: dismiss the
+        # first-run dialog so it cannot appear over the game. Only written when
+        # the file is absent, so a copied GuiConfigs always wins.
+        # UNVERIFIED: the infoBoxEnabledWelcome key name is from RPCS3's
+        # documented layout, not confirmed against the pinned build. The copy
+        # path above does not depend on it.
+        gui = prof / "GuiConfigs" / "CurrentSettings.ini"
+        if not gui.exists():
+            try:
+                gui.parent.mkdir(parents=True, exist_ok=True)
+                gui.write_text("[main_window]\ninfoBoxEnabledWelcome=false\n")
+                seeded.append("welcome dialog dismissed")
+            except OSError as exc:
+                decky.logger.warning("Could not write %s: %s", gui, exc)
+
+        self._chown_deck(prof)
+        self._chown_deck(prof / "GuiConfigs")
+        self._log_setup("RPCS3 profile seeded: %s" % (", ".join(seeded) or "nothing to carry over"))
 
     # Section -> key mapping taken from the shipped xenia-canary.config.toml
     # (Content, GPU, Storage). use_shm_open is not present in the reference
@@ -2473,6 +2571,7 @@ class Plugin:
             "padSkin": self.config.get("padSkin", "default"),
             "soundEffects": self.config.get("soundEffects", True),
             "confirmButtonSwap": self.config.get("confirmButtonSwap", False),
+            "isolateBackendConfig": self._isolating(),
         }
         # Verifying state is transient - don't cache it as long as the others
         # or the panel will show "verifying..." for 5 seconds after it's done.
@@ -3170,6 +3269,28 @@ class Plugin:
         self.config[key] = val
         self._save_config()
         return {"ok": True}
+
+    async def seed_rpcs3_profile(self):
+        """P1: run the profile seeding on demand, without a reinstall.
+
+        _seed_backend_config only runs inside install_backend, so anyone who
+        installed before this existed is stuck with the pristine profile that
+        caused the problem - the fix would never reach the machines that need
+        it. Fills in only what is missing, so it is safe to press twice."""
+        if not self._isolating():
+            return {"ok": True, "message": "Isolation is off - RPCS3 already uses your own ~/.config/rpcs3."}
+        config_dir = BACKEND_ROOT / "rpcs3" / "config"
+        try:
+            config_dir.mkdir(parents=True, exist_ok=True)
+            self._seed_rpcs3_config(config_dir)
+        except OSError as exc:
+            return {"ok": False, "error": str(exc)}
+        prof = config_dir / "rpcs3"
+        return {"ok": True,
+                "message": "RPCS3 profile seeded.",
+                "firmware": (prof / "dev_flash").exists(),
+                "inputConfigs": (prof / "input_configs").is_dir(),
+                "guiConfigs": (prof / "GuiConfigs").is_dir()}
 
 
 PLAY_SCRIPT_TEMPLATE = r'''#!/bin/bash
