@@ -1,11 +1,11 @@
 {
-  "version": "toypad-20260903-aio-3.4.2",
+  "version": "toypad-20260904-aio-3.4.3",
   "rpcs3_sha256": "c9221b0178ec12308638d828408f1a9b638d59de432dc8df45aa9bcaedaaf07b",
   "rpcs3_size": 93840381,
   "rpcs3_commit": "6905c5ad82805af216a8addad40ee7dcea49f66b",
   "tag_source": "https://github.com/harrysof/LegoToypad",
   "tag_source_version": "v1.8",
-  "plugin_version": "3.4.2",
+  "plugin_version": "3.4.3",
   "runtime_policy": "bundled-only-no-fallback",
   "launcher_chain": "play-dimensions.sh -> run-both.sh -> bundled RPCS3 AppImage --no-gui EBOOT.BIN",
   "game_display": "16:9 1280x720 via Gamescope when needed; native Steam Gaming Mode compositor when already present",

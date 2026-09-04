@@ -4,6 +4,60 @@ Consolidated history from the v3.3.11 GitHub release to current.
 
 ---
 
+## 3.4.3 — RPCS3 stops losing your setup (P1)
+
+Field testing on hardware found that isolating RPCS3 into its own profile
+(R1b, 3.4.1) broke installs that had been working. One cause produced three
+symptoms, all of them the signature of a first-ever-run profile:
+
+- PS3 firmware asked to be reinstalled — no `dev_flash/`
+- "Welcome to RPCS3" drawn over the running game — no `GuiConfigs/`
+- controller dead once the cutscene ended — no `input_configs/`, so no pad
+  bound; cutscenes need no input, which is why it only surfaced at gameplay
+
+`_seed_backend_config` skipped RPCS3 deliberately, on the grounds that
+`XDG_CONFIG_HOME` at launch is enough. That is true of isolation and false of
+usability: isolation without seeding hands RPCS3 an empty profile, which reads
+to the user as the plugin having broken a setup that worked.
+
+**An existing RPCS3 install is now used as-is by default.** `isolateBackendConfig`
+defaults to `false` when `~/.config/rpcs3/config.yml` is present — a machine that
+already runs RPCS3 well should keep its own firmware, controls, library and
+saves. Isolation remains the default only for a machine with no RPCS3 of its own.
+The detection applies only while the setting is absent from the config file;
+once toggled, the choice is the user's and is never second-guessed.
+
+- Surfaced in the panel as **"Use my existing RPCS3 setup"**. Switching it
+  rewrites the launcher, so it takes effect without any further step.
+- With isolation off, the launcher emits no `XDG_*` at all and
+  `_fullscreen_block` follows the same root, so it no longer rewrites a config
+  RPCS3 will never read.
+
+**Seeding, for anyone who does want isolation.** `_seed_rpcs3_config()` carries
+the user's own state into the isolated profile on first install, filling in only
+what is missing:
+
+- `dev_flash` symlinked — ~200 MB, one firmware serves every profile and should
+  never diverge from the user's own
+- `input_configs`, `GuiConfigs`, `custom_configs`, `patches` copied
+- `vfs.yml`, `games.yml`, `config.yml` copied. `vfs.yml` is what decides whether
+  a profile can see any games at all: RPCS3 resolves `$(EmulatorDir)` relative to
+  the active profile, so an unseeded profile looks for `dev_hdd0` inside itself
+  and finds nothing, while a real `vfs.yml` typically points `/dev_hdd0/` at an
+  absolute library path that resolves identically from any profile
+- the first-run dialog is dismissed explicitly when there was no prior install
+  to copy from
+
+Each step is independently guarded and logged, so a failed firmware link no
+longer costs the pad bindings too. Copied trees are chowned recursively —
+Decky runs as root, and `_chown_deck` only ever took a single path.
+
+`seed_rpcs3_profile()` exposes seeding as a panel button. Seeding otherwise runs
+only inside `install_backend`, so the fix would never have reached a machine that
+had already installed — which is every machine currently showing the bug.
+
+---
+
 ## 3.4.2 — Overlay no longer crops its own controls
 
 First on-hardware look at the deployed overlay: the pad itself renders
