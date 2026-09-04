@@ -306,6 +306,10 @@ class Plugin:
             "connects": 0, "frames_parsed": 0, "last_error": "",
             "connected": False, "last_frame_ts": 0.0, "led_serial": 0,
             "mode": "get-led", "snapshots_seen": 0, "changed_snapshots": 0,
+            # Which endpoint the reader is actually polling. Without it, a
+            # reader that is connecting to the wrong port looks identical to
+            # one whose backend simply never sends a snapshot.
+            "port": 0, "backend": "",
         }
         # v3.3.33: retain a bounded stream of every changed GET_LED snapshot.
         # This is deliberately separate from the renderer state so diagnostics
@@ -421,8 +425,16 @@ class Plugin:
         while True:
             # Backend check: if GET_LED not supported, surface status and wait
             if not self.backend.supports_get_led:
-                self._color_reader_stats["last_error"] = "LEDs not supported on this backend"
+                # Name the backend. "LEDs not supported on this backend" while
+                # the panel's RPCS3 section still shows RPCS3 paths reads as
+                # "LEDs are broken", not "you are on the wrong backend" - which
+                # is what one press of the backend toggle actually did.
+                self._color_reader_stats["last_error"] = (
+                    "Active backend is %s, which has no GET_LED. Switch back to RPCS3 for LEDs."
+                    % self.backend.label)
                 self._color_reader_stats["connected"] = False
+                self._color_reader_stats["port"] = self.port
+                self._color_reader_stats["backend"] = self.backend.key
                 await asyncio.sleep(POLL_SUSPENDED)
                 continue
 
@@ -452,6 +464,8 @@ class Plugin:
                 continue
 
             writer = None
+            self._color_reader_stats["port"] = self.port
+            self._color_reader_stats["backend"] = self.backend.key
             try:
                 reader, writer = await asyncio.wait_for(
                     asyncio.open_connection(self.host, self.port), timeout=2)

@@ -887,10 +887,20 @@ const Content = () => {
                                         const next = current === "rpcs3" ? "xenia" : "rpcs3";
                                         const res = await setBackend(next);
                                         if (res && res.ok) {
-                                            toaster.toast({ title: "Backend Switch", body: `Switched backend to ${next.toUpperCase()}` });
+                                            // Xenia has no GET_LED, so switching to it
+                                            // silently kills every LED in the overlay.
+                                            // Say so at the moment of the switch rather
+                                            // than leaving it to be discovered as
+                                            // "the lighting is broken".
+                                            toaster.toast({
+                                                title: "Backend Switch",
+                                                body: next === "xenia"
+                                                    ? "Switched to XENIA — no LED support on this backend, the pad will stay unlit."
+                                                    : "Switched backend to RPCS3",
+                                            });
                                             await refresh();
                                         }
-                                    }, children: `Active Backend: ${(setup?.backend || "rpcs3").toUpperCase()} (Click to toggle RPCS3 / Xenia)` }) }), SP_JSX.jsx(DFL.PanelSectionRow, { children: SP_JSX.jsx(DFL.ButtonItem, { layout: "below", onClick: async () => {
+                                    }, children: `Active Backend: ${(setup?.backend || "rpcs3").toUpperCase()} (Click to toggle RPCS3 / Xenia)` }) }), (setup?.backend || "rpcs3") === "xenia" ? (SP_JSX.jsx(DFL.PanelSectionRow, { children: SP_JSX.jsx("div", { style: { fontSize: "11px", color: "#ffc93c", lineHeight: 1.4, padding: "2px 0" }, children: "Xenia is active. It has no GET_LED, so the pad renders unlit and LED diagnostics stay empty \u2014 switch back to RPCS3 above if you expected lighting." }) })) : null, SP_JSX.jsx(DFL.PanelSectionRow, { children: SP_JSX.jsx(DFL.ButtonItem, { layout: "below", onClick: async () => {
                                         const current = await getConfigSetting("padSkin", "default");
                                         const skins = ["default", "Plain", "Old"];
                                         const next = skins[(skins.indexOf(current) + 1) % skins.length];
@@ -1168,7 +1178,7 @@ const LedDiagnostics = ({ data }) => {
                         return (SP_JSX.jsxs("div", { style: { background: "rgba(0,0,0,.22)", borderRadius: "4px", padding: "4px" }, children: [SP_JSX.jsxs("div", { children: [SP_JSX.jsx("b", { children: label }), " ", modeText(p)] }), SP_JSX.jsxs("div", { children: ["RGB ", rgbText(p)] }), prev && p ? SP_JSX.jsxs("div", { style: { opacity: .7 }, children: ["FROM ", prev.join(","), " \u2192 ", rgbText(p)] }) : null, p?.kind === "fade" ? SP_JSX.jsxs("div", { style: { opacity: .7 }, children: ["speed ", String(p?.speedTicks ?? 0), "t/", String(p?.speedMs ?? 0), "ms \u00B7 count ", String(p?.count ?? 0)] }) : null, p?.kind === "flash" ? SP_JSX.jsxs("div", { style: { opacity: .7 }, children: ["on ", String(p?.onTicks ?? 0), "t / off ", String(p?.offTicks ?? 0), "t \u00B7 count ", String(p?.count ?? 0)] }) : null] }, key));
                     }) }), e?.raw ? SP_JSX.jsxs("div", { style: { opacity: .45, marginTop: "3px", wordBreak: "break-all" }, children: ["RX ", String(e.raw).slice(0, 90), String(e.raw).length > 90 ? "…" : ""] }) : null] }, String(e?.seq ?? i)));
     };
-    return (SP_JSX.jsxs("div", { style: { marginTop: "10px", padding: "8px", background: "rgba(5,8,12,.65)", borderRadius: "8px", border: "1px solid rgba(255,255,255,.10)", maxHeight: "38vh", overflowY: "auto", overflowX: "hidden", fontSize: "10px" }, children: [SP_JSX.jsxs("div", { style: { fontSize: "12px", fontWeight: 600, marginBottom: "5px" }, children: ["LED LISTENER DIAGNOSTICS ", SP_JSX.jsx("span", { style: { color: "#5fd08a", float: "right" }, children: stats.connected ? "● CONNECTED" : "○ WAITING" })] }), SP_JSX.jsxs("div", { style: { opacity: .75, marginBottom: "5px" }, children: ["GET_LED snapshots ", String(stats.snapshots_seen ?? 0), " \u00B7 changed ", String(stats.changed_snapshots ?? 0), " \u00B7 frames ", String(stats.frames_parsed ?? 0), " \u00B7 serial ", String(stats.led_serial ?? 0)] }), SP_JSX.jsx("div", { style: { opacity: .6, marginBottom: "6px" }, children: "This is the listener's received 30-byte GET_LED stream. It is not the raw game's C0\u2013C8 command stream." }), events.length ? events.map(line) : SP_JSX.jsx("div", { style: { opacity: .5, padding: "10px 0" }, children: "Waiting for a changed LED snapshot\u2026" }), SP_JSX.jsxs("div", { style: { marginTop: "5px", paddingTop: "5px", borderTop: "1px solid rgba(255,255,255,.08)", opacity: .65 }, children: ["Current: C ", current["0"]?.hex || "off", " \u00B7 L ", current["1"]?.hex || "off", " \u00B7 R ", current["2"]?.hex || "off"] })] }));
+    return (SP_JSX.jsxs("div", { style: { marginTop: "10px", padding: "8px", background: "rgba(5,8,12,.65)", borderRadius: "8px", border: "1px solid rgba(255,255,255,.10)", maxHeight: "32vh", overflowY: "auto", overflowX: "hidden", fontSize: "10px" }, children: [SP_JSX.jsxs("div", { style: { fontSize: "12px", fontWeight: 600, marginBottom: "5px" }, children: ["LED LISTENER DIAGNOSTICS ", SP_JSX.jsx("span", { style: { color: stats.connected ? "#5fd08a" : "#ffc93c", float: "right" }, children: stats.connected ? "● CONNECTED" : "○ WAITING" })] }), SP_JSX.jsxs("div", { style: { opacity: .75, marginBottom: "5px" }, children: ["GET_LED snapshots ", String(stats.snapshots_seen ?? 0), " \u00B7 changed ", String(stats.changed_snapshots ?? 0), " \u00B7 frames ", String(stats.frames_parsed ?? 0), " \u00B7 serial ", String(stats.led_serial ?? 0)] }), SP_JSX.jsxs("div", { style: { opacity: .75, marginBottom: "5px" }, children: ["backend ", String(stats.backend || "—").toUpperCase(), " \u00B7 connects ", String(stats.connects ?? 0), " \u00B7 port ", String(stats.port ?? "—"), " \u00B7 ", stats.suspended ? "capture suspended" : "capture live"] }), stats.last_error ? (SP_JSX.jsxs("div", { style: { color: "#ff6b4a", marginBottom: "6px", wordBreak: "break-word" }, children: ["last error: ", String(stats.last_error)] })) : null, SP_JSX.jsx("div", { style: { opacity: .6, marginBottom: "6px" }, children: "This is the listener's received 30-byte GET_LED stream. It is not the raw game's C0\u2013C8 command stream." }), events.length ? events.map(line) : SP_JSX.jsx("div", { style: { opacity: .5, padding: "10px 0" }, children: "Waiting for a changed LED snapshot\u2026" }), SP_JSX.jsxs("div", { style: { marginTop: "5px", paddingTop: "5px", borderTop: "1px solid rgba(255,255,255,.08)", opacity: .65 }, children: ["Current: C ", current["0"]?.hex || "off", " \u00B7 L ", current["1"]?.hex || "off", " \u00B7 R ", current["2"]?.hex || "off"] })] }));
 };
 const ToypadModal = ({ closeModal, onClosed }) => {
     const [slots, setSlots] = SP_REACT.useState([]);
@@ -1485,9 +1495,14 @@ const ToypadModal = ({ closeModal, onClosed }) => {
     // that silently stops biting at the exact scale where it matters. 48vh
     // leaves roughly 250px for ~150px of controls at 1:1 - enough slack to
     // survive the scaling. The picker modes hand more of it to the results.
+    // Opening diagnostics adds ~38vh of panel below the pad, which at a 48vh
+    // pad overran the shell by roughly 200px - and since diagnostics sits
+    // above the button row, the overflow swallowed both, so the feature read
+    // as "nothing happens". The pad gives way here for the same reason it
+    // does everywhere else.
     const padHeightBudget = (mode === "franchises" || mode === "picking")
         ? "38vh"
-        : "48vh";
+        : (ledDiagOpen ? "24vh" : "48vh");
     return (SP_JSX.jsx(DFL.ModalRoot, { className: "dt-toypad-modal-root", closeModal: back, onCancel: back, onEscKeypress: back, children: SP_JSX.jsx("div", { style: {
                 position: "fixed", inset: 0,
                 width: "100vw", height: "100vh",

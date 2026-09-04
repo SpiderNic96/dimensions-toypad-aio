@@ -390,7 +390,17 @@ const Content = () => {
                                     const next = current === "rpcs3" ? "xenia" : "rpcs3";
                                     const res = await setBackend(next);
                                     if (res && res.ok) {
-                                        toaster.toast({ title: "Backend Switch", body: `Switched backend to ${next.toUpperCase()}` });
+                                        // Xenia has no GET_LED, so switching to it
+                                        // silently kills every LED in the overlay.
+                                        // Say so at the moment of the switch rather
+                                        // than leaving it to be discovered as
+                                        // "the lighting is broken".
+                                        toaster.toast({
+                                            title: "Backend Switch",
+                                            body: next === "xenia"
+                                                ? "Switched to XENIA — no LED support on this backend, the pad will stay unlit."
+                                                : "Switched backend to RPCS3",
+                                        });
                                         await refresh();
                                     }
                                 }}
@@ -398,6 +408,13 @@ const Content = () => {
                                 {`Active Backend: ${(setup?.backend || "rpcs3").toUpperCase()} (Click to toggle RPCS3 / Xenia)`}
                             </DFL.ButtonItem>
                         </DFL.PanelSectionRow>
+                        {(setup?.backend || "rpcs3") === "xenia" ? (
+                            <DFL.PanelSectionRow>
+                                <div style={{ fontSize: "11px", color: "#ffc93c", lineHeight: 1.4, padding: "2px 0" }}>
+                                    Xenia is active. It has no GET_LED, so the pad renders unlit and LED diagnostics stay empty — switch back to RPCS3 above if you expected lighting.
+                                </div>
+                            </DFL.PanelSectionRow>
+                        ) : null}
                         <DFL.PanelSectionRow>
                             <DFL.ButtonItem
                                 layout="below"
@@ -899,11 +916,22 @@ const LedDiagnostics = ({ data }: any) => {
         );
     };
     return (
-        <div style={{ marginTop: "10px", padding: "8px", background: "rgba(5,8,12,.65)", borderRadius: "8px", border: "1px solid rgba(255,255,255,.10)", maxHeight: "38vh", overflowY: "auto", overflowX: "hidden", fontSize: "10px" }}>
-            <div style={{ fontSize: "12px", fontWeight: 600, marginBottom: "5px" }}>LED LISTENER DIAGNOSTICS <span style={{ color: "#5fd08a", float: "right" }}>{stats.connected ? "● CONNECTED" : "○ WAITING"}</span></div>
+        <div style={{ marginTop: "10px", padding: "8px", background: "rgba(5,8,12,.65)", borderRadius: "8px", border: "1px solid rgba(255,255,255,.10)", maxHeight: "32vh", overflowY: "auto", overflowX: "hidden", fontSize: "10px" }}>
+            <div style={{ fontSize: "12px", fontWeight: 600, marginBottom: "5px" }}>LED LISTENER DIAGNOSTICS <span style={{ color: stats.connected ? "#5fd08a" : "#ffc93c", float: "right" }}>{stats.connected ? "● CONNECTED" : "○ WAITING"}</span></div>
             <div style={{ opacity: .75, marginBottom: "5px" }}>
                 GET_LED snapshots {String(stats.snapshots_seen ?? 0)} · changed {String(stats.changed_snapshots ?? 0)} · frames {String(stats.frames_parsed ?? 0)} · serial {String(stats.led_serial ?? 0)}
             </div>
+            <div style={{ opacity: .75, marginBottom: "5px" }}>
+                backend {String(stats.backend || "—").toUpperCase()} · connects {String(stats.connects ?? 0)} · port {String(stats.port ?? "—")} · {stats.suspended ? "capture suspended" : "capture live"}
+            </div>
+            {/* The reason a dead reader is dead. This was only ever rendered in
+                the sidebar, never here - so the one screen a user opens when
+                the LEDs are dark was the one that would not tell them why. */}
+            {stats.last_error ? (
+                <div style={{ color: "#ff6b4a", marginBottom: "6px", wordBreak: "break-word" }}>
+                    last error: {String(stats.last_error)}
+                </div>
+            ) : null}
             <div style={{ opacity: .6, marginBottom: "6px" }}>This is the listener's received 30-byte GET_LED stream. It is not the raw game's C0–C8 command stream.</div>
             {events.length ? events.map(line) : <div style={{ opacity: .5, padding: "10px 0" }}>Waiting for a changed LED snapshot…</div>}
             <div style={{ marginTop: "5px", paddingTop: "5px", borderTop: "1px solid rgba(255,255,255,.08)", opacity: .65 }}>
@@ -1194,9 +1222,14 @@ const ToypadModal = ({ closeModal, onClosed }: any) => {
     // that silently stops biting at the exact scale where it matters. 48vh
     // leaves roughly 250px for ~150px of controls at 1:1 - enough slack to
     // survive the scaling. The picker modes hand more of it to the results.
+    // Opening diagnostics adds ~38vh of panel below the pad, which at a 48vh
+    // pad overran the shell by roughly 200px - and since diagnostics sits
+    // above the button row, the overflow swallowed both, so the feature read
+    // as "nothing happens". The pad gives way here for the same reason it
+    // does everywhere else.
     const padHeightBudget = (mode === "franchises" || mode === "picking")
         ? "38vh"
-        : "48vh";
+        : (ledDiagOpen ? "24vh" : "48vh");
 
     return (
         <DFL.ModalRoot className="dt-toypad-modal-root" closeModal={back} onCancel={back} onEscKeypress={back}>
