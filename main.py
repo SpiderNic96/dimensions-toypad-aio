@@ -679,11 +679,25 @@ class Plugin:
 
     def _load_config(self):
         cfg = dict(DEFAULT_CONFIG)
+        stored = {}
         try:
             if CONFIG_FILE.is_file():
-                cfg.update(json.loads(CONFIG_FILE.read_text()))
+                stored = json.loads(CONFIG_FILE.read_text())
+                cfg.update(stored)
         except (OSError, ValueError) as exc:
             decky.logger.warning("Config unreadable, using defaults: %s", exc)
+        # P1/A: isolation is the right default for a Deck with no RPCS3 of its
+        # own, and the wrong one for a Deck that already runs it well - there,
+        # a fresh profile reads as the plugin having lost the user's firmware,
+        # controls and library. Decide by what is actually on the machine, but
+        # only while the user has never expressed a preference: once the key is
+        # in the file it is their choice and this must not second-guess it.
+        if "isolateBackendConfig" not in stored:
+            existing = (HOME / ".config" / "rpcs3" / "config.yml").is_file()
+            cfg["isolateBackendConfig"] = not existing
+            if existing:
+                decky.logger.info(
+                    "Existing RPCS3 install detected; defaulting to it rather than an isolated profile")
         return cfg
 
     def _save_config(self):
@@ -2185,9 +2199,9 @@ class Plugin:
             except OSError as exc:
                 decky.logger.warning("Could not link dev_flash: %s", exc)
 
-        # Pad bindings and GUI state are small and may reasonably be tuned per
-        # profile, so copy rather than link.
-        for sub in ("input_configs", "GuiConfigs"):
+        # Pad bindings, GUI state, per-game overrides and patches are small and
+        # may reasonably be tuned per profile, so copy rather than link.
+        for sub in ("input_configs", "GuiConfigs", "custom_configs", "patches"):
             if (src / sub).is_dir() and not (prof / sub).exists():
                 try:
                     shutil.copytree(src / sub, prof / sub)
@@ -2196,12 +2210,29 @@ class Plugin:
                 except OSError as exc:
                     decky.logger.warning("Could not copy %s: %s", sub, exc)
 
+        # vfs.yml is the one that decides whether the profile can see any games
+        # at all. RPCS3's $(EmulatorDir) resolves relative to the active
+        # profile, so an unseeded profile looks for dev_hdd0 *inside itself* and
+        # finds nothing - while a user's own vfs.yml typically points
+        # /dev_hdd0/ at an absolute library path (the EmuDeck layout does), which
+        # resolves identically from any profile. Copying it is what makes games,
+        # DLC and saves survive isolation; without it the profile boots clean and
+        # empty, which looks like the plugin lost the user's library.
+        # games.yml is the game list, config.yml the tuned global settings.
+        for name in ("vfs.yml", "games.yml", "config.yml"):
+            if (src / name).is_file() and not (prof / name).exists():
+                try:
+                    shutil.copy2(src / name, prof / name)
+                    self._chown_deck(prof / name)
+                    seeded.append(name)
+                except OSError as exc:
+                    decky.logger.warning("Could not copy %s: %s", name, exc)
+
         # Fallback for a machine with no prior RPCS3 to copy from: dismiss the
         # first-run dialog so it cannot appear over the game. Only written when
         # the file is absent, so a copied GuiConfigs always wins.
-        # UNVERIFIED: the infoBoxEnabledWelcome key name is from RPCS3's
-        # documented layout, not confirmed against the pinned build. The copy
-        # path above does not depend on it.
+        # Key name confirmed against a real SteamOS install: GuiConfigs holds
+        # infoBoxEnabledWelcome=false once the dialog has been dismissed once.
         gui = prof / "GuiConfigs" / "CurrentSettings.ini"
         if not gui.exists():
             try:
