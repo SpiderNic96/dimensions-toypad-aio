@@ -27,6 +27,7 @@ import {
   installTags,
   installLauncher,
   installShortcuts,
+  seedRpcs3Profile,
   setWeb,
   checkRpcs3Release,
   installRpcs3,
@@ -432,6 +433,39 @@ const Content = () => {
                                 }}
                             />
                         </DFL.PanelSectionRow>
+                        {/* P1: isolation is right for a Deck with no RPCS3 of its
+                            own and wrong for one that already runs it well, so it
+                            has to be the user's choice rather than a default they
+                            cannot see. */}
+                        <DFL.PanelSectionRow>
+                            <DFL.ToggleField
+                                label="Use my existing RPCS3 setup"
+                                description="Off: the plugin keeps RPCS3 in its own profile. On: RPCS3 reads and writes your own ~/.config/rpcs3, including the settings profile you already tuned."
+                                checked={setup?.isolateBackendConfig === false}
+                                onChange={async (val: boolean) => {
+                                    await setConfigSetting("isolateBackendConfig", !val);
+                                    await installLauncher().catch(() => { });
+                                    await refresh();
+                                }}
+                            />
+                        </DFL.PanelSectionRow>
+                        {setup?.isolateBackendConfig === false ? null : (
+                            <DFL.PanelSectionRow>
+                                <DFL.ButtonItem
+                                    layout="below"
+                                    onClick={async () => {
+                                        const res = await seedRpcs3Profile().catch((e: any) => ({ ok: false, error: String(e) }));
+                                        toaster.toast({
+                                            title: "RPCS3 profile",
+                                            body: (res && (res.message || res.error)) || "Nothing to do.",
+                                        });
+                                        await refresh();
+                                    }}
+                                >
+                                    Carry my RPCS3 firmware & controls into the plugin profile
+                                </DFL.ButtonItem>
+                            </DFL.PanelSectionRow>
+                        )}
                     </DFL.PanelSection>
                     <DFL.PanelSection title="RPCS3">
                         <DFL.PanelSectionRow>

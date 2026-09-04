@@ -26,6 +26,7 @@ export const installTags = rpc("install_tags");
 export const installLauncher = rpc("install_launcher");
 export const installShortcuts = rpc("install_shortcuts");
 export const setWeb = rpc("set_web");
+export const seedRpcs3Profile = rpc("seed_rpcs3_profile");
 export const checkRpcs3Release = rpc("check_rpcs3_release");
 export const installRpcs3 = rpc("install_rpcs3");
 export const launchEmulatorGui = rpc("launch_emulator_gui");
