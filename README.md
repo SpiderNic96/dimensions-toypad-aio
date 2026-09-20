@@ -87,3 +87,6 @@ To play the PS4 version of LEGO Dimensions via shadPS4 on your Steam Deck or Lin
    - Command line example: `./ps4-pkg-unpacker -x your_game.pkg output_dir/`
 3. **Decrypted EBOOT**: The raw `.pkg` contains an encrypted `eboot.bin`. **shadPS4 cannot run encrypted EBOOTs.** You must replace the extracted `eboot.bin` with the decrypted payload dumped from your PS4's memory.
 4. **Directory Structure**: Ensure your final directory contains the decrypted `eboot.bin` alongside the `sce_sys/` and `sce_module/` directories. Point shadPS4's game directory setting directly to this folder.
+
+#### shadPS4 Cheats / Patches
+- **Note**: This plugin does *not* support toggling shadPS4 cheat files (like 60FPS patches). This is because shadPS4 relies on its Qt GUI to parse and implement cheat memory offsets. You must manage your cheats manually via the shadPS4 desktop GUI. Implementing this in the plugin would require writing a custom patch parser in the Python backend.
