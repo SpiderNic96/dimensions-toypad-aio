@@ -53,10 +53,11 @@ While Decky plugins are designed for Gaming Mode, the background server (which h
 ## Technical Documentation
 For detailed information on how the backends interact, how to build from source, and architecture details, please see [docs/TECHNICAL.md](docs/TECHNICAL.md).
 
-## Credits
-- **MetalNic96**: Original plugin author.
-- **Harrysof**: Phone remote web app implementation.
-- **nevercookfirst**: Developer of the LEGO Dimensions Recompiled Windows port.
+## Credits & References
+- **[MetalNic96](https://github.com/MetalNic96)**: Original plugin author.
+- **[Harrysof](https://github.com/Harrysof)**: Phone remote web app implementation and Recompiled contributions.
+- **[nevercookfirst](https://github.com/nevercookfirst)**: Developer of the LEGO Dimensions Recompiled Windows port.
+- **[Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader)**: The foundational plugin framework for SteamOS.
 - **The Original LD Virtualiser Team**: For pioneering the foundational Toypad emulation protocols.
 - **Decky Lego Dimensions Discord Community**: For testing, feedback, and continued support of the emulation ecosystem.
 
