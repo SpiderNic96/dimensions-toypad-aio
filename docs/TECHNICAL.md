@@ -30,9 +30,10 @@ This document describes how the various components of the Dimensions Toypad plug
 - The Python backend spins up a TCP socket on the default port. The emulators are configured to route Toypad traffic to `127.0.0.1:<PORT>`.
 - The backend parses the raw byte packets (e.g., `get_led()` or `read_tag()`) and responds with the mocked NFC tag data corresponding to the characters the user selected in the UI.
 
-### LEGO Dimensions Recompiled
-- The native recompiled port has deeper hooks. Instead of just simulating a USB protocol over TCP, the Python backend communicates directly with the Recompiled game's memory/IPC hooks if configured.
-- When compiling the Recompiled game from the latest git on the Steam Deck, you must run it in **Gaming Mode** for Decky Loader to inject the React Modal correctly. Running the Recompiled game in Desktop Mode will still work with the Phone App, but the Decky Modal will be unavailable.
+### LEGO Dimensions Recompiled (by nevercookfirst)
+- The Recompiled port is a Windows-native application. To run it on the Steam Deck, it requires a compatibility layer like Proton (added as a Non-Steam Game) or Lutris/Wine.
+- The Python backend detects the Recompiled game and communicates with it (simulating the USB protocol over TCP or via direct hooks if configured).
+- When setting up the Recompiled game from the latest git, you must run it in **Gaming Mode** (via Steam) for Decky Loader to inject the React Modal correctly. Running the game in Desktop Mode will still allow the Phone App to connect, but the Decky Modal will be unavailable.
 
 ## LED State Sync
 1. The emulator sends an LED change packet to the Python backend.

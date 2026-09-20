@@ -36,9 +36,10 @@ While Decky plugins are designed for Gaming Mode, the background server (which h
 - **System Modules**: ShadPS4 requires specific decrypted system modules to communicate with USB devices (like the Toypad). Ensure you have the required `libusb` and `libScePad` equivalents dumped from a PS4 and placed in your shadPS4 `sys_modules` folder.
 - The plugin handles the TCP translation layer automatically.
 
-### Recompiled Backend
-- If you are playing the native Linux Recompiled version of LEGO Dimensions, the plugin detects the backend automatically. 
-- Ensure you launch the Recompiled executable through Steam (Gaming Mode) so the Decky Loader overlay can hook into the rendering pipeline.
+### Recompiled Backend (by nevercookfirst)
+- The Recompiled version of LEGO Dimensions is Windows-native. To run it on the Steam Deck, you must use a compatibility layer like Proton (by adding it as a Non-Steam Game) or configure it through Lutris/Wine.
+- The plugin detects the Recompiled backend automatically.
+- **Important**: You must launch the game through Steam (Gaming Mode) for the Decky Loader UI overlay to successfully hook into the rendering pipeline.
 
 ## Usage
 - **Hotkey**: By default, pressing Volume Up + Volume Down together will open the Toypad modal in-game. Pressing it again will close it. 
