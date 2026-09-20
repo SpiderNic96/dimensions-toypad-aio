@@ -132,8 +132,8 @@ zip -r dimensions-toypad-release.zip . -x "*.git*" "data/favourites.json" "data/
 4. **Sysmodules**: ShadPS4 requires decrypted system modules to communicate with USB devices. Dump `libusb` and `libScePad` from your PS4 and place them into your shadPS4 `user/sys_modules/` folder.
 5. **Patches & Cheats**: Place community patches (like 60FPS or resolution unlocks) into the shadPS4 `patches/` folder. You must open the shadPS4 Qt GUI in Desktop Mode to manually toggle these patches on.
 
-### 4. Harry's Latest Recompiled (Windows Native)
-1. **Building**: Clone Harry's latest Recompiled repository. Follow the repository's CMake build instructions to compile the executable. 
+### 4. NeverCookFirst Latest Recompiled (Windows Native) (Untested)
+1. **Building**: Clone NeverCook latest Recompiled repository. Follow the repository's CMake build instructions to compile the executable. 
 2. **Asset Extraction**: The Recompiled `.exe` requires the original game assets to function. Extract your LEGO Dimensions game data and place it in the exact directory structure requested by the Recompiled build instructions (typically alongside the compiled executable).
 3. **Shortcut Creation**: 
    - Open Steam in Desktop Mode.
