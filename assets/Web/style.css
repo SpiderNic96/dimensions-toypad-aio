@@ -1,0 +1,991 @@
+/* LegoToypad Remote - mobile-first and fully responsive controller UI.
+   Adapts smoothly across all device sizes, tablets, desktop windows, and orientations. */
+
+@font-face {
+  font-family: "LegoUI";
+  src: url("/InterVariable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-ui: "LegoUI", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  --ink: #f4f7fb;
+  --ink-soft: #c8d4df;
+  --ink-dim: rgba(213, 223, 232, 0.58);
+  --line: rgba(255, 255, 255, 0.14);
+  --line-strong: rgba(255, 255, 255, 0.26);
+  --shadow: 0 16px 36px rgba(0, 0, 0, 0.46);
+  --panel-a: rgba(11, 17, 24, 0.82);
+  --panel-b: rgba(25, 34, 44, 0.70);
+  --blue: #49b7ff;
+  --cyan: #60f3df;
+  --green: #4ce07a;
+  --red: #ff5b58;
+  --amber: #f7b84c;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #030609;
+  overflow: hidden;
+  font-family: var(--font-ui);
+  color: var(--ink);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  position: relative;
+  width: 100vw;
+  width: 100dvw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #05080d;
+}
+
+#bgimg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  transition: opacity 0.35s ease;
+}
+
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(2, 5, 9, 0.22), rgba(2, 5, 9, 0.72) 58%, rgba(2, 5, 9, 0.94)),
+    radial-gradient(100% 64% at 50% 18%, rgba(73, 183, 255, 0.20), rgba(73, 183, 255, 0) 60%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.45), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.45));
+}
+
+#stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 100% 90px, 90px 100%;
+  opacity: 0.4;
+}
+
+/* Topbar ----------------------------------------------------------------- */
+#topbar {
+  position: relative;
+  width: 100%;
+  height: clamp(54px, 7.5vh, 70px);
+  flex-shrink: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(12px, 3.5vw, 28px);
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+#topbar::after {
+  content: "";
+  position: absolute;
+  left: clamp(12px, 3.5vw, 28px);
+  right: clamp(12px, 3.5vw, 28px);
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+}
+
+#wordmark {
+  height: clamp(40px, 6.2vh, 56px);
+  max-width: min(60vw, 280px);
+  object-fit: contain;
+  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.75));
+  pointer-events: auto;
+  display: block;
+}
+
+#byHarrysof {
+  height: clamp(22px, 3.6vh, 32px);
+  max-width: min(32vw, 120px);
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.75));
+  opacity: 0.98;
+  pointer-events: auto;
+  display: block;
+}
+
+/* Screens ---------------------------------------------------------------- */
+.screen {
+  position: relative;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  z-index: 10;
+  display: none;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.screen.active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Pad Deck Screen -------------------------------------------------------- */
+.pad-layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: clamp(2px, 0.8vh, 8px) clamp(4px, 1.5vw, 12px) clamp(6px, 1.2vh, 12px);
+  gap: clamp(4px, 0.8vh, 10px);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.pad-deck-card {
+  position: relative;
+  width: min(97vw, calc((100% - 110px) * 350 / 400), 560px);
+  aspect-ratio: 350 / 400;
+  flex-shrink: 0;
+  border-radius: clamp(10px, 2vw, 20px);
+  background:
+    radial-gradient(92% 52% at 50% 24%, rgba(96, 243, 223, 0.15), rgba(96, 243, 223, 0) 68%),
+    linear-gradient(180deg, rgba(18, 27, 36, 0.86), rgba(9, 14, 20, 0.78));
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  overflow: visible;
+}
+
+#pads {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+}
+
+.pad {
+  position: absolute;
+  cursor: pointer;
+  z-index: 3;
+  overflow: visible;
+  touch-action: none;
+  border-radius: clamp(8px, 1.8vw, 14px);
+  background: linear-gradient(180deg, rgba(31, 45, 61, 0.96), rgba(10, 15, 22, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.50), inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  transition: transform 0.12s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.pad::before {
+  content: "";
+  position: absolute;
+  inset: clamp(3px, 0.8vw, 6px);
+  z-index: 2;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 42%);
+  pointer-events: none;
+}
+
+.pad.center-pad,
+.pad[data-slot="1"] {
+  border-radius: 50% !important;
+}
+
+.pad.center-pad::before,
+.pad[data-slot="1"]::before {
+  border-radius: 50% !important;
+}
+
+.pad.center-pad::after,
+.pad[data-slot="1"]::after {
+  border-radius: 50% !important;
+}
+
+.pad.center-pad .padcdot,
+.pad[data-slot="1"] .padcdot {
+  border-radius: 50% !important;
+}
+
+.pad:active {
+  transform: scale(0.96);
+}
+
+.pad::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.20), rgba(255, 255, 255, 0) 34%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.34));
+}
+
+.pad .padcdot {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Toypad LED mirror: a soft halo bleeding past the pad's own edges (like the
+   desktop overlay's glow), plus a tint washed over the pad surface itself.
+   Both are driven from JS via --led-color / --led-intensity, polled from
+   /api/leds - see pollLeds() in app.js. */
+.pad .padled {
+  position: absolute;
+  inset: -22%;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--led-intensity, 0);
+  background: radial-gradient(circle, var(--led-color, transparent) 0%, transparent 72%);
+  filter: blur(3px);
+  transition: opacity 90ms linear;
+  will-change: opacity;
+}
+
+.pad .padledtint {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--led-intensity, 0);
+  background: var(--led-color, transparent);
+  mix-blend-mode: screen;
+  transition: opacity 90ms linear;
+  will-change: opacity;
+}
+
+.pad.center-pad .padled,
+.pad[data-slot="1"] .padled,
+.pad.center-pad .padledtint,
+.pad[data-slot="1"] .padledtint {
+  border-radius: 50% !important;
+}
+
+.pad .padportrait {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  max-width: 80%;
+  max-height: 80%;
+  aspect-ratio: 1 / 1;
+  z-index: 3;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(8, 12, 18, 0.86);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.32), 0 8px 18px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+}
+
+.pad.center-pad .padportrait {
+  max-width: 74%;
+  max-height: 74%;
+}
+
+.pad.selected {
+  z-index: 6;
+  animation: padsel 1.8s ease-in-out infinite;
+}
+
+@keyframes padsel {
+  0%, 100% { box-shadow: 0 14px 26px rgba(0, 0, 0, 0.44), 0 0 0 2px rgba(255, 91, 88, 0.7); }
+  50% { box-shadow: 0 14px 26px rgba(0, 0, 0, 0.44), 0 0 0 2px var(--red), 0 0 24px rgba(255, 91, 88, 0.62); }
+}
+
+.pad.dragging {
+  opacity: 0.45;
+  transform: scale(0.96);
+}
+
+.pad.dropTarget {
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.50), 0 0 0 2px var(--cyan), 0 0 24px rgba(96, 243, 223, 0.60);
+}
+
+/* Pad Controls Area ------------------------------------------------------ */
+.pad-controls-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(5px, 1vh, 10px);
+  width: min(96vw, 560px);
+  flex-shrink: 0;
+}
+
+#actionBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2.5vw, 18px);
+  width: 100%;
+}
+
+.actbtn {
+  min-width: 0;
+  width: clamp(130px, 28vw, 180px);
+  /* Compact height on mobile so deck gets more room */
+  height: clamp(52px, 7vh, 68px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(20, 31, 42, 0.86), rgba(8, 12, 18, 0.92));
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+
+.actbtn img {
+  width: clamp(24px, 3.8vh, 32px);
+  height: clamp(24px, 3.8vh, 32px);
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.46));
+}
+
+.actbtn .alabel {
+  color: var(--ink);
+  font-size: clamp(10px, 1.6vw, 12px);
+  font-weight: 860;
+  letter-spacing: 0.12em;
+  pointer-events: none;
+}
+
+.actbtn:active {
+  transform: translateY(2px) scale(0.97);
+}
+
+.actbtn.tapped {
+  transform: scale(1.04);
+  border-color: var(--cyan);
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.40), 0 0 20px rgba(96, 243, 223, 0.34);
+}
+
+/* Status message under action bar --------------------------------------- */
+.status-message {
+  width: 100%;
+  max-width: 100%;
+  /* Compact on mobile */
+  min-height: clamp(36px, 5vh, 48px);
+  padding: 6px clamp(10px, 3vw, 18px);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(20, 31, 46, 0.90), rgba(9, 14, 22, 0.95));
+  border: 1px solid rgba(73, 183, 255, 0.22);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  color: var(--ink);
+  font-size: clamp(11px, 1.8vw, 13px);
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  letter-spacing: 0.012em;
+  pointer-events: none;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+}
+
+.status-message.success {
+  border-color: rgba(76, 224, 122, 0.55);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 20px rgba(76, 224, 122, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  color: #ebfff3;
+}
+
+.status-message.warn {
+  border-color: rgba(247, 184, 76, 0.55);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 20px rgba(247, 184, 76, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  color: #fff6e5;
+}
+
+.status-message.error {
+  border-color: rgba(255, 91, 88, 0.55);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 20px rgba(255, 91, 88, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  color: #ffeaea;
+}
+
+.status-message.pulse {
+  animation: statuspop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes statuspop {
+  0% { transform: scale(0.96); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Landscape Mode (phone rotated / tablet) -------------------------------- */
+@media (min-aspect-ratio: 1.05/1) and (min-height: 250px) {
+  #topbar {
+    height: clamp(46px, 11vh, 58px);
+    padding: 0 clamp(14px, 3vw, 32px);
+  }
+
+  #wordmark {
+    height: clamp(32px, 8vh, 44px);
+  }
+
+  #byHarrysof {
+    height: clamp(18px, 4.5vh, 26px);
+  }
+
+  .pad-layout-wrapper {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(10px, 2vw, 28px);
+    max-width: 1400px;
+    margin: 0 auto;
+    height: 100%;
+    padding: clamp(4px, 1vh, 10px) clamp(10px, 2vw, 28px);
+    box-sizing: border-box;
+  }
+
+  /*
+    LANDSCAPE: HEIGHT-DRIVEN WIDE PORTAL
+    Deck fills the full available height; width is derived from 520/290 aspect-ratio.
+    Left L-shape wing, Center circle, and Right inverted-L wing are set apart!
+  */
+  .pad-deck-card {
+    height: 100%;
+    max-height: 100%;
+    width: auto;
+    max-width: none;
+    min-width: 0;
+    flex: 0 1 auto;
+    align-self: center;
+    aspect-ratio: 520 / 290;
+    margin: 0;
+  }
+
+  .pad-controls-card {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: clamp(8px, 1.5vh, 14px);
+    width: clamp(150px, 20vw, 240px);
+    max-width: 260px;
+    flex-shrink: 0;
+  }
+
+  /* Narrow sidebar in landscape: stack Clear/Favorite instead of squeezing
+     them side by side. */
+  #actionBar {
+    flex-direction: column;
+    gap: clamp(6px, 1vh, 10px);
+  }
+
+  .actbtn {
+    width: 100%;
+    height: clamp(40px, 9vh, 56px);
+  }
+
+  .status-message {
+    width: 100%;
+    max-width: none;
+    min-height: clamp(38px, 9vh, 50px);
+    font-size: clamp(11px, 2.2vh, 13px);
+    padding: 4px 8px;
+  }
+}
+
+/*
+  Portrait Mode: optimized deck, 1+2+4 pad layout
+  Switches deck aspect-ratio to 350/400 (R = 0.875).
+  Width fills 97vw to eliminate side gaps while safely fitting vertical height.
+*/
+@media (max-aspect-ratio: 1/1) {
+  .pad-deck-card {
+    aspect-ratio: 350 / 400;
+    width: min(
+      97vw,
+      calc((100svh - 175px) * 350 / 400),
+      560px
+    );
+  }
+}
+
+/* Franchise / Roster / Plus Screens -------------------------------------- */
+.screen-header {
+  height: clamp(48px, 8vh, 68px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0 16px;
+  position: relative;
+  z-index: 10;
+}
+
+#franchiseTitle {
+  color: var(--ink);
+  font-size: clamp(15px, 2.5vw, 22px);
+  font-weight: 860;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.68);
+  pointer-events: none;
+}
+
+#worldLogo,
+#plusWorldLogo {
+  height: clamp(38px, 6.5vh, 56px);
+  max-width: min(70vw, 360px);
+  object-fit: contain;
+  filter: drop-shadow(0 3px 9px rgba(0, 0, 0, 0.70));
+  pointer-events: none;
+}
+
+.grid-wrapper {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  overflow: hidden;
+  padding: 0 clamp(12px, 3vw, 32px) clamp(14px, 2vh, 28px);
+  box-sizing: border-box;
+}
+
+#franchiseGrid {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(130px, 20vw, 190px), 1fr));
+  gap: clamp(10px, 1.8vw, 18px);
+  align-content: start;
+  padding-right: 10px;
+}
+
+.fworld {
+  position: relative;
+  min-width: 0;
+  min-height: clamp(84px, 12vh, 116px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 12px 10px;
+  overflow: hidden;
+  border-radius: 14px;
+  cursor: pointer;
+  background: linear-gradient(180deg, rgba(28, 40, 54, 0.94), rgba(11, 17, 24, 0.97));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: transform 0.08s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.fworld::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0) 50%);
+}
+
+.fworld:active {
+  transform: scale(0.97);
+}
+
+.fworld img.logo {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: clamp(44px, 6.5vh, 60px);
+  object-fit: contain;
+  filter: drop-shadow(0 4px 9px rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+}
+
+.fworld.touched {
+  border-color: var(--red);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.36), 0 0 22px rgba(255, 91, 88, 0.45);
+}
+
+#rosterGrid {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(96px, 22vw, 130px), 1fr));
+  gap: clamp(12px, 2vw, 18px) clamp(8px, 1.5vw, 14px);
+  align-content: start;
+  padding-right: 10px;
+}
+
+#rosterGrid .rowsep {
+  grid-column: 1 / -1;
+  height: 1px;
+  margin: 6px 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+}
+
+.fig {
+  min-width: 0;
+  padding: 4px 0 2px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.08s ease;
+}
+
+.fig:active {
+  transform: scale(0.95);
+}
+
+.fig .ring {
+  position: relative;
+  width: clamp(80px, 18vw, 102px);
+  height: clamp(80px, 18vw, 102px);
+  margin: 0 auto;
+}
+
+.fig .ring img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(8, 12, 18, 0.82);
+}
+
+.fig .ring.bordered img {
+  border: 2px solid var(--fig-color, var(--cyan));
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.30), 0 8px 18px rgba(0, 0, 0, 0.45);
+}
+
+.fig .ring.bordered .letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid var(--fig-color, var(--cyan));
+  background: linear-gradient(180deg, rgba(23, 34, 44, 0.94), rgba(7, 11, 16, 0.96));
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.30), 0 8px 18px rgba(0, 0, 0, 0.45);
+  color: var(--fig-color, var(--cyan));
+  font-size: clamp(32px, 5vw, 42px);
+  font-weight: 850;
+}
+
+.fig .ring.touched img {
+  border-color: var(--red);
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.30), 0 0 20px rgba(255, 91, 88, 0.62);
+}
+
+.fig .lbl {
+  margin-top: 6px;
+  padding: 0 2px;
+  min-height: 32px;
+  overflow: hidden;
+  color: var(--ink-soft);
+  font-size: clamp(11px, 1.6vw, 13px);
+  font-weight: 680;
+  line-height: 1.18;
+}
+
+.fig.touched .lbl {
+  color: #fff1d8;
+}
+
+.fig.plus .ring {
+  border: 2px dashed rgba(255, 255, 255, 0.36);
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(20, 31, 42, 0.82), rgba(8, 12, 18, 0.88));
+}
+
+.fig.plus .ring span {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  font-size: clamp(34px, 5vw, 44px);
+  font-weight: 780;
+}
+
+/* Plus picker ------------------------------------------------------------ */
+.plus-wrapper {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+#plusPanel {
+  position: relative;
+  width: 100%;
+  min-height: clamp(200px, 34vh, 300px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 14px;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  padding: 20px;
+}
+
+#plusPanel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.44));
+  pointer-events: none;
+}
+
+#plusGrid {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 2.5vw, 28px);
+}
+
+#plusGrid .fig {
+  flex: none;
+  /* Fixed width (independent of label length) so every build in the
+     picker wraps its name the same way instead of a long name (e.g.
+     "Ancient Psychic Tandem War Elephant") stretching its tile wider
+     than its neighbors and making the row look uneven. */
+  width: clamp(96px, 20vw, 130px);
+}
+
+#plusGrid .fig .ring {
+  width: clamp(78px, 16vw, 98px);
+  height: clamp(78px, 16vw, 98px);
+}
+
+/* Navigation button ------------------------------------------------------ */
+#backBtn {
+  position: absolute;
+  left: clamp(14px, 3vw, 28px);
+  top: clamp(10px, 1.8vh, 18px);
+  width: clamp(38px, 5.5vh, 46px);
+  height: clamp(38px, 5.5vh, 46px);
+  z-index: 55;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: linear-gradient(180deg, rgba(20, 31, 42, 0.94), rgba(8, 12, 18, 0.96));
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.45);
+  color: var(--ink);
+  font-size: clamp(24px, 3.5vh, 30px);
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.08s ease;
+}
+
+#backBtn:active {
+  transform: scale(0.92);
+}
+
+#backBtn.visible {
+  display: flex;
+}
+
+/* Floating pad caption --------------------------------------------------- */
+#floatName {
+  position: fixed;
+  z-index: 40;
+  padding: 3px 8px;
+  color: rgba(224, 236, 248, 0.85);
+  font-size: 11px;
+  font-weight: 720;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.95);
+  background: rgba(10, 15, 22, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  pointer-events: none;
+}
+
+#floatName.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dragGhost {
+  position: fixed;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(8, 12, 18, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.60), 0 0 18px rgba(73, 183, 255, 0.5);
+  z-index: 70;
+  display: none;
+  pointer-events: none;
+}
+
+.dragGhost.active {
+  display: block;
+}
+
+/* Scrollbars ------------------------------------------------------------- */
+.scrollbar {
+  position: absolute;
+  right: 4px;
+  top: 8px;
+  bottom: 12px;
+  width: 4px;
+  z-index: 6;
+  display: none;
+  pointer-events: none;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.scrollbar img {
+  position: absolute;
+  left: 0;
+  width: 4px;
+  border-radius: 2px;
+  filter: none;
+}
+
+.scrollbar.visible {
+  display: block;
+}
+
+/* Loading splash ---------------------------------------------------------- */
+#loading {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background:
+    radial-gradient(90% 60% at 50% 40%, rgba(73, 183, 255, 0.14), rgba(73, 183, 255, 0) 62%),
+    linear-gradient(180deg, #0b1320, #04070c);
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+#loading.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#loadingLogo {
+  height: clamp(80px, 14vh, 120px);
+  max-width: min(80vw, 340px);
+  object-fit: contain;
+  filter: drop-shadow(0 10px 26px rgba(73, 183, 255, 0.34));
+  animation: loadpulse 1.7s ease-in-out infinite;
+}
+
+@keyframes loadpulse {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+#loadBar {
+  position: relative;
+  width: clamp(140px, 30vw, 180px);
+  height: 3px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.10);
+}
+
+#loadBar::after {
+  content: "";
+  position: absolute;
+  left: -40%;
+  top: 0;
+  bottom: 0;
+  width: 40%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--blue), transparent);
+  animation: loadslide 1.1s ease-in-out infinite;
+}
+
+@keyframes loadslide {
+  from { left: -40%; }
+  to { left: 100%; }
+}
+
+#loadingText {
+  max-width: min(85vw, 360px);
+  color: var(--ink-soft);
+  font-size: clamp(12px, 2vw, 14px);
+  font-weight: 680;
+  text-align: center;
+  white-space: pre-line;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+

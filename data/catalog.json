@@ -1,0 +1,5135 @@
+{
+ "franchises": [
+  {
+   "name": "Adventure Time",
+   "logo": "All Bin Files/Adventure Time/Logo/Adventure_Time.png",
+   "characters": [
+    {
+     "stableId": "WORLD_ADVENTURE_TIME_CHAR_FINN_THE_HUMAN_BIN",
+     "name": "Finn",
+     "build": 0,
+     "ringColor": "#5D9AF5",
+     "abilities": [
+      2,
+      10,
+      14,
+      47,
+      48,
+      55,
+      66,
+      81,
+      84,
+      98
+     ],
+     "bin": "All Bin Files/Adventure Time/Characters/Finn the Human.bin",
+     "portrait": "All Bin Files/Adventure Time/Characters/Finn the Human.png",
+     "atlas": 0
+    },
+    {
+     "stableId": "WORLD_ADVENTURE_TIME_CHAR_JAKE_THE_DOG_BIN",
+     "name": "Jake",
+     "build": 0,
+     "ringColor": "#F5EB5D",
+     "abilities": [
+      6,
+      18,
+      20,
+      21,
+      33,
+      38,
+      44,
+      57,
+      66,
+      68,
+      71,
+      72,
+      84,
+      89
+     ],
+     "bin": "All Bin Files/Adventure Time/Characters/Jake the Dog.bin",
+     "portrait": "All Bin Files/Adventure Time/Characters/Jake the Dog.png",
+     "atlas": 1
+    },
+    {
+     "stableId": "WORLD_ADVENTURE_TIME_CHAR_LUMPY_SPACE_PRINCESS_BIN",
+     "name": "Lumpy Space Princess",
+     "build": 0,
+     "ringColor": "#B6F55D",
+     "abilities": [
+      8,
+      41,
+      57,
+      63,
+      71,
+      84
+     ],
+     "bin": "All Bin Files/Adventure Time/Characters/Lumpy Space Princess.bin",
+     "portrait": "All Bin Files/Adventure Time/Characters/Lumpy Space Princess.png",
+     "atlas": 2
+    },
+    {
+     "stableId": "WORLD_ADVENTURE_TIME_CHAR_MARCELINE_THE_VAMPIRE_QUEEN_BIN",
+     "name": "Marceline",
+     "build": 0,
+     "ringColor": "#F5E65D",
+     "abilities": [
+      2,
+      14,
+      17,
+      26,
+      42,
+      48,
+      51,
+      57,
+      71,
+      72,
+      76,
+      89,
+      96
+     ],
+     "bin": "All Bin Files/Adventure Time/Characters/Marceline the Vampire Queen.bin",
+     "portrait": "All Bin Files/Adventure Time/Characters/Marceline the Vampire Queen.png",
+     "atlas": 3
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Ancient Psychic Tandem War Elephant",
+     "builds": [
+      {
+       "stableId": "WORLD_ADVENTURE_TIME_VEH_ANCIENT_PSYCHIC_TANDEM_WAR_ELEPHANT_1_BIN",
+       "name": "Ancient Psychic Tandem War Elephant",
+       "build": 1,
+       "ringColor": "#5DA1F5",
+       "abilities": [
+        47
+       ],
+       "bin": "All Bin Files/Adventure Time/Vehicules/Finn the Human - 1. Ancient Psychic Tandem War Elephant.bin",
+       "portrait": "All Bin Files/Adventure Time/Vehicules/Finn the Human - 1. Ancient Psychic Tandem War Elephant.png",
+       "atlas": 4
+      },
+      {
+       "stableId": "WORLD_ADVENTURE_TIME_VEH_COSMIC_SQUID_2_BIN",
+       "name": "Cosmic Squid",
+       "build": 2,
+       "ringColor": "#83F55D",
+       "abilities": [
+        9,
+        25,
+        26,
+        69,
+        97
+       ],
+       "bin": "All Bin Files/Adventure Time/Vehicules/Finn the Human - 2. Cosmic Squid.bin",
+       "portrait": "All Bin Files/Adventure Time/Vehicules/Finn the Human - 2. Cosmic Squid.png",
+       "atlas": 5
+      },
+      {
+       "stableId": "WORLD_ADVENTURE_TIME_VEH_PHYCHIC_SUBMARINE_3_BIN",
+       "name": "Psychic Submarine",
+       "build": 3,
+       "ringColor": "#5DD9F5",
+       "abilities": [
+        18,
+        21,
+        47
+       ],
+       "bin": "All Bin Files/Adventure Time/Vehicules/Finn the Human - 3. Phychic Submarine.bin",
+       "portrait": "All Bin Files/Adventure Time/Vehicules/Finn the Human - 3. Phychic Submarine.png",
+       "atlas": 6
+      }
+     ]
+    },
+    {
+     "baseName": "Jakemobile",
+     "builds": [
+      {
+       "stableId": "WORLD_ADVENTURE_TIME_VEH_JAKEMOBILE_1_BIN",
+       "name": "Jakemobile",
+       "build": 1,
+       "ringColor": "#5DF597",
+       "abilities": [
+        1,
+        96
+       ],
+       "bin": "All Bin Files/Adventure Time/Vehicules/Finn the Human - 1. Jakemobile.bin",
+       "portrait": "All Bin Files/Adventure Time/Vehicules/Finn the Human - 1. Jakemobile.png",
+       "atlas": 7
+      },
+      {
+       "stableId": "WORLD_ADVENTURE_TIME_VEH_SNAIL_DUDE_JAKE_2_BIN",
+       "name": "Snail Dude Jake",
+       "build": 2,
+       "ringColor": "#5DF5E3",
+       "abilities": [
+        37,
+        72,
+        78,
+        79
+       ],
+       "bin": "All Bin Files/Adventure Time/Vehicules/Finn the Human - 2. Snail Dude Jake.bin",
+       "portrait": "All Bin Files/Adventure Time/Vehicules/Finn the Human - 2. Snail Dude Jake.png",
+       "atlas": 8
+      },
+      {
+       "stableId": "WORLD_ADVENTURE_TIME_VEH_HOVER_JAKE_3_BIN",
+       "name": "Hover Jake",
+       "build": 3,
+       "ringColor": "#5DDCF5",
+       "abilities": [
+        37,
+        97
+       ],
+       "bin": "All Bin Files/Adventure Time/Vehicules/Finn the Human - 3. Hover Jake.bin",
+       "portrait": "All Bin Files/Adventure Time/Vehicules/Finn the Human - 3. Hover Jake.png",
+       "atlas": 9
+      }
+     ]
+    },
+    {
+     "baseName": "BMO",
+     "builds": [
+      {
+       "stableId": "WORLD_ADVENTURE_TIME_VEH_BMO_1_BIN",
+       "name": "BMO",
+       "build": 1,
+       "ringColor": "#5DF56A",
+       "abilities": [
+        7
+       ],
+       "bin": "All Bin Files/Adventure Time/Vehicules/Jake the Dog - 1. BMO.bin",
+       "portrait": "All Bin Files/Adventure Time/Vehicules/Jake the Dog - 1. BMO.png",
+       "atlas": 10
+      },
+      {
+       "stableId": "WORLD_ADVENTURE_TIME_VEH_DOGMO_2_BIN",
+       "name": "DOGMO",
+       "build": 2,
+       "ringColor": "#5DF5A4",
+       "abilities": [
+        7,
+        17
+       ],
+       "bin": "All Bin Files/Adventure Time/Vehicules/Jake the Dog - 2. Dogmo.bin",
+       "portrait": "All Bin Files/Adventure Time/Vehicules/Jake the Dog - 2. Dogmo.png",
+       "atlas": 11
+      },
+      {
+       "stableId": "WORLD_ADVENTURE_TIME_VEH_SNAKEMO_3_BIN",
+       "name": "SNAKEMO",
+       "build": 3,
+       "ringColor": "#5DE1F5",
+       "abilities": [
+        7,
+        22
+       ],
+       "bin": "All Bin Files/Adventure Time/Vehicules/Jake the Dog - 3. Snakemo.bin",
+       "portrait": "All Bin Files/Adventure Time/Vehicules/Jake the Dog - 3. Snakemo.png",
+       "atlas": 12
+      }
+     ]
+    },
+    {
+     "baseName": "Lumpy Car",
+     "builds": [
+      {
+       "stableId": "WORLD_ADVENTURE_TIME_VEH_LUMPY_CAR_1_BIN",
+       "name": "Lumpy Car",
+       "build": 1,
+       "ringColor": "#F5C55D",
+       "abilities": [
+        1,
+        74
+       ],
+       "bin": "All Bin Files/Adventure Time/Vehicules/Lumpy Space Princess - 1. Lumpy Car.bin",
+       "portrait": "All Bin Files/Adventure Time/Vehicules/Lumpy Space Princess - 1. Lumpy Car.png",
+       "atlas": 13
+      },
+      {
+       "stableId": "WORLD_ADVENTURE_TIME_VEH_LUMPY_TRUCK_2_BIN",
+       "name": "Lumpy Truck",
+       "build": 2,
+       "ringColor": "#5DF5B6",
+       "abilities": [
+        1,
+        26,
+        47,
+        63
+       ],
+       "bin": "All Bin Files/Adventure Time/Vehicules/Lumpy Space Princess - 2. Lumpy Truck.bin",
+       "portrait": "All Bin Files/Adventure Time/Vehicules/Lumpy Space Princess - 2. Lumpy Truck.png",
+       "atlas": 14
+      },
+      {
+       "stableId": "WORLD_ADVENTURE_TIME_VEH_LUMPY_LAND_WHALE_3_BIN",
+       "name": "Lumpy Land Whale",
+       "build": 3,
+       "ringColor": "#5DF57E",
+       "abilities": [
+        18,
+        21,
+        72
+       ],
+       "bin": "All Bin Files/Adventure Time/Vehicules/Lumpy Space Princess - 3. Lumpy Land Whale.bin",
+       "portrait": "All Bin Files/Adventure Time/Vehicules/Lumpy Space Princess - 3. Lumpy Land Whale.png",
+       "atlas": 15
+      }
+     ]
+    },
+    {
+     "baseName": "Lunatic Amp",
+     "builds": [
+      {
+       "stableId": "WORLD_ADVENTURE_TIME_VEH_LUNATIC_AMP_1_BIN",
+       "name": "Lunatic Amp",
+       "build": 1,
+       "ringColor": "#F5BD5D",
+       "abilities": [
+        17,
+        72,
+        78
+       ],
+       "bin": "All Bin Files/Adventure Time/Vehicules/Marceline the Vampire Queen - 1. Lunatic Amp.bin",
+       "portrait": "All Bin Files/Adventure Time/Vehicules/Marceline the Vampire Queen - 1. Lunatic Amp.png",
+       "atlas": 16
+      },
+      {
+       "stableId": "WORLD_ADVENTURE_TIME_VEH_SHADOW_SCORPION_2_BIN",
+       "name": "Shadow Scorpion",
+       "build": 2,
+       "ringColor": "#5DF597",
+       "abilities": [
+        9,
+        25,
+        26,
+        73
+       ],
+       "bin": "All Bin Files/Adventure Time/Vehicules/Marceline the Vampire Queen - 2. Shadow Scorpion.bin",
+       "portrait": "All Bin Files/Adventure Time/Vehicules/Marceline the Vampire Queen - 2. Shadow Scorpion.png",
+       "atlas": 17
+      },
+      {
+       "stableId": "WORLD_ADVENTURE_TIME_VEH_HEAVY_METAL_MONSTER_3_BIN",
+       "name": "Heavy Metal Monster",
+       "build": 3,
+       "ringColor": "#5DF56A",
+       "abilities": [
+        14,
+        26,
+        37,
+        47,
+        72,
+        79
+       ],
+       "bin": "All Bin Files/Adventure Time/Vehicules/Marceline the Vampire Queen - 3. Heavy Metal Monster.bin",
+       "portrait": "All Bin Files/Adventure Time/Vehicules/Marceline the Vampire Queen - 3. Heavy Metal Monster.png",
+       "atlas": 18
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Back to the Future",
+   "logo": "All Bin Files/Back to the Future/Logo/Back_to_the_future.png",
+   "characters": [
+    {
+     "stableId": "WORLD_BACK_TO_THE_FUTURE_CHAR_DOC_BROWN_BIN",
+     "name": "Doc Brown",
+     "build": 0,
+     "ringColor": "#EBF55D",
+     "abilities": [
+      21,
+      24,
+      39,
+      45,
+      86
+     ],
+     "bin": "All Bin Files/Back to the Future/Characters/Doc Brown.bin",
+     "portrait": "All Bin Files/Back to the Future/Characters/Doc Brown.png",
+     "atlas": 19
+    },
+    {
+     "stableId": "WORLD_BACK_TO_THE_FUTURE_CHAR_MARTY_MCFLY_BIN",
+     "name": "Marty McFly",
+     "build": 0,
+     "ringColor": "#5DF5BB",
+     "abilities": [
+      39,
+      54,
+      72
+     ],
+     "bin": "All Bin Files/Back to the Future/Characters/Marty McFly.bin",
+     "portrait": "All Bin Files/Back to the Future/Characters/Marty McFly.png",
+     "atlas": 20
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Travelling Time Train",
+     "builds": [
+      {
+       "stableId": "WORLD_BACK_TO_THE_FUTURE_VEH_TRAVELLING_TIME_TRAIN_1_BIN",
+       "name": "Travelling Time Train",
+       "build": 1,
+       "ringColor": "#5DF571",
+       "abilities": [],
+       "bin": "All Bin Files/Back to the Future/Vehicules/Doc Brown - 1. Travelling Time Train.bin",
+       "portrait": "All Bin Files/Back to the Future/Vehicules/Doc Brown - 1. Travelling Time Train.png",
+       "atlas": 21
+      },
+      {
+       "stableId": "WORLD_BACK_TO_THE_FUTURE_VEH_FLYIN_TIME_TRAIN_2_BIN",
+       "name": "Flying Time Train",
+       "build": 2,
+       "ringColor": "#F5C25D",
+       "abilities": [
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/Back to the Future/Vehicules/Doc Brown - 2. Flyin Time Train.bin",
+       "portrait": "All Bin Files/Back to the Future/Vehicules/Doc Brown - 2. Flyin Time Train.png",
+       "atlas": 22
+      },
+      {
+       "stableId": "WORLD_BACK_TO_THE_FUTURE_VEH_MISSILE_BLAST_TIME_TRAIN_3_BIN",
+       "name": "Missile Blast Time Train",
+       "build": 3,
+       "ringColor": "#F5805D",
+       "abilities": [
+        9,
+        25,
+        26,
+        69,
+        87
+       ],
+       "bin": "All Bin Files/Back to the Future/Vehicules/Doc Brown - 3. Missile Blast Time Train.bin",
+       "portrait": "All Bin Files/Back to the Future/Vehicules/Doc Brown - 3. Missile Blast Time Train.png",
+       "atlas": 23
+      }
+     ]
+    },
+    {
+     "baseName": "DeLorean Time Machine",
+     "builds": [
+      {
+       "stableId": "WORLD_BACK_TO_THE_FUTURE_VEH_DELOREAN_TIME_MACHINE_1_BIN",
+       "name": "DeLorean Time Machine",
+       "build": 1,
+       "ringColor": "#F5EB5D",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/Back to the Future/Vehicules/Marty McFly - 1. DeLorean Time Machine.bin",
+       "portrait": "All Bin Files/Back to the Future/Vehicules/Marty McFly - 1. DeLorean Time Machine.png",
+       "atlas": 24
+      },
+      {
+       "stableId": "WORLD_BACK_TO_THE_FUTURE_VEH_ELECTRIC_TIME_MACHINE_2_BIN",
+       "name": "Electric Time Machine",
+       "build": 2,
+       "ringColor": "#F5B15D",
+       "abilities": [
+        1,
+        22,
+        87
+       ],
+       "bin": "All Bin Files/Back to the Future/Vehicules/Marty McFly - 2. Electric Time Machine.bin",
+       "portrait": "All Bin Files/Back to the Future/Vehicules/Marty McFly - 2. Electric Time Machine.png",
+       "atlas": 25
+      },
+      {
+       "stableId": "WORLD_BACK_TO_THE_FUTURE_VEH_ULTRA_TIME_MACHINE_3_BIN",
+       "name": "Ultra Time Machine",
+       "build": 3,
+       "ringColor": "#5DB3F5",
+       "abilities": [
+        9,
+        25,
+        26,
+        69,
+        87
+       ],
+       "bin": "All Bin Files/Back to the Future/Vehicules/Marty McFly - 3. Ultra Time Machine.bin",
+       "portrait": "All Bin Files/Back to the Future/Vehicules/Marty McFly - 3. Ultra Time Machine.png",
+       "atlas": 26
+      }
+     ]
+    },
+    {
+     "baseName": "Hoverboard",
+     "builds": [
+      {
+       "stableId": "WORLD_BACK_TO_THE_FUTURE_VEH_HOVERBOARD_1_BIN",
+       "name": "Hoverboard",
+       "build": 1,
+       "ringColor": "#5DF5A4",
+       "abilities": [],
+       "bin": "All Bin Files/Back to the Future/Vehicules/Marty McFly - 1. Hoverboard.bin",
+       "portrait": "All Bin Files/Back to the Future/Vehicules/Marty McFly - 1. Hoverboard.png",
+       "atlas": 27
+      },
+      {
+       "stableId": "WORLD_BACK_TO_THE_FUTURE_VEH_CYCLONE_BOARD_2_BIN",
+       "name": "Cyclone Board",
+       "build": 2,
+       "ringColor": "#5DE3F5",
+       "abilities": [
+        73
+       ],
+       "bin": "All Bin Files/Back to the Future/Vehicules/Marty McFly - 2. Cyclone Board.bin",
+       "portrait": "All Bin Files/Back to the Future/Vehicules/Marty McFly - 2. Cyclone Board.png",
+       "atlas": 28
+      },
+      {
+       "stableId": "WORLD_BACK_TO_THE_FUTURE_VEH_ULTIMATE_HOVERJET_3_BIN",
+       "name": "Ultimate Hoverjet",
+       "build": 3,
+       "ringColor": "#5DA4F5",
+       "abilities": [
+        26,
+        69
+       ],
+       "bin": "All Bin Files/Back to the Future/Vehicules/Marty McFly - 3. Ultimate Hoverjet.bin",
+       "portrait": "All Bin Files/Back to the Future/Vehicules/Marty McFly - 3. Ultimate Hoverjet.png",
+       "atlas": 29
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Beetlejuice",
+   "logo": "All Bin Files/Beetlejuice/Logo/Beetlejuice.png",
+   "characters": [
+    {
+     "stableId": "WORLD_BEETLEJUICE_CHAR_BEETLE_JUICE_BIN",
+     "name": "Betelgeuse",
+     "build": 0,
+     "ringColor": "#95F55D",
+     "abilities": [
+      3,
+      51,
+      56,
+      57,
+      71
+     ],
+     "bin": "All Bin Files/Beetlejuice/Characters/Beetle Juice.bin",
+     "portrait": "All Bin Files/Beetlejuice/Characters/Beetle Juice.png",
+     "atlas": 30
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Saturn's Sandworm",
+     "builds": [
+      {
+       "stableId": "WORLD_BEETLEJUICE_VEH_SATURNS_SANDWORM_1_BIN",
+       "name": "Saturn's Sandworm",
+       "build": 1,
+       "ringColor": "#5DF5F5",
+       "abilities": [
+        72
+       ],
+       "bin": "All Bin Files/Beetlejuice/Vehicules/Beetle Juice - 1. Saturns Sandworm.bin",
+       "portrait": "All Bin Files/Beetlejuice/Vehicules/Beetle Juice - 1. Saturns Sandworm.png",
+       "atlas": 31
+      },
+      {
+       "stableId": "WORLD_BEETLEJUICE_VEH_SPOOKY_SPIDER_2_BIN",
+       "name": "Spooky Spider",
+       "build": 2,
+       "ringColor": "#92F55D",
+       "abilities": [
+        78
+       ],
+       "bin": "All Bin Files/Beetlejuice/Vehicules/Beetle Juice - 2. Spooky Spider.bin",
+       "portrait": "All Bin Files/Beetlejuice/Vehicules/Beetle Juice - 2. Spooky Spider.png",
+       "atlas": 32
+      },
+      {
+       "stableId": "WORLD_BEETLEJUICE_VEH_HAUNTED_VACUUM_3_BIN",
+       "name": "Haunted Vacuum",
+       "build": 3,
+       "ringColor": "#5DE1F5",
+       "abilities": [],
+       "bin": "All Bin Files/Beetlejuice/Vehicules/Beetle Juice - 3. Haunted Vacuum.bin",
+       "portrait": "All Bin Files/Beetlejuice/Vehicules/Beetle Juice - 3. Haunted Vacuum.png",
+       "atlas": 33
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DC Comics",
+   "logo": "All Bin Files/DC Comics/Logo/DC_Comics.png",
+   "characters": [
+    {
+     "stableId": "WORLD_DC_COMICS_CHAR_AQUAMAN_BIN",
+     "name": "Aquaman",
+     "build": 0,
+     "ringColor": "#5DF5DC",
+     "abilities": [
+      5,
+      18,
+      36,
+      40,
+      97
+     ],
+     "bin": "All Bin Files/DC Comics/Characters/Aquaman.bin",
+     "portrait": "All Bin Files/DC Comics/Characters/Aquaman.png",
+     "atlas": 34
+    },
+    {
+     "stableId": "WORLD_DC_COMICS_CHAR_BANE_BIN",
+     "name": "Bane",
+     "build": 0,
+     "ringColor": "#80F55D",
+     "abilities": [
+      6,
+      41,
+      69,
+      79
+     ],
+     "bin": "All Bin Files/DC Comics/Characters/Bane.bin",
+     "portrait": "All Bin Files/DC Comics/Characters/Bane.png",
+     "atlas": 35
+    },
+    {
+     "stableId": "WORLD_DC_COMICS_CHAR_BATMAN_BIN",
+     "name": "Batman",
+     "build": 0,
+     "ringColor": "#EDF55D",
+     "abilities": [
+      8,
+      33,
+      76
+     ],
+     "bin": "All Bin Files/DC Comics/Characters/Batman.bin",
+     "portrait": "All Bin Files/DC Comics/Characters/Batman.png",
+     "atlas": 36
+    },
+    {
+     "stableId": "WORLD_DC_COMICS_CHAR_CYBORG_BIN",
+     "name": "Cyborg",
+     "build": 0,
+     "ringColor": "#F5DC5D",
+     "abilities": [
+      6,
+      10,
+      18,
+      47,
+      55,
+      69,
+      79,
+      84,
+      86,
+      100
+     ],
+     "bin": "All Bin Files/DC Comics/Characters/Cyborg.bin",
+     "portrait": "All Bin Files/DC Comics/Characters/Cyborg.png",
+     "atlas": 37
+    },
+    {
+     "stableId": "WORLD_DC_COMICS_CHAR_GREEN_ARROW_BIN",
+     "name": "Green Arrow",
+     "build": 0,
+     "ringColor": "#F5F25D",
+     "abilities": [
+      2,
+      33,
+      61,
+      84
+     ],
+     "bin": "All Bin Files/DC Comics/Characters/Green Arrow.bin",
+     "portrait": "All Bin Files/DC Comics/Characters/Green Arrow.png",
+     "atlas": 38
+    },
+    {
+     "stableId": "WORLD_DC_COMICS_CHAR_HARLEY_QUINN_BIN",
+     "name": "Harley Quinn",
+     "build": 0,
+     "ringColor": "#5DF565",
+     "abilities": [
+      2,
+      33,
+      79,
+      84
+     ],
+     "bin": "All Bin Files/DC Comics/Characters/Harley Quinn.bin",
+     "portrait": "All Bin Files/DC Comics/Characters/Harley Quinn.png",
+     "atlas": 39
+    },
+    {
+     "stableId": "WORLD_DC_COMICS_CHAR_SUPERGIRL_BIN",
+     "name": "Supergirl",
+     "build": 0,
+     "ringColor": "#F5D45D",
+     "abilities": [
+      18,
+      26,
+      27,
+      46,
+      47,
+      49,
+      55,
+      79,
+      100
+     ],
+     "bin": "All Bin Files/DC Comics/Characters/Supergirl.bin",
+     "portrait": "All Bin Files/DC Comics/Characters/Supergirl.png",
+     "atlas": 40
+    },
+    {
+     "stableId": "WORLD_DC_COMICS_CHAR_SUPERMAN_BIN",
+     "name": "Superman",
+     "build": 0,
+     "ringColor": "#F5B65D",
+     "abilities": [
+      18,
+      26,
+      27,
+      46,
+      47,
+      55,
+      79,
+      100
+     ],
+     "bin": "All Bin Files/DC Comics/Characters/Superman.bin",
+     "portrait": "All Bin Files/DC Comics/Characters/Superman.png",
+     "atlas": 41
+    },
+    {
+     "stableId": "WORLD_DC_COMICS_CHAR_THE_JOKER_BIN",
+     "name": "The Joker",
+     "build": 0,
+     "ringColor": "#5DF5B3",
+     "abilities": [
+      22,
+      33,
+      41,
+      84
+     ],
+     "bin": "All Bin Files/DC Comics/Characters/The Joker.bin",
+     "portrait": "All Bin Files/DC Comics/Characters/The Joker.png",
+     "atlas": 42
+    },
+    {
+     "stableId": "WORLD_DC_COMICS_CHAR_WONDER_WOMAN_BIN",
+     "name": "Wonder Woman",
+     "build": 0,
+     "ringColor": "#F5D45D",
+     "abilities": [
+      2,
+      8,
+      18,
+      26,
+      33,
+      46,
+      48,
+      56
+     ],
+     "bin": "All Bin Files/DC Comics/Characters/Wonder Woman.bin",
+     "portrait": "All Bin Files/DC Comics/Characters/Wonder Woman.png",
+     "atlas": 43
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Aqua Watercraft",
+     "builds": [
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_AQUA_WATERCRAFT_1_BIN",
+       "name": "Aqua Watercraft",
+       "build": 1,
+       "ringColor": "#F5F55D",
+       "abilities": [
+        18
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Aquaman - 1. Aqua Watercraft.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Aquaman - 1. Aqua Watercraft.png",
+       "atlas": 44
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_SEVEN_SEAS_SPEEDER_2_BIN",
+       "name": "Seven Seas Speeder",
+       "build": 2,
+       "ringColor": "#5DF58B",
+       "abilities": [
+        18,
+        73,
+        74
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Aquaman - 2. Seven Seas Speeder.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Aquaman - 2. Seven Seas Speeder.png",
+       "atlas": 45
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_TRIDENT_OF_FIRE_3_BIN",
+       "name": "Trident of Fire",
+       "build": 3,
+       "ringColor": "#90F55D",
+       "abilities": [
+        18,
+        69,
+        73
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Aquaman - 3. Trident of Fire.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Aquaman - 3. Trident of Fire.png",
+       "atlas": 46
+      }
+     ]
+    },
+    {
+     "baseName": "Drill Driver",
+     "builds": [
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_BANE_S_DRILL_DIVER_1_BIN",
+       "name": "Drill Driver",
+       "build": 1,
+       "ringColor": "#F5D15D",
+       "abilities": [
+        1,
+        17,
+        20
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Bane - 1. Bane's Drill Diver.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Bane - 1. Bane's Drill Diver.png",
+       "atlas": 47
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_BANE_DIG_N_DRILL_2_BIN",
+       "name": "Bane Dig 'n Drill",
+       "build": 2,
+       "ringColor": "#5DCFF5",
+       "abilities": [
+        17,
+        20
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Bane - 2. Bane Dig 'n' Drill.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Bane - 2. Bane Dig 'n' Drill.png",
+       "atlas": 48
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_BANE_DRILL_N_BLAST_3_BIN",
+       "name": "Bane Drill 'n Blast",
+       "build": 3,
+       "ringColor": "#F59F5D",
+       "abilities": [
+        17,
+        20,
+        69,
+        73
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Bane - 3. Bane Drill 'n' Blast.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Bane - 3. Bane Drill 'n' Blast.png",
+       "atlas": 49
+      }
+     ]
+    },
+    {
+     "baseName": "Batmobile",
+     "builds": [
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_BATMOBILE_1_BIN",
+       "name": "Batmobile",
+       "build": 1,
+       "ringColor": "#F5ED5D",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Batman - 1. Batmobile.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Batman - 1. Batmobile.png",
+       "atlas": 50
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_THE_BATBLASTER_2_BIN",
+       "name": "The Batblaster",
+       "build": 2,
+       "ringColor": "#F5805D",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Batman - 2. The Batblaster.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Batman - 2. The Batblaster.png",
+       "atlas": 51
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_SONIC_BATRAY_3_BIN",
+       "name": "Sonic Batray",
+       "build": 3,
+       "ringColor": "#F5EB5D",
+       "abilities": [
+        1,
+        72,
+        73
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Batman - 3. Sonic Batray.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Batman - 3. Sonic Batray.png",
+       "atlas": 52
+      }
+     ]
+    },
+    {
+     "baseName": "Cyber-Guard",
+     "builds": [
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_CYBER_GUARD_1_BIN",
+       "name": "Cyber-Guard",
+       "build": 1,
+       "ringColor": "#F59C5D",
+       "abilities": [
+        79
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Cyborg - 1. Cyber-Guard.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Cyborg - 1. Cyber-Guard.png",
+       "atlas": 53
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_CYBER_WRECKER_2_BIN",
+       "name": "Cyber-Wrecker",
+       "build": 2,
+       "ringColor": "#5DC7F5",
+       "abilities": [
+        17,
+        69,
+        79
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Cyborg - 2. Cyber-Wrecker.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Cyborg - 2. Cyber-Wrecker.png",
+       "atlas": 54
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_LASER_ROBOT_WALKER_3_BIN",
+       "name": "Laser Robot Walker",
+       "build": 3,
+       "ringColor": "#5DF5AB",
+       "abilities": [
+        47
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Cyborg - 3. Laser Robot Walker.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Cyborg - 3. Laser Robot Walker.png",
+       "atlas": 55
+      }
+     ]
+    },
+    {
+     "baseName": "Quinn-mobile",
+     "builds": [
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_QUINN_MOBILE_1_BIN",
+       "name": "Quinn-mobile",
+       "build": 1,
+       "ringColor": "#9CF55D",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Harley Quinn - 1. Quinn Mobile.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Harley Quinn - 1. Quinn Mobile.png",
+       "atlas": 56
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_QUINN_ULTRA_RACER_2_BIN",
+       "name": "Quinn Ultra Racer",
+       "build": 2,
+       "ringColor": "#7EF55D",
+       "abilities": [
+        1,
+        74
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Harley Quinn - 2. Quinn Ultra Racer.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Harley Quinn - 2. Quinn Ultra Racer.png",
+       "atlas": 57
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_MISSILE_LAUNCHER_3_BIN",
+       "name": "Missile Launcher",
+       "build": 3,
+       "ringColor": "#5DBDF5",
+       "abilities": [
+        1,
+        69
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Harley Quinn - 3. Missile Launcher.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Harley Quinn - 3. Missile Launcher.png",
+       "atlas": 58
+      }
+     ]
+    },
+    {
+     "baseName": "Hover Pod",
+     "builds": [
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_SUPERMAN_S_HOVER_POD_1_BIN",
+       "name": "Hover Pod",
+       "build": 1,
+       "ringColor": "#5DF5E8",
+       "abilities": [
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Superman - 1. Superman's Hover Pod.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Superman - 1. Superman's Hover Pod.png",
+       "atlas": 59
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_KTYPTON_STRIKER_2_BIN",
+       "name": "Krypton Striker",
+       "build": 2,
+       "ringColor": "#F59A5D",
+       "abilities": [
+        9,
+        25,
+        26,
+        73
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Superman - 2. Ktypton Striker.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Superman - 2. Ktypton Striker.png",
+       "atlas": 60
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_SUPER_STEALTH_POD_3_BIN",
+       "name": "Super Stealth Pod",
+       "build": 3,
+       "ringColor": "#5DF560",
+       "abilities": [
+        9,
+        25,
+        26,
+        69
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Superman - 3. Super Stealth Pod.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Superman - 3. Super Stealth Pod.png",
+       "atlas": 61
+      }
+     ]
+    },
+    {
+     "baseName": "The Joker's Chopper",
+     "builds": [
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_THE_JOKER_S_CHOPPER_1_BIN",
+       "name": "The Joker's Chopper",
+       "build": 1,
+       "ringColor": "#DCF55D",
+       "abilities": [
+        9,
+        25,
+        26,
+        73
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/The Joker - 1. The Joker's Chopper.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/The Joker - 1. The Joker's Chopper.png",
+       "atlas": 62
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_MISCHIEVOUS_MISSILE_BLASTER_2_BIN",
+       "name": "Mischievous Missile Blaster",
+       "build": 2,
+       "ringColor": "#F5F25D",
+       "abilities": [
+        9,
+        25,
+        26,
+        73
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/The Joker - 2. Mischievous Missile Blaster.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/The Joker - 2. Mischievous Missile Blaster.png",
+       "atlas": 63
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_THE_JOKER_S_LOCK_N_LASER_JET_3_BIN",
+       "name": "The Joker's Lock 'n' Laser Jet",
+       "build": 3,
+       "ringColor": "#D1F55D",
+       "abilities": [
+        9,
+        25,
+        26,
+        47,
+        73
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/The Joker - 3. The Joker's Lock 'n' Laser Jet.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/The Joker - 3. The Joker's Lock 'n' Laser Jet.png",
+       "atlas": 64
+      }
+     ]
+    },
+    {
+     "baseName": "Invisible Jet",
+     "builds": [
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_WONDERWOMAN_S_INVISIBLE_JET_1_BIN",
+       "name": "Invisible Jet",
+       "build": 1,
+       "ringColor": "#5DF5F0",
+       "abilities": [
+        25,
+        26,
+        76
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Wonder Woman - 1. Wonderwoman's Invisible Jet.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Wonder Woman - 1. Wonderwoman's Invisible Jet.png",
+       "atlas": 65
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_STEALTH_LASER_SHOOTER_2_BIN",
+       "name": "Stealth Laser Shooter",
+       "build": 2,
+       "ringColor": "#F5F05D",
+       "abilities": [],
+       "bin": "All Bin Files/DC Comics/Vehicules/Wonder Woman - 2. Stealth Laser Shooter.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Wonder Woman - 2. Stealth Laser Shooter.png",
+       "atlas": 66
+      },
+      {
+       "stableId": "WORLD_DC_COMICS_VEH_TORPEDO_BOMBER_3_BIN",
+       "name": "Torpedo Bomber",
+       "build": 3,
+       "ringColor": "#92F55D",
+       "abilities": [
+        9,
+        26,
+        69
+       ],
+       "bin": "All Bin Files/DC Comics/Vehicules/Wonder Woman - 3. Torpedo Bomber.bin",
+       "portrait": "All Bin Files/DC Comics/Vehicules/Wonder Woman - 3. Torpedo Bomber.png",
+       "atlas": 67
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Doctor Who",
+   "logo": "All Bin Files/Doctor Who/Logo/Doctor_Who.png",
+   "characters": [
+    {
+     "stableId": "WORLD_DOCTOR_WHO_CHAR_CYBERMAN_BIN",
+     "name": "Cyberman",
+     "build": 0,
+     "ringColor": "#F5B65D",
+     "abilities": [
+      18,
+      21,
+      39,
+      56,
+      69,
+      86,
+      100
+     ],
+     "bin": "All Bin Files/Doctor Who/Characters/Cyberman.bin",
+     "portrait": "All Bin Files/Doctor Who/Characters/Cyberman.png",
+     "atlas": 68
+    },
+    {
+     "stableId": "WORLD_DOCTOR_WHO_CHAR_TWELFTH_DOCTOR_BIN",
+     "name": "The Doctor",
+     "build": 0,
+     "ringColor": "#5DF56A",
+     "abilities": [
+      19,
+      24,
+      39,
+      45,
+      72,
+      82,
+      86
+     ],
+     "bin": "All Bin Files/Doctor Who/Characters/Twelfth Doctor.bin",
+     "portrait": "All Bin Files/Doctor Who/Characters/Twelfth Doctor.png",
+     "atlas": 69
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Dalek",
+     "builds": [
+      {
+       "stableId": "WORLD_DOCTOR_WHO_VEH_DALEK_1_BIN",
+       "name": "Dalek",
+       "build": 1,
+       "ringColor": "#F57E5D",
+       "abilities": [
+        84
+       ],
+       "bin": "All Bin Files/Doctor Who/Vehicules/Cyberman - 1. Dalek.bin",
+       "portrait": "All Bin Files/Doctor Who/Vehicules/Cyberman - 1. Dalek.png",
+       "atlas": 70
+      },
+      {
+       "stableId": "WORLD_DOCTOR_WHO_VEH_FIRE_N_RIDE_DALEK_2_BIN",
+       "name": "Fire 'n' Ride Dalek",
+       "build": 2,
+       "ringColor": "#5DF5CC",
+       "abilities": [
+        47,
+        91
+       ],
+       "bin": "All Bin Files/Doctor Who/Vehicules/Cyberman - 2. Fire 'n' Ride Dalek.bin",
+       "portrait": "All Bin Files/Doctor Who/Vehicules/Cyberman - 2. Fire 'n' Ride Dalek.png",
+       "atlas": 71
+      },
+      {
+       "stableId": "WORLD_DOCTOR_WHO_VEH_SILVER_SHOOTER_DALEK_3_BIN",
+       "name": "Silver Shooter Dalek",
+       "build": 3,
+       "ringColor": "#A6F55D",
+       "abilities": [
+        9,
+        25,
+        26,
+        69
+       ],
+       "bin": "All Bin Files/Doctor Who/Vehicules/Cyberman - 3. Silver Shooter Dalek.bin",
+       "portrait": "All Bin Files/Doctor Who/Vehicules/Cyberman - 3. Silver Shooter Dalek.png",
+       "atlas": 72
+      }
+     ]
+    },
+    {
+     "baseName": "K-9",
+     "builds": [
+      {
+       "stableId": "WORLD_DOCTOR_WHO_VEH_K_9_1_BIN",
+       "name": "K-9",
+       "build": 1,
+       "ringColor": "#D4F55D",
+       "abilities": [
+        69
+       ],
+       "bin": "All Bin Files/Doctor Who/Vehicules/Twelfth Doctor - 1. K-9.bin",
+       "portrait": "All Bin Files/Doctor Who/Vehicules/Twelfth Doctor - 1. K-9.png",
+       "atlas": 73
+      },
+      {
+       "stableId": "WORLD_DOCTOR_WHO_VEH_K_9_RUFF_ROVER_2_BIN",
+       "name": "K-9 Ruff Rover",
+       "build": 2,
+       "ringColor": "#5DF55D",
+       "abilities": [
+        72
+       ],
+       "bin": "All Bin Files/Doctor Who/Vehicules/Twelfth Doctor - 2. K-9 Ruff Rover.bin",
+       "portrait": "All Bin Files/Doctor Who/Vehicules/Twelfth Doctor - 2. K-9 Ruff Rover.png",
+       "atlas": 74
+      },
+      {
+       "stableId": "WORLD_DOCTOR_WHO_VEH_K_9_LASER_CUTTER_3_BIN",
+       "name": "K-9 Laser Cutter",
+       "build": 3,
+       "ringColor": "#5DB8F5",
+       "abilities": [
+        47,
+        55
+       ],
+       "bin": "All Bin Files/Doctor Who/Vehicules/Twelfth Doctor - 3. K-9 Laser Cutter.bin",
+       "portrait": "All Bin Files/Doctor Who/Vehicules/Twelfth Doctor - 3. K-9 Laser Cutter.png",
+       "atlas": 75
+      }
+     ]
+    },
+    {
+     "baseName": "TARDIS",
+     "builds": [
+      {
+       "stableId": "WORLD_DOCTOR_WHO_VEH_TARDIS_1_BIN",
+       "name": "TARDIS",
+       "build": 1,
+       "ringColor": "#D9F55D",
+       "abilities": [
+        9,
+        25,
+        26,
+        76,
+        83
+       ],
+       "bin": "All Bin Files/Doctor Who/Vehicules/Twelfth Doctor - 1. TARDIS.bin",
+       "portrait": "All Bin Files/Doctor Who/Vehicules/Twelfth Doctor - 1. TARDIS.png",
+       "atlas": 76
+      },
+      {
+       "stableId": "WORLD_DOCTOR_WHO_VEH_LASER_PULSE_TARDIS_2_BIN",
+       "name": "Laser-Pulse TARDIS",
+       "build": 2,
+       "ringColor": "#F5795D",
+       "abilities": [
+        9,
+        25,
+        26,
+        47
+       ],
+       "bin": "All Bin Files/Doctor Who/Vehicules/Twelfth Doctor - 2. Laser-Pulse TARDIS.bin",
+       "portrait": "All Bin Files/Doctor Who/Vehicules/Twelfth Doctor - 2. Laser-Pulse TARDIS.png",
+       "atlas": 77
+      },
+      {
+       "stableId": "WORLD_DOCTOR_WHO_VEH_ENERGY_BURST_TARDIS_3_BIN",
+       "name": "Energy-Burst TARDIS",
+       "build": 3,
+       "ringColor": "#E3F55D",
+       "abilities": [
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/Doctor Who/Vehicules/Twelfth Doctor - 3. Energy-Burst TARDIS.bin",
+       "portrait": "All Bin Files/Doctor Who/Vehicules/Twelfth Doctor - 3. Energy-Burst TARDIS.png",
+       "atlas": 78
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "E.T. the Extra-Terrestrial",
+   "logo": "All Bin Files/E.T. the Extra-Terrestrial/Logo/E.T..png",
+   "characters": [
+    {
+     "stableId": "WORLD_E_T_THE_EXTRA_TERRESTRIAL_CHAR_E_T_BIN",
+     "name": "E.T.",
+     "build": 0,
+     "ringColor": "#5DF5A6",
+     "abilities": [
+      24,
+      36,
+      42,
+      44,
+      51,
+      57,
+      76
+     ],
+     "bin": "All Bin Files/E.T. the Extra-Terrestrial/Characters/E.T..bin",
+     "portrait": "All Bin Files/E.T. the Extra-Terrestrial/Characters/E.T..png",
+     "atlas": 79
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Phone Home",
+     "builds": [
+      {
+       "stableId": "WORLD_E_T_THE_EXTRA_TERRESTRIAL_VEH_PHONE_HOME_1_BIN",
+       "name": "Phone Home",
+       "build": 1,
+       "ringColor": "#5DF5BB",
+       "abilities": [
+        60,
+        72
+       ],
+       "bin": "All Bin Files/E.T. the Extra-Terrestrial/Vehicules/E.T. - 1. Phone Home.bin",
+       "portrait": "All Bin Files/E.T. the Extra-Terrestrial/Vehicules/E.T. - 1. Phone Home.png",
+       "atlas": 80
+      },
+      {
+       "stableId": "WORLD_E_T_THE_EXTRA_TERRESTRIAL_VEH_MOBILE_UPLINK_2_BIN",
+       "name": "Mobile Uplink",
+       "build": 2,
+       "ringColor": "#BBF55D",
+       "abilities": [
+        60,
+        73
+       ],
+       "bin": "All Bin Files/E.T. the Extra-Terrestrial/Vehicules/E.T. - 2. Mobile Uplink.bin",
+       "portrait": "All Bin Files/E.T. the Extra-Terrestrial/Vehicules/E.T. - 2. Mobile Uplink.png",
+       "atlas": 81
+      },
+      {
+       "stableId": "WORLD_E_T_THE_EXTRA_TERRESTRIAL_VEH_SUPER_CHARGED_SATELLITE_3_BIN",
+       "name": "Super-Charged Satellite",
+       "build": 3,
+       "ringColor": "#F5CA5D",
+       "abilities": [
+        9,
+        25,
+        26,
+        47,
+        69
+       ],
+       "bin": "All Bin Files/E.T. the Extra-Terrestrial/Vehicules/E.T. - 3. Super-Charged Satellite.bin",
+       "portrait": "All Bin Files/E.T. the Extra-Terrestrial/Vehicules/E.T. - 3. Super-Charged Satellite.png",
+       "atlas": 82
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Fantastic Beasts and Where to Find Them",
+   "logo": "All Bin Files/Fantastic Beasts and Where to Find Them/Logo/Fantastic_Beasts.png",
+   "characters": [
+    {
+     "stableId": "WORLD_FANTASTIC_BEASTS_AND_WHERE_TO_FIND_THEM_CHAR_NEWT_SCAMANDER_BIN",
+     "name": "Newt Scamander",
+     "build": 0,
+     "ringColor": "#F5855D",
+     "abilities": [
+      3,
+      10,
+      16,
+      23,
+      24,
+      44,
+      45,
+      48,
+      50,
+      51,
+      69,
+      76,
+      84,
+      97
+     ],
+     "bin": "All Bin Files/Fantastic Beasts and Where to Find Them/Characters/Newt Scamander.bin",
+     "portrait": "All Bin Files/Fantastic Beasts and Where to Find Them/Characters/Newt Scamander.png",
+     "atlas": 83
+    },
+    {
+     "stableId": "WORLD_FANTASTIC_BEASTS_AND_WHERE_TO_FIND_THEM_CHAR_TINA_GOLDSTEIN_BIN",
+     "name": "Tina Goldstein",
+     "build": 0,
+     "ringColor": "#8DF55D",
+     "abilities": [
+      2,
+      3,
+      10,
+      16,
+      44,
+      48,
+      51,
+      69,
+      76,
+      84,
+      97
+     ],
+     "bin": "All Bin Files/Fantastic Beasts and Where to Find Them/Characters/Tina Goldstein.bin",
+     "portrait": "All Bin Files/Fantastic Beasts and Where to Find Them/Characters/Tina Goldstein.png",
+     "atlas": 84
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Niffler",
+     "builds": [
+      {
+       "stableId": "WORLD_FANTASTIC_BEASTS_AND_WHERE_TO_FIND_THEM_VEH_NIFFLER_1_BIN",
+       "name": "Niffler",
+       "build": 1,
+       "ringColor": "#9AF55D",
+       "abilities": [
+        17
+       ],
+       "bin": "All Bin Files/Fantastic Beasts and Where to Find Them/Vehicules/Newt Scamander - 1. Niffler.bin",
+       "portrait": "All Bin Files/Fantastic Beasts and Where to Find Them/Vehicules/Newt Scamander - 1. Niffler.png",
+       "atlas": 85
+      },
+      {
+       "stableId": "WORLD_FANTASTIC_BEASTS_AND_WHERE_TO_FIND_THEM_VEH_SINISTER_SCORPION_2_BIN",
+       "name": "Sinister Scorpion",
+       "build": 2,
+       "ringColor": "#5DA4F5",
+       "abilities": [
+        73
+       ],
+       "bin": "All Bin Files/Fantastic Beasts and Where to Find Them/Vehicules/Newt Scamander - 2. Sinister Scorpion.bin",
+       "portrait": "All Bin Files/Fantastic Beasts and Where to Find Them/Vehicules/Newt Scamander - 2. Sinister Scorpion.png",
+       "atlas": 86
+      },
+      {
+       "stableId": "WORLD_FANTASTIC_BEASTS_AND_WHERE_TO_FIND_THEM_VEH_VICIOUS_VULTURE_3_BIN",
+       "name": "Vicious Vulture",
+       "build": 3,
+       "ringColor": "#F5C25D",
+       "abilities": [
+        26,
+        47
+       ],
+       "bin": "All Bin Files/Fantastic Beasts and Where to Find Them/Vehicules/Newt Scamander - 3. Vicious Vulture.bin",
+       "portrait": "All Bin Files/Fantastic Beasts and Where to Find Them/Vehicules/Newt Scamander - 3. Vicious Vulture.png",
+       "atlas": 87
+      }
+     ]
+    },
+    {
+     "baseName": "Swooping Evil",
+     "builds": [
+      {
+       "stableId": "WORLD_FANTASTIC_BEASTS_AND_WHERE_TO_FIND_THEM_VEH_SWOOPING_EVIL_1_BIN",
+       "name": "Swooping Evil",
+       "build": 1,
+       "ringColor": "#5DF2F5",
+       "abilities": [
+        26
+       ],
+       "bin": "All Bin Files/Fantastic Beasts and Where to Find Them/Vehicules/Tina Goldstein - 1. Swooping Evil.bin",
+       "portrait": "All Bin Files/Fantastic Beasts and Where to Find Them/Vehicules/Tina Goldstein - 1. Swooping Evil.png",
+       "atlas": 88
+      },
+      {
+       "stableId": "WORLD_FANTASTIC_BEASTS_AND_WHERE_TO_FIND_THEM_VEH_BRUTAL_BLOOM_2_BIN",
+       "name": "Brutal Bloom",
+       "build": 2,
+       "ringColor": "#5DA4F5",
+       "abilities": [],
+       "bin": "All Bin Files/Fantastic Beasts and Where to Find Them/Vehicules/Tina Goldstein - 2. Brutal Bloom.bin",
+       "portrait": "All Bin Files/Fantastic Beasts and Where to Find Them/Vehicules/Tina Goldstein - 2. Brutal Bloom.png",
+       "atlas": 89
+      },
+      {
+       "stableId": "WORLD_FANTASTIC_BEASTS_AND_WHERE_TO_FIND_THEM_VEH_CRAWLING_CREEPER_3_BIN",
+       "name": "Crawling Creeper",
+       "build": 3,
+       "ringColor": "#5DEBF5",
+       "abilities": [
+        17,
+        22
+       ],
+       "bin": "All Bin Files/Fantastic Beasts and Where to Find Them/Vehicules/Tina Goldstein - 3. Crawling Creeper.bin",
+       "portrait": "All Bin Files/Fantastic Beasts and Where to Find Them/Vehicules/Tina Goldstein - 3. Crawling Creeper.png",
+       "atlas": 90
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ghostbusters",
+   "logo": "All Bin Files/Ghostbusters/Logo/Ghostbusters.png",
+   "characters": [
+    {
+     "stableId": "WORLD_GHOSTBUSTERS_CHAR_PETER_VENKMAN_BIN",
+     "name": "Peter Venkman",
+     "build": 0,
+     "ringColor": "#79F55D",
+     "abilities": [
+      10,
+      30,
+      41,
+      47,
+      80
+     ],
+     "bin": "All Bin Files/Ghostbusters/Characters/Peter Venkman.bin",
+     "portrait": "All Bin Files/Ghostbusters/Characters/Peter Venkman.png",
+     "atlas": 91
+    },
+    {
+     "stableId": "WORLD_GHOSTBUSTERS_CHAR_SLIMER_BIN",
+     "name": "Slimer",
+     "build": 0,
+     "ringColor": "#85F55D",
+     "abilities": [
+      8,
+      18,
+      26,
+      40,
+      41,
+      44,
+      57,
+      71,
+      72
+     ],
+     "bin": "All Bin Files/Ghostbusters/Characters/Slimer.bin",
+     "portrait": "All Bin Files/Ghostbusters/Characters/Slimer.png",
+     "atlas": 92
+    },
+    {
+     "stableId": "WORLD_GHOSTBUSTERS_CHAR_STAY_PUFT_BIN",
+     "name": "Stay Puft",
+     "build": 0,
+     "ringColor": "#F5CA5D",
+     "abilities": [
+      6,
+      41,
+      79
+     ],
+     "bin": "All Bin Files/Ghostbusters/Characters/Stay Puft.bin",
+     "portrait": "All Bin Files/Ghostbusters/Characters/Stay Puft.png",
+     "atlas": 93
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Ecto-1",
+     "builds": [
+      {
+       "stableId": "WORLD_GHOSTBUSTERS_VEH_ECTO_1_1_BIN",
+       "name": "Ecto-1",
+       "build": 1,
+       "ringColor": "#5DF56A",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/Ghostbusters/Vehicules/Peter Venkman - 1. Ecto-1.bin",
+       "portrait": "All Bin Files/Ghostbusters/Vehicules/Peter Venkman - 1. Ecto-1.png",
+       "atlas": 94
+      },
+      {
+       "stableId": "WORLD_GHOSTBUSTERS_VEH_ECTO_1_BLASTER_2_BIN",
+       "name": "Ecto-1 Blaster",
+       "build": 2,
+       "ringColor": "#F55D5D",
+       "abilities": [
+        1,
+        36,
+        40,
+        97
+       ],
+       "bin": "All Bin Files/Ghostbusters/Vehicules/Peter Venkman - 2. Ecto-1 Blaster.bin",
+       "portrait": "All Bin Files/Ghostbusters/Vehicules/Peter Venkman - 2. Ecto-1 Blaster.png",
+       "atlas": 95
+      },
+      {
+       "stableId": "WORLD_GHOSTBUSTERS_VEH_ECTO_1_WATER_DIVER_3_BIN",
+       "name": "Ecto-1 Water Diver",
+       "build": 3,
+       "ringColor": "#F55D5D",
+       "abilities": [
+        18,
+        69
+       ],
+       "bin": "All Bin Files/Ghostbusters/Vehicules/Peter Venkman - 3. Ecto-1 Water Diver.bin",
+       "portrait": "All Bin Files/Ghostbusters/Vehicules/Peter Venkman - 3. Ecto-1 Water Diver.png",
+       "atlas": 96
+      }
+     ]
+    },
+    {
+     "baseName": "Ghost Trap",
+     "builds": [
+      {
+       "stableId": "WORLD_GHOSTBUSTERS_VEH_GHOST_TRAP_1_BIN",
+       "name": "Ghost Trap",
+       "build": 1,
+       "ringColor": "#5DF5DC",
+       "abilities": [
+        31
+       ],
+       "bin": "All Bin Files/Ghostbusters/Vehicules/Peter Venkman - 1. Ghost Trap.bin",
+       "portrait": "All Bin Files/Ghostbusters/Vehicules/Peter Venkman - 1. Ghost Trap.png",
+       "atlas": 97
+      },
+      {
+       "stableId": "WORLD_GHOSTBUSTERS_VEH_GHOST_STUN_M_TRAP_2_BIN",
+       "name": "Ghost Stun 'n' Trap",
+       "build": 2,
+       "ringColor": "#F2F55D",
+       "abilities": [
+        31,
+        73
+       ],
+       "bin": "All Bin Files/Ghostbusters/Vehicules/Peter Venkman - 2. Ghost Stun 'm' Trap.bin",
+       "portrait": "All Bin Files/Ghostbusters/Vehicules/Peter Venkman - 2. Ghost Stun 'm' Trap.png",
+       "atlas": 98
+      },
+      {
+       "stableId": "WORLD_GHOSTBUSTERS_VEH_PROTON_ZAPPER_3_BIN",
+       "name": "Proton Zapper",
+       "build": 3,
+       "ringColor": "#5DB6F5",
+       "abilities": [
+        47
+       ],
+       "bin": "All Bin Files/Ghostbusters/Vehicules/Peter Venkman - 3. Proton Zapper.bin",
+       "portrait": "All Bin Files/Ghostbusters/Vehicules/Peter Venkman - 3. Proton Zapper.png",
+       "atlas": 99
+      }
+     ]
+    },
+    {
+     "baseName": "Slime Shooter",
+     "builds": [
+      {
+       "stableId": "WORLD_GHOSTBUSTERS_VEH_SLIME_SHOOTER_1_BIN",
+       "name": "Slime Shooter",
+       "build": 1,
+       "ringColor": "#5DF55D",
+       "abilities": [
+        73,
+        84
+       ],
+       "bin": "All Bin Files/Ghostbusters/Vehicules/Slimer - 1. Slime Shooter.bin",
+       "portrait": "All Bin Files/Ghostbusters/Vehicules/Slimer - 1. Slime Shooter.png",
+       "atlas": 100
+      },
+      {
+       "stableId": "WORLD_GHOSTBUSTERS_VEH_SLIME_EXPLODER_2_BIN",
+       "name": "Slime Exploder",
+       "build": 2,
+       "ringColor": "#F56F5D",
+       "abilities": [
+        73
+       ],
+       "bin": "All Bin Files/Ghostbusters/Vehicules/Slimer - 2. Slime Exploder.bin",
+       "portrait": "All Bin Files/Ghostbusters/Vehicules/Slimer - 2. Slime Exploder.png",
+       "atlas": 101
+      },
+      {
+       "stableId": "WORLD_GHOSTBUSTERS_VEH_SLIME_STREAMER_3_BIN",
+       "name": "Slime Streamer",
+       "build": 3,
+       "ringColor": "#67F55D",
+       "abilities": [
+        69,
+        73
+       ],
+       "bin": "All Bin Files/Ghostbusters/Vehicules/Slimer - 3. Slime Streamer.bin",
+       "portrait": "All Bin Files/Ghostbusters/Vehicules/Slimer - 3. Slime Streamer.png",
+       "atlas": 102
+      }
+     ]
+    },
+    {
+     "baseName": "Terror Dog",
+     "builds": [
+      {
+       "stableId": "WORLD_GHOSTBUSTERS_VEH_TERROR_DOG_1_BIN",
+       "name": "Terror Dog",
+       "build": 1,
+       "ringColor": "#5DF5F2",
+       "abilities": [
+        37
+       ],
+       "bin": "All Bin Files/Ghostbusters/Vehicules/Stay Puft - 1. Terror Dog.bin",
+       "portrait": "All Bin Files/Ghostbusters/Vehicules/Stay Puft - 1. Terror Dog.png",
+       "atlas": 103
+      },
+      {
+       "stableId": "WORLD_GHOSTBUSTERS_VEH_TERROR_DOG_DESTROYER_2_BIN",
+       "name": "Terror Dog Destroyer",
+       "build": 2,
+       "ringColor": "#74F55D",
+       "abilities": [
+        17,
+        69
+       ],
+       "bin": "All Bin Files/Ghostbusters/Vehicules/Stay Puft - 2. Terror Dog Destroyer.bin",
+       "portrait": "All Bin Files/Ghostbusters/Vehicules/Stay Puft - 2. Terror Dog Destroyer.png",
+       "atlas": 104
+      },
+      {
+       "stableId": "WORLD_GHOSTBUSTERS_VEH_SOARING_TERROR_DOG_3_BIN",
+       "name": "Soaring Terror Dog",
+       "build": 3,
+       "ringColor": "#F5D65D",
+       "abilities": [
+        26,
+        73
+       ],
+       "bin": "All Bin Files/Ghostbusters/Vehicules/Stay Puft - 3. Soaring Terror Dog.bin",
+       "portrait": "All Bin Files/Ghostbusters/Vehicules/Stay Puft - 3. Soaring Terror Dog.png",
+       "atlas": 105
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ghostbusters 2016",
+   "logo": "All Bin Files/Ghostbusters 2016/Logo/Ghostbusters (2016).png",
+   "characters": [
+    {
+     "stableId": "WORLD_GHOSTBUSTERS_2016_CHAR_ABBY_YATES_BIN",
+     "name": "Abby Yates",
+     "build": 0,
+     "ringColor": "#5D9FF5",
+     "abilities": [
+      10,
+      11,
+      24,
+      29,
+      30,
+      31,
+      41,
+      45,
+      47,
+      55,
+      58,
+      80
+     ],
+     "bin": "All Bin Files/Ghostbusters 2016/Characters/Abby Yates.bin",
+     "portrait": "All Bin Files/Ghostbusters 2016/Characters/Abby Yates.png",
+     "atlas": 106
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Ecto-1 (2016)",
+     "builds": [
+      {
+       "stableId": "WORLD_GHOSTBUSTERS_2016_VEH_ECTO_1_2016_1_BIN",
+       "name": "Ecto-1 (2016)",
+       "build": 1,
+       "ringColor": "#F58B5D",
+       "abilities": [
+        1,
+        69
+       ],
+       "bin": "All Bin Files/Ghostbusters 2016/Vehicules/Abby Yates - 1. Ecto-1 (2016).bin",
+       "portrait": "All Bin Files/Ghostbusters 2016/Vehicules/Abby Yates - 1. Ecto-1 (2016).png",
+       "atlas": 107
+      },
+      {
+       "stableId": "WORLD_GHOSTBUSTERS_2016_VEH_ECTOZER_2_BIN",
+       "name": "Ectozer",
+       "build": 2,
+       "ringColor": "#F5DC5D",
+       "abilities": [
+        1,
+        73
+       ],
+       "bin": "All Bin Files/Ghostbusters 2016/Vehicules/Abby Yates - 2. Ectozer.bin",
+       "portrait": "All Bin Files/Ghostbusters 2016/Vehicules/Abby Yates - 2. Ectozer.png",
+       "atlas": 108
+      },
+      {
+       "stableId": "WORLD_GHOSTBUSTERS_2016_VEH_THE_PERFECTO_3_BIN",
+       "name": "The PerfEcto",
+       "build": 3,
+       "ringColor": "#5DD1F5",
+       "abilities": [
+        9,
+        26,
+        88
+       ],
+       "bin": "All Bin Files/Ghostbusters 2016/Vehicules/Abby Yates - 3. The PerfEcto.bin",
+       "portrait": "All Bin Files/Ghostbusters 2016/Vehicules/Abby Yates - 3. The PerfEcto.png",
+       "atlas": 109
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Gremlins",
+   "logo": "All Bin Files/Gremlins/Logo/Gremlins.png",
+   "characters": [
+    {
+     "stableId": "WORLD_GREMLINS_CHAR_GIZMO_BIN",
+     "name": "Gizmo",
+     "build": 0,
+     "ringColor": "#5DC5F5",
+     "abilities": [
+      2,
+      34,
+      57,
+      66,
+      84
+     ],
+     "bin": "All Bin Files/Gremlins/Characters/Gizmo.bin",
+     "portrait": "All Bin Files/Gremlins/Characters/Gizmo.png",
+     "atlas": 110
+    },
+    {
+     "stableId": "WORLD_GREMLINS_CHAR_STRIPE_BIN",
+     "name": "Stripe",
+     "build": 0,
+     "ringColor": "#5DF59F",
+     "abilities": [
+      2,
+      17,
+      84,
+      96
+     ],
+     "bin": "All Bin Files/Gremlins/Characters/Stripe.bin",
+     "portrait": "All Bin Files/Gremlins/Characters/Stripe.png",
+     "atlas": 111
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "R.C. Racer",
+     "builds": [
+      {
+       "stableId": "WORLD_GREMLINS_VEH_R_C_RACER_1_BIN",
+       "name": "R.C. Racer",
+       "build": 1,
+       "ringColor": "#F5F05D",
+       "abilities": [
+        1,
+        22
+       ],
+       "bin": "All Bin Files/Gremlins/Vehicules/Gizmo - 1. R.C. Racer.bin",
+       "portrait": "All Bin Files/Gremlins/Vehicules/Gizmo - 1. R.C. Racer.png",
+       "atlas": 112
+      },
+      {
+       "stableId": "WORLD_GREMLINS_VEH_GADGET_O_MATIC_2_BIN",
+       "name": "Gadget-o-Matic",
+       "build": 2,
+       "ringColor": "#6AF55D",
+       "abilities": [
+        1,
+        14,
+        69,
+        72,
+        73
+       ],
+       "bin": "All Bin Files/Gremlins/Vehicules/Gizmo - 2. Gadget-O-Matic.bin",
+       "portrait": "All Bin Files/Gremlins/Vehicules/Gizmo - 2. Gadget-O-Matic.png",
+       "atlas": 113
+      },
+      {
+       "stableId": "WORLD_GREMLINS_VEH_SCARLET_SCORPION_3_BIN",
+       "name": "Scarlet Scorpion",
+       "build": 3,
+       "ringColor": "#F5955D",
+       "abilities": [
+        22,
+        73,
+        78,
+        96
+       ],
+       "bin": "All Bin Files/Gremlins/Vehicules/Gizmo - 3. Scarlet Scorpion.bin",
+       "portrait": "All Bin Files/Gremlins/Vehicules/Gizmo - 3. Scarlet Scorpion.png",
+       "atlas": 114
+      }
+     ]
+    },
+    {
+     "baseName": "Flash 'n' Finish",
+     "builds": [
+      {
+       "stableId": "WORLD_GREMLINS_VEH_FLASH_N_FINISH_1_BIN",
+       "name": "Flash 'n' Finish",
+       "build": 1,
+       "ringColor": "#F5B35D",
+       "abilities": [
+        47,
+        72
+       ],
+       "bin": "All Bin Files/Gremlins/Vehicules/Stripe - 1. Flash 'n' Finish.bin",
+       "portrait": "All Bin Files/Gremlins/Vehicules/Stripe - 1. Flash 'n' Finish.png",
+       "atlas": 115
+      },
+      {
+       "stableId": "WORLD_GREMLINS_VEH_RAMPAGE_RECORD_PLAYER_2_BIN",
+       "name": "Rampage Record Player",
+       "build": 2,
+       "ringColor": "#5DD9F5",
+       "abilities": [],
+       "bin": "All Bin Files/Gremlins/Vehicules/Stripe - 2. Rampage Record Player.bin",
+       "portrait": "All Bin Files/Gremlins/Vehicules/Stripe - 2. Rampage Record Player.png",
+       "atlas": 116
+      },
+      {
+       "stableId": "WORLD_GREMLINS_VEH_STRIPE_S_THRONE_3_BIN",
+       "name": "Stripe's Throne",
+       "build": 3,
+       "ringColor": "#DCF55D",
+       "abilities": [
+        14,
+        72,
+        78
+       ],
+       "bin": "All Bin Files/Gremlins/Vehicules/Stripe - 3. Stripe's Throne.bin",
+       "portrait": "All Bin Files/Gremlins/Vehicules/Stripe - 3. Stripe's Throne.png",
+       "atlas": 117
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Harry Potter",
+   "logo": "All Bin Files/Harry Potter/Logo/Harry_Potter.png",
+   "characters": [
+    {
+     "stableId": "WORLD_HARRY_POTTER_CHAR_HARRY_POTTER_BIN",
+     "name": "Harry Potter",
+     "build": 0,
+     "ringColor": "#5DF588",
+     "abilities": [
+      3,
+      16,
+      26,
+      44,
+      48,
+      51,
+      59,
+      69,
+      76,
+      84,
+      97
+     ],
+     "bin": "All Bin Files/Harry Potter/Characters/Harry Potter.bin",
+     "portrait": "All Bin Files/Harry Potter/Characters/Harry Potter.png",
+     "atlas": 118
+    },
+    {
+     "stableId": "WORLD_HARRY_POTTER_CHAR_HERMIONE_GRANGER_BIN",
+     "name": "Hermione Granger",
+     "build": 0,
+     "ringColor": "#C0F55D",
+     "abilities": [
+      2,
+      3,
+      16,
+      44,
+      45,
+      48,
+      51,
+      69,
+      84,
+      97
+     ],
+     "bin": "All Bin Files/Harry Potter/Characters/Hermione Granger.bin",
+     "portrait": "All Bin Files/Harry Potter/Characters/Hermione Granger.png",
+     "atlas": 119
+    },
+    {
+     "stableId": "WORLD_HARRY_POTTER_CHAR_LORD_VOLDEMORT_BIN",
+     "name": "Voldemort",
+     "build": 0,
+     "ringColor": "#F5E65D",
+     "abilities": [
+      3,
+      16,
+      26,
+      44,
+      48,
+      51,
+      56,
+      59,
+      69,
+      84,
+      97
+     ],
+     "bin": "All Bin Files/Harry Potter/Characters/Lord Voldemort.bin",
+     "portrait": "All Bin Files/Harry Potter/Characters/Lord Voldemort.png",
+     "atlas": 120
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Enchanted Car",
+     "builds": [
+      {
+       "stableId": "WORLD_HARRY_POTTER_VEH_ENCHANTED_CAR_1_BIN",
+       "name": "Enchanted Car",
+       "build": 1,
+       "ringColor": "#6AF55D",
+       "abilities": [
+        1,
+        9,
+        25,
+        26,
+        76
+       ],
+       "bin": "All Bin Files/Harry Potter/Vehicules/Harry Potter - 1. Enchanted Car.bin",
+       "portrait": "All Bin Files/Harry Potter/Vehicules/Harry Potter - 1. Enchanted Car.png",
+       "atlas": 121
+      },
+      {
+       "stableId": "WORLD_HARRY_POTTER_VEH_PIRANHA_SUB_2_BIN",
+       "name": "Piranha Sub",
+       "build": 2,
+       "ringColor": "#80F55D",
+       "abilities": [],
+       "bin": "All Bin Files/Harry Potter/Vehicules/Harry Potter - 2. Piranha Sub.bin",
+       "portrait": "All Bin Files/Harry Potter/Vehicules/Harry Potter - 2. Piranha Sub.png",
+       "atlas": 122
+      },
+      {
+       "stableId": "WORLD_HARRY_POTTER_VEH_MONSTROUS_MOUTH_3_BIN",
+       "name": "Monstrous Mouth",
+       "build": 3,
+       "ringColor": "#F56C5D",
+       "abilities": [
+        47,
+        96
+       ],
+       "bin": "All Bin Files/Harry Potter/Vehicules/Harry Potter - 3. Monstrous Mouth.bin",
+       "portrait": "All Bin Files/Harry Potter/Vehicules/Harry Potter - 3. Monstrous Mouth.png",
+       "atlas": 123
+      }
+     ]
+    },
+    {
+     "baseName": "Buckbeak",
+     "builds": [
+      {
+       "stableId": "WORLD_HARRY_POTTER_VEH_BUCKBEAK_1_BIN",
+       "name": "Buckbeak",
+       "build": 1,
+       "ringColor": "#D1F55D",
+       "abilities": [
+        26,
+        69
+       ],
+       "bin": "All Bin Files/Harry Potter/Vehicules/Hermione Granger - 1. Buckbeak.bin",
+       "portrait": "All Bin Files/Harry Potter/Vehicules/Hermione Granger - 1. Buckbeak.png",
+       "atlas": 124
+      },
+      {
+       "stableId": "WORLD_HARRY_POTTER_VEH_GIANT_OWL_2_BIN",
+       "name": "Giant Owl",
+       "build": 2,
+       "ringColor": "#5D95F5",
+       "abilities": [
+        22,
+        26
+       ],
+       "bin": "All Bin Files/Harry Potter/Vehicules/Hermione Granger - 2. Giant Owl.bin",
+       "portrait": "All Bin Files/Harry Potter/Vehicules/Hermione Granger - 2. Giant Owl.png",
+       "atlas": 125
+      },
+      {
+       "stableId": "WORLD_HARRY_POTTER_VEH_FIERCE_FALCON_3_BIN",
+       "name": "Fierce Falcon",
+       "build": 3,
+       "ringColor": "#5DF585",
+       "abilities": [
+        26,
+        72
+       ],
+       "bin": "All Bin Files/Harry Potter/Vehicules/Hermione Granger - 3. Fierce Falcon.bin",
+       "portrait": "All Bin Files/Harry Potter/Vehicules/Hermione Granger - 3. Fierce Falcon.png",
+       "atlas": 126
+      }
+     ]
+    },
+    {
+     "baseName": "Hogwarts Express",
+     "builds": [
+      {
+       "stableId": "WORLD_HARRY_POTTER_VEH_HOGWARTS_EXPRESS_1_BIN",
+       "name": "Hogwarts Express",
+       "build": 1,
+       "ringColor": "#5DF5A6",
+       "abilities": [
+        1,
+        72
+       ],
+       "bin": "All Bin Files/Harry Potter/Vehicules/Lord Voldemort - 1. Hogwarts Express.bin",
+       "portrait": "All Bin Files/Harry Potter/Vehicules/Lord Voldemort - 1. Hogwarts Express.png",
+       "atlas": 127
+      },
+      {
+       "stableId": "WORLD_HARRY_POTTER_VEH_SOARING_STEAM_PLANE_2_BIN",
+       "name": "Soaring Steam Plane",
+       "build": 2,
+       "ringColor": "#B6F55D",
+       "abilities": [
+        9,
+        25,
+        26,
+        47
+       ],
+       "bin": "All Bin Files/Harry Potter/Vehicules/Lord Voldemort - 2. Soaring Steam Plane.bin",
+       "portrait": "All Bin Files/Harry Potter/Vehicules/Lord Voldemort - 2. Soaring Steam Plane.png",
+       "atlas": 128
+      },
+      {
+       "stableId": "WORLD_HARRY_POTTER_VEH_STEAM_WARRIOR_3_BIN",
+       "name": "Steam Warrior",
+       "build": 3,
+       "ringColor": "#5DF576",
+       "abilities": [
+        78,
+        79
+       ],
+       "bin": "All Bin Files/Harry Potter/Vehicules/Lord Voldemort - 3. Steam Warrior.bin",
+       "portrait": "All Bin Files/Harry Potter/Vehicules/Lord Voldemort - 3. Steam Warrior.png",
+       "atlas": 129
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Jurassic World",
+   "logo": "All Bin Files/Jurassic World/Logo/Jurassic_World.png",
+   "characters": [
+    {
+     "stableId": "WORLD_JURASSIC_WORLD_CHAR_ACU_TROOPER_BIN",
+     "name": "ACU Trooper",
+     "build": 0,
+     "ringColor": "#F5F25D",
+     "abilities": [
+      22,
+      44
+     ],
+     "bin": "All Bin Files/Jurassic World/Characters/ACU Trooper.bin",
+     "portrait": "All Bin Files/Jurassic World/Characters/ACU Trooper.png",
+     "atlas": 130
+    },
+    {
+     "stableId": "WORLD_JURASSIC_WORLD_CHAR_OWEN_GRADY_BIN",
+     "name": "Owen",
+     "build": 0,
+     "ringColor": "#65F55D",
+     "abilities": [
+      76,
+      84,
+      89,
+      96
+     ],
+     "bin": "All Bin Files/Jurassic World/Characters/Owen Grady.bin",
+     "portrait": "All Bin Files/Jurassic World/Characters/Owen Grady.png",
+     "atlas": 131
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Gyrosphere",
+     "builds": [
+      {
+       "stableId": "WORLD_JURASSIC_WORLD_VEH_GYROSPHERE_1_BIN",
+       "name": "Gyrosphere",
+       "build": 1,
+       "ringColor": "#5DF5DE",
+       "abilities": [
+        38
+       ],
+       "bin": "All Bin Files/Jurassic World/Vehicules/ACU Trooper - 1. Gyrosphere.bin",
+       "portrait": "All Bin Files/Jurassic World/Vehicules/ACU Trooper - 1. Gyrosphere.png",
+       "atlas": 132
+      },
+      {
+       "stableId": "WORLD_JURASSIC_WORLD_VEH_SONIC_BEAM_GYROSPHERE_2_BIN",
+       "name": "Sonic Beam Gyrosphere",
+       "build": 2,
+       "ringColor": "#8BF55D",
+       "abilities": [
+        38,
+        72
+       ],
+       "bin": "All Bin Files/Jurassic World/Vehicules/ACU Trooper - 2. Sonic Beam Gyrosphere.bin",
+       "portrait": "All Bin Files/Jurassic World/Vehicules/ACU Trooper - 2. Sonic Beam Gyrosphere.png",
+       "atlas": 133
+      },
+      {
+       "stableId": "WORLD_JURASSIC_WORLD_VEH_SPEED_BOOST_GYROSPHERE_3_BIN",
+       "name": "Speed Boost Gyrosphere",
+       "build": 3,
+       "ringColor": "#67F55D",
+       "abilities": [
+        38,
+        74
+       ],
+       "bin": "All Bin Files/Jurassic World/Vehicules/ACU Trooper - 3. Speed Boost Gyrosphere.bin",
+       "portrait": "All Bin Files/Jurassic World/Vehicules/ACU Trooper - 3. Speed Boost Gyrosphere.png",
+       "atlas": 134
+      }
+     ]
+    },
+    {
+     "baseName": "Velociraptor",
+     "builds": [
+      {
+       "stableId": "WORLD_JURASSIC_WORLD_VEH_VELOCIRAPTOR_1_BIN",
+       "name": "Velociraptor",
+       "build": 1,
+       "ringColor": "#5DA1F5",
+       "abilities": [
+        89,
+        96
+       ],
+       "bin": "All Bin Files/Jurassic World/Vehicules/Owen Grady - 1. Velociraptor.bin",
+       "portrait": "All Bin Files/Jurassic World/Vehicules/Owen Grady - 1. Velociraptor.png",
+       "atlas": 135
+      },
+      {
+       "stableId": "WORLD_JURASSIC_WORLD_VEH_SPIKE_ATTACK_RAPTOR_2_BIN",
+       "name": "Spike Attack Raptor",
+       "build": 2,
+       "ringColor": "#5DF5F5",
+       "abilities": [
+        17,
+        73,
+        79,
+        89,
+        96
+       ],
+       "bin": "All Bin Files/Jurassic World/Vehicules/Owen Grady - 2. Spike Attack Raptor.bin",
+       "portrait": "All Bin Files/Jurassic World/Vehicules/Owen Grady - 2. Spike Attack Raptor.png",
+       "atlas": 136
+      },
+      {
+       "stableId": "WORLD_JURASSIC_WORLD_VEH_VENOM_RAPTOR_3_BIN",
+       "name": "Venom Raptor",
+       "build": 3,
+       "ringColor": "#5D9CF5",
+       "abilities": [
+        17,
+        73,
+        79,
+        89,
+        96
+       ],
+       "bin": "All Bin Files/Jurassic World/Vehicules/Owen Grady - 3. Venom Raptor.bin",
+       "portrait": "All Bin Files/Jurassic World/Vehicules/Owen Grady - 3. Venom Raptor.png",
+       "atlas": 137
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Knight Rider",
+   "logo": "All Bin Files/Knight Rider/Logo/Knight_Rider.png",
+   "characters": [
+    {
+     "stableId": "WORLD_KNIGHT_RIDER_CHAR_MICHAEL_KNIGHT_BIN",
+     "name": "Michael Knight",
+     "build": 0,
+     "ringColor": "#60F55D",
+     "abilities": [
+      2,
+      39,
+      86,
+      89,
+      100
+     ],
+     "bin": "All Bin Files/Knight Rider/Characters/Michael Knight.bin",
+     "portrait": "All Bin Files/Knight Rider/Characters/Michael Knight.png",
+     "atlas": 138
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "K.I.T.T.",
+     "builds": [
+      {
+       "stableId": "WORLD_KNIGHT_RIDER_VEH_K_I_T_T_1_BIN",
+       "name": "K.I.T.T.",
+       "build": 1,
+       "ringColor": "#5DD9F5",
+       "abilities": [
+        1,
+        47
+       ],
+       "bin": "All Bin Files/Knight Rider/Vehicules/Michael Knight - 1. K.I.T.T..bin",
+       "portrait": "All Bin Files/Knight Rider/Vehicules/Michael Knight - 1. K.I.T.T..png",
+       "atlas": 139
+      },
+      {
+       "stableId": "WORLD_KNIGHT_RIDER_VEH_GOLIATH_ARMORED_SEMI_2_BIN",
+       "name": "Goliath Armored Semi",
+       "build": 2,
+       "ringColor": "#B8F55D",
+       "abilities": [
+        1,
+        22,
+        46,
+        79
+       ],
+       "bin": "All Bin Files/Knight Rider/Vehicules/Michael Knight - 2. Goliath Armored Semi.bin",
+       "portrait": "All Bin Files/Knight Rider/Vehicules/Michael Knight - 2. Goliath Armored Semi.png",
+       "atlas": 140
+      },
+      {
+       "stableId": "WORLD_KNIGHT_RIDER_VEH_K_I_T_T_JET_3_BIN",
+       "name": "K.I.T.T. Jet",
+       "build": 3,
+       "ringColor": "#F57B5D",
+       "abilities": [
+        25,
+        26,
+        47,
+        69,
+        73
+       ],
+       "bin": "All Bin Files/Knight Rider/Vehicules/Michael Knight - 3. K.I.T.T. Jet.bin",
+       "portrait": "All Bin Files/Knight Rider/Vehicules/Michael Knight - 3. K.I.T.T. Jet.png",
+       "atlas": 141
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Legends of Chima",
+   "logo": "All Bin Files/Legends of Chima/Logo/Lego_Chima.png",
+   "characters": [
+    {
+     "stableId": "WORLD_LEGENDS_OF_CHIMA_CHAR_CRAGGER_BIN",
+     "name": "Cragger",
+     "build": 0,
+     "ringColor": "#5DF5A1",
+     "abilities": [
+      12,
+      18,
+      33,
+      41,
+      79
+     ],
+     "bin": "All Bin Files/Legends of Chima/Characters/Cragger.bin",
+     "portrait": "All Bin Files/Legends of Chima/Characters/Cragger.png",
+     "atlas": 142
+    },
+    {
+     "stableId": "WORLD_LEGENDS_OF_CHIMA_CHAR_ERIS_BIN",
+     "name": "Eris",
+     "build": 0,
+     "ringColor": "#F5F05D",
+     "abilities": [
+      12,
+      18,
+      26,
+      84
+     ],
+     "bin": "All Bin Files/Legends of Chima/Characters/Eris.bin",
+     "portrait": "All Bin Files/Legends of Chima/Characters/Eris.png",
+     "atlas": 143
+    },
+    {
+     "stableId": "WORLD_LEGENDS_OF_CHIMA_CHAR_LAVAL_BIN",
+     "name": "Laval",
+     "build": 0,
+     "ringColor": "#F5D95D",
+     "abilities": [
+      2,
+      12,
+      18,
+      33,
+      41,
+      48,
+      72,
+      81
+     ],
+     "bin": "All Bin Files/Legends of Chima/Characters/Laval.bin",
+     "portrait": "All Bin Files/Legends of Chima/Characters/Laval.png",
+     "atlas": 144
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Swamp Skimmer",
+     "builds": [
+      {
+       "stableId": "WORLD_LEGENDS_OF_CHIMA_VEH_SWAMP_SKIMMER_1_BIN",
+       "name": "Swamp Skimmer",
+       "build": 1,
+       "ringColor": "#5DF5E1",
+       "abilities": [],
+       "bin": "All Bin Files/Legends of Chima/Vehicules/Cragger - 1. Swamp Skimmer.bin",
+       "portrait": "All Bin Files/Legends of Chima/Vehicules/Cragger - 1. Swamp Skimmer.png",
+       "atlas": 145
+      },
+      {
+       "stableId": "WORLD_LEGENDS_OF_CHIMA_VEH_CRAGGER_S_FIRESHIP_2_BIN",
+       "name": "Cragger's Fireship",
+       "build": 2,
+       "ringColor": "#F5ED5D",
+       "abilities": [
+        73,
+        74
+       ],
+       "bin": "All Bin Files/Legends of Chima/Vehicules/Cragger - 2. Cragger's Fireship.bin",
+       "portrait": "All Bin Files/Legends of Chima/Vehicules/Cragger - 2. Cragger's Fireship.png",
+       "atlas": 146
+      },
+      {
+       "stableId": "WORLD_LEGENDS_OF_CHIMA_VEH_CROC_COMMAND_SUB_3_BIN",
+       "name": "Croc Command Sub",
+       "build": 3,
+       "ringColor": "#5DF5DE",
+       "abilities": [
+        18,
+        69
+       ],
+       "bin": "All Bin Files/Legends of Chima/Vehicules/Cragger - 3. Croc Command Sub.bin",
+       "portrait": "All Bin Files/Legends of Chima/Vehicules/Cragger - 3. Croc Command Sub.png",
+       "atlas": 147
+      }
+     ]
+    },
+    {
+     "baseName": "Eagle Interceptor",
+     "builds": [
+      {
+       "stableId": "WORLD_LEGENDS_OF_CHIMA_VEH_EAGLE_INTERCEPTOR_1_BIN",
+       "name": "Eagle Interceptor",
+       "build": 1,
+       "ringColor": "#5DF57B",
+       "abilities": [
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/Legends of Chima/Vehicules/Eris - 1. Eagle Interceptor.bin",
+       "portrait": "All Bin Files/Legends of Chima/Vehicules/Eris - 1. Eagle Interceptor.png",
+       "atlas": 148
+      },
+      {
+       "stableId": "WORLD_LEGENDS_OF_CHIMA_VEH_EAGLE_SKYBLAZER_2_BIN",
+       "name": "Eagle Skyblazer",
+       "build": 2,
+       "ringColor": "#F5E35D",
+       "abilities": [
+        9,
+        25,
+        26,
+        69,
+        74
+       ],
+       "bin": "All Bin Files/Legends of Chima/Vehicules/Eris - 2. Eagle Skyblazer.bin",
+       "portrait": "All Bin Files/Legends of Chima/Vehicules/Eris - 2. Eagle Skyblazer.png",
+       "atlas": 149
+      },
+      {
+       "stableId": "WORLD_LEGENDS_OF_CHIMA_VEH_EAGLE_SWOOP_DIVER_3_BIN",
+       "name": "Eagle Swoop Diver",
+       "build": 3,
+       "ringColor": "#F59A5D",
+       "abilities": [
+        9,
+        25,
+        26,
+        47,
+        69
+       ],
+       "bin": "All Bin Files/Legends of Chima/Vehicules/Eris - 3. Eagle Swoop Diver.bin",
+       "portrait": "All Bin Files/Legends of Chima/Vehicules/Eris - 3. Eagle Swoop Diver.png",
+       "atlas": 150
+      }
+     ]
+    },
+    {
+     "baseName": "Mighty Lion Rider",
+     "builds": [
+      {
+       "stableId": "WORLD_LEGENDS_OF_CHIMA_VEH_MIGHTY_LION_RIDER_1_BIN",
+       "name": "Mighty Lion Rider",
+       "build": 1,
+       "ringColor": "#7EF55D",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/Legends of Chima/Vehicules/Laval - 1. Mighty Lion Rider.bin",
+       "portrait": "All Bin Files/Legends of Chima/Vehicules/Laval - 1. Mighty Lion Rider.png",
+       "atlas": 151
+      },
+      {
+       "stableId": "WORLD_LEGENDS_OF_CHIMA_VEH_LION_BLAZER_2_BIN",
+       "name": "Lion Blazer",
+       "build": 2,
+       "ringColor": "#F2F55D",
+       "abilities": [
+        73
+       ],
+       "bin": "All Bin Files/Legends of Chima/Vehicules/Laval - 2. Lion Blazer.bin",
+       "portrait": "All Bin Files/Legends of Chima/Vehicules/Laval - 2. Lion Blazer.png",
+       "atlas": 152
+      },
+      {
+       "stableId": "WORLD_LEGENDS_OF_CHIMA_VEH_FIRE_LION_3_BIN",
+       "name": "Fire Lion",
+       "build": 3,
+       "ringColor": "#F56C5D",
+       "abilities": [],
+       "bin": "All Bin Files/Legends of Chima/Vehicules/Laval - 3. Fire Lion.bin",
+       "portrait": "All Bin Files/Legends of Chima/Vehicules/Laval - 3. Fire Lion.png",
+       "atlas": 153
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "LEGO City Undercover",
+   "logo": "All Bin Files/LEGO City Undercover/Logo/Lego_City_Undercover.png",
+   "characters": [
+    {
+     "stableId": "WORLD_LEGO_CITY_UNDERCOVER_CHAR_CHASE_MCCAIN_BIN",
+     "name": "Chase McCain",
+     "build": 0,
+     "ringColor": "#5DBBF5",
+     "abilities": [
+      2,
+      20,
+      26,
+      32,
+      33,
+      36,
+      39,
+      40,
+      44,
+      65,
+      66,
+      69,
+      84,
+      89,
+      94,
+      97
+     ],
+     "bin": "All Bin Files/LEGO City Undercover/Characters/Chase McCain.bin",
+     "portrait": "All Bin Files/LEGO City Undercover/Characters/Chase McCain.png",
+     "atlas": 154
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Police Helicopter",
+     "builds": [
+      {
+       "stableId": "WORLD_LEGO_CITY_UNDERCOVER_VEH_POLICE_HELICOPTER_1_BIN",
+       "name": "Police Helicopter",
+       "build": 1,
+       "ringColor": "#F5B35D",
+       "abilities": [
+        25,
+        26,
+        73
+       ],
+       "bin": "All Bin Files/LEGO City Undercover/Vehicules/Chase McCain - 1. Police Helicopter.bin",
+       "portrait": "All Bin Files/LEGO City Undercover/Vehicules/Chase McCain - 1. Police Helicopter.png",
+       "atlas": 155
+      },
+      {
+       "stableId": "WORLD_LEGO_CITY_UNDERCOVER_VEH_POLICE_HOVERCRAFT_2_BIN",
+       "name": "Police Hovercraft",
+       "build": 2,
+       "ringColor": "#B3F55D",
+       "abilities": [
+        47
+       ],
+       "bin": "All Bin Files/LEGO City Undercover/Vehicules/Chase McCain - 2. Police Hovercraft.bin",
+       "portrait": "All Bin Files/LEGO City Undercover/Vehicules/Chase McCain - 2. Police Hovercraft.png",
+       "atlas": 156
+      },
+      {
+       "stableId": "WORLD_LEGO_CITY_UNDERCOVER_VEH_POLICE_PLANE_3_BIN",
+       "name": "Police Plane",
+       "build": 3,
+       "ringColor": "#F5DC5D",
+       "abilities": [
+        21,
+        26
+       ],
+       "bin": "All Bin Files/LEGO City Undercover/Vehicules/Chase McCain - 3. Police Plane.bin",
+       "portrait": "All Bin Files/LEGO City Undercover/Vehicules/Chase McCain - 3. Police Plane.png",
+       "atlas": 157
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Midway Arcade",
+   "logo": "All Bin Files/Midway Arcade/Logo/Midway.png",
+   "characters": [
+    {
+     "stableId": "WORLD_MIDWAY_ARCADE_CHAR_GAMER_KID_BIN",
+     "name": "Gamer Kid",
+     "build": 0,
+     "ringColor": "#5DF5CC",
+     "abilities": [
+      46,
+      47,
+      55,
+      74,
+      76,
+      79
+     ],
+     "bin": "All Bin Files/Midway Arcade/Characters/Gamer Kid.bin",
+     "portrait": "All Bin Files/Midway Arcade/Characters/Gamer Kid.png",
+     "atlas": 158
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Arcade Machine",
+     "builds": [
+      {
+       "stableId": "WORLD_MIDWAY_ARCADE_VEH_ARCADE_MACHINE_1_BIN",
+       "name": "Arcade Machine",
+       "build": 1,
+       "ringColor": "#F5A45D",
+       "abilities": [
+        4
+       ],
+       "bin": "All Bin Files/Midway Arcade/Vehicules/Gamer Kid - 1. Arcade Machine.bin",
+       "portrait": "All Bin Files/Midway Arcade/Vehicules/Gamer Kid - 1. Arcade Machine.png",
+       "atlas": 159
+      },
+      {
+       "stableId": "WORLD_MIDWAY_ARCADE_VEH_8_BIT_SHOOTER_2_BIN",
+       "name": "8-Bit Shooter",
+       "build": 2,
+       "ringColor": "#5DF56A",
+       "abilities": [
+        26
+       ],
+       "bin": "All Bin Files/Midway Arcade/Vehicules/Gamer Kid - 2. 8-Bit Shooter.bin",
+       "portrait": "All Bin Files/Midway Arcade/Vehicules/Gamer Kid - 2. 8-Bit Shooter.png",
+       "atlas": 160
+      },
+      {
+       "stableId": "WORLD_MIDWAY_ARCADE_VEH_THE_PIXELATOR_3_BIN",
+       "name": "The Pixelator",
+       "build": 3,
+       "ringColor": "#9FF55D",
+       "abilities": [
+        73
+       ],
+       "bin": "All Bin Files/Midway Arcade/Vehicules/Gamer Kid - 3. The Pixelator.bin",
+       "portrait": "All Bin Files/Midway Arcade/Vehicules/Gamer Kid - 3. The Pixelator.png",
+       "atlas": 161
+      }
+     ]
+    },
+    {
+     "baseName": "G-6155 Spy Hunter",
+     "builds": [
+      {
+       "stableId": "WORLD_MIDWAY_ARCADE_VEH_G_6155_SPY_HUNTER_1_BIN",
+       "name": "G-6155 Spy Hunter",
+       "build": 1,
+       "ringColor": "#5DC0F5",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/Midway Arcade/Vehicules/Gamer Kid - 1. G-6155 Spy Hunter.bin",
+       "portrait": "All Bin Files/Midway Arcade/Vehicules/Gamer Kid - 1. G-6155 Spy Hunter.png",
+       "atlas": 162
+      },
+      {
+       "stableId": "WORLD_MIDWAY_ARCADE_VEH_THE_INTERDIVER_2_BIN",
+       "name": "The Interdiver",
+       "build": 2,
+       "ringColor": "#5DC0F5",
+       "abilities": [
+        18,
+        69
+       ],
+       "bin": "All Bin Files/Midway Arcade/Vehicules/Gamer Kid - 2. The Interdiver.bin",
+       "portrait": "All Bin Files/Midway Arcade/Vehicules/Gamer Kid - 2. The Interdiver.png",
+       "atlas": 163
+      },
+      {
+       "stableId": "WORLD_MIDWAY_ARCADE_VEH_AERIAL_SPYHUNTER_3_BIN",
+       "name": "Aerial Spyhunter",
+       "build": 3,
+       "ringColor": "#5DF579",
+       "abilities": [
+        9,
+        25,
+        26,
+        47
+       ],
+       "bin": "All Bin Files/Midway Arcade/Vehicules/Gamer Kid - 3. Aerial Spyhunter.bin",
+       "portrait": "All Bin Files/Midway Arcade/Vehicules/Gamer Kid - 3. Aerial Spyhunter.png",
+       "atlas": 164
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Mission Impossible",
+   "logo": "All Bin Files/Mission Impossible/Logo/Mission_Impossible.png",
+   "characters": [
+    {
+     "stableId": "WORLD_MISSION_IMPOSSIBLE_CHAR_ETHAN_HUNT_BIN",
+     "name": "Ethan Hunt",
+     "build": 0,
+     "ringColor": "#F5675D",
+     "abilities": [
+      2,
+      18,
+      21,
+      28,
+      33,
+      53,
+      66,
+      67,
+      69,
+      76,
+      84,
+      86
+     ],
+     "bin": "All Bin Files/Mission Impossible/Characters/Ethan Hunt.bin",
+     "portrait": "All Bin Files/Mission Impossible/Characters/Ethan Hunt.png",
+     "atlas": 165
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "IMF Scrambler",
+     "builds": [
+      {
+       "stableId": "WORLD_MISSION_IMPOSSIBLE_VEH_IMF_SCRAMBLER_1_BIN",
+       "name": "IMF Scrambler",
+       "build": 1,
+       "ringColor": "#E6F55D",
+       "abilities": [
+        1,
+        73,
+        76
+       ],
+       "bin": "All Bin Files/Mission Impossible/Vehicules/Ethan Hunt - 1. IMF Scrambler.bin",
+       "portrait": "All Bin Files/Mission Impossible/Vehicules/Ethan Hunt - 1. IMF Scrambler.png",
+       "atlas": 166
+      },
+      {
+       "stableId": "WORLD_MISSION_IMPOSSIBLE_VEH_SHOCKCYCLE_2_BIN",
+       "name": "ShockCycle",
+       "build": 2,
+       "ringColor": "#5DD9F5",
+       "abilities": [
+        1,
+        73,
+        76
+       ],
+       "bin": "All Bin Files/Mission Impossible/Vehicules/Ethan Hunt - 2. ShockCycle.bin",
+       "portrait": "All Bin Files/Mission Impossible/Vehicules/Ethan Hunt - 2. ShockCycle.png",
+       "atlas": 167
+      },
+      {
+       "stableId": "WORLD_MISSION_IMPOSSIBLE_VEH_IMF_COVERT_JET_3_BIN",
+       "name": "IMF Covert Jet",
+       "build": 3,
+       "ringColor": "#5DF5CA",
+       "abilities": [
+        9,
+        18,
+        25,
+        26,
+        73,
+        76
+       ],
+       "bin": "All Bin Files/Mission Impossible/Vehicules/Ethan Hunt - 3. IMF Covert Jet.bin",
+       "portrait": "All Bin Files/Mission Impossible/Vehicules/Ethan Hunt - 3. IMF Covert Jet.png",
+       "atlas": 168
+      }
+     ]
+    },
+    {
+     "baseName": "IMF Sport Car",
+     "builds": [
+      {
+       "stableId": "WORLD_MISSION_IMPOSSIBLE_VEH_IMF_SPORT_CAR_1_BIN",
+       "name": "IMF Sport Car",
+       "build": 1,
+       "ringColor": "#5DF5CA",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/Mission Impossible/Vehicules/Ethan Hunt - 1. IMF Sport Car.bin",
+       "portrait": "All Bin Files/Mission Impossible/Vehicules/Ethan Hunt - 1. IMF Sport Car.png",
+       "atlas": 169
+      },
+      {
+       "stableId": "WORLD_MISSION_IMPOSSIBLE_VEH_IMF_TANK_2_BIN",
+       "name": "IMF Tank",
+       "build": 2,
+       "ringColor": "#F5CC5D",
+       "abilities": [
+        1,
+        47,
+        79
+       ],
+       "bin": "All Bin Files/Mission Impossible/Vehicules/Ethan Hunt - 2. IMF Tank.bin",
+       "portrait": "All Bin Files/Mission Impossible/Vehicules/Ethan Hunt - 2. IMF Tank.png",
+       "atlas": 170
+      },
+      {
+       "stableId": "WORLD_MISSION_IMPOSSIBLE_VEH_THE_IMF_SPLORER_3_BIN",
+       "name": "The IMF-Splorer",
+       "build": 3,
+       "ringColor": "#B3F55D",
+       "abilities": [
+        18,
+        21,
+        92,
+        93
+       ],
+       "bin": "All Bin Files/Mission Impossible/Vehicules/Ethan Hunt - 3. The IMF-Splorer.bin",
+       "portrait": "All Bin Files/Mission Impossible/Vehicules/Ethan Hunt - 3. The IMF-Splorer.png",
+       "atlas": 171
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ninjago",
+   "logo": "All Bin Files/Ninjago/Logo/Lego_Ninjago.png",
+   "characters": [
+    {
+     "stableId": "WORLD_NINJAGO_CHAR_COLE_BIN",
+     "name": "Cole",
+     "build": 0,
+     "ringColor": "#5DF58B",
+     "abilities": [
+      2,
+      48,
+      75,
+      76,
+      79
+     ],
+     "bin": "All Bin Files/Ninjago/Characters/Cole.bin",
+     "portrait": "All Bin Files/Ninjago/Characters/Cole.png",
+     "atlas": 172
+    },
+    {
+     "stableId": "WORLD_NINJAGO_CHAR_JAY_BIN",
+     "name": "Jay",
+     "build": 0,
+     "ringColor": "#7BF55D",
+     "abilities": [
+      2,
+      22,
+      24,
+      45,
+      75,
+      76
+     ],
+     "bin": "All Bin Files/Ninjago/Characters/Jay.bin",
+     "portrait": "All Bin Files/Ninjago/Characters/Jay.png",
+     "atlas": 173
+    },
+    {
+     "stableId": "WORLD_NINJAGO_CHAR_KAI_BIN",
+     "name": "Kai",
+     "build": 0,
+     "ringColor": "#71F55D",
+     "abilities": [
+      2,
+      48,
+      55,
+      75,
+      76,
+      81
+     ],
+     "bin": "All Bin Files/Ninjago/Characters/Kai.bin",
+     "portrait": "All Bin Files/Ninjago/Characters/Kai.png",
+     "atlas": 174
+    },
+    {
+     "stableId": "WORLD_NINJAGO_CHAR_LLOYD_BIN",
+     "name": "Lloyd",
+     "build": 0,
+     "ringColor": "#F5B15D",
+     "abilities": [
+      2,
+      44,
+      48,
+      75,
+      76
+     ],
+     "bin": "All Bin Files/Ninjago/Characters/Lloyd.bin",
+     "portrait": "All Bin Files/Ninjago/Characters/Lloyd.png",
+     "atlas": 175
+    },
+    {
+     "stableId": "WORLD_NINJAGO_CHAR_NYA_BIN",
+     "name": "Nya",
+     "build": 0,
+     "ringColor": "#F5655D",
+     "abilities": [
+      2,
+      24,
+      48,
+      75,
+      76
+     ],
+     "bin": "All Bin Files/Ninjago/Characters/Nya.bin",
+     "portrait": "All Bin Files/Ninjago/Characters/Nya.png",
+     "atlas": 176
+    },
+    {
+     "stableId": "WORLD_NINJAGO_CHAR_SENSEI_WU_BIN",
+     "name": "Sensei Wu",
+     "build": 0,
+     "ringColor": "#5DA1F5",
+     "abilities": [
+      2,
+      32,
+      61,
+      75,
+      76
+     ],
+     "bin": "All Bin Files/Ninjago/Characters/Sensei Wu.bin",
+     "portrait": "All Bin Files/Ninjago/Characters/Sensei Wu.png",
+     "atlas": 177
+    },
+    {
+     "stableId": "WORLD_NINJAGO_CHAR_ZANE_BIN",
+     "name": "Zane",
+     "build": 0,
+     "ringColor": "#5DDEF5",
+     "abilities": [
+      2,
+      8,
+      18,
+      75,
+      76,
+      100
+     ],
+     "bin": "All Bin Files/Ninjago/Characters/Zane.bin",
+     "portrait": "All Bin Files/Ninjago/Characters/Zane.png",
+     "atlas": 178
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Boulder Bomber",
+     "builds": [
+      {
+       "stableId": "WORLD_NINJAGO_VEH_BOULDER_BOMBER_1_BIN",
+       "name": "Boulder Bomber",
+       "build": 1,
+       "ringColor": "#5DDEF5",
+       "abilities": [
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Cole - 1. Boulder Bomber.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Cole - 1. Boulder Bomber.png",
+       "atlas": 179
+      },
+      {
+       "stableId": "WORLD_NINJAGO_VEH_BOULDER_BLASTER_2_BIN",
+       "name": "Boulder Blaster",
+       "build": 2,
+       "ringColor": "#5DF5DE",
+       "abilities": [
+        26,
+        69
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Cole - 2. Boulder Blaster.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Cole - 2. Boulder Blaster.png",
+       "atlas": 180
+      },
+      {
+       "stableId": "WORLD_NINJAGO_VEH_CYCLONE_JET_3_BIN",
+       "name": "Cyclone Jet",
+       "build": 3,
+       "ringColor": "#5DC5F5",
+       "abilities": [
+        26,
+        73
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Cole - 3. Cyclone Jet.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Cole - 3. Cyclone Jet.png",
+       "atlas": 181
+      }
+     ]
+    },
+    {
+     "baseName": "Storm Fighter",
+     "builds": [
+      {
+       "stableId": "WORLD_NINJAGO_VEH_STORM_FIGHTER_1_BIN",
+       "name": "Storm Fighter",
+       "build": 1,
+       "ringColor": "#5D90F5",
+       "abilities": [
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Jay - 1. Storm Fighter.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Jay - 1. Storm Fighter.png",
+       "atlas": 182
+      },
+      {
+       "stableId": "WORLD_NINJAGO_VEH_LIGHTNING_JET_2_BIN",
+       "name": "Lightning Jet",
+       "build": 2,
+       "ringColor": "#BBF55D",
+       "abilities": [
+        9,
+        22,
+        25,
+        26,
+        47
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Jay - 2. Lightning Jet.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Jay - 2. Lightning Jet.png",
+       "atlas": 183
+      },
+      {
+       "stableId": "WORLD_NINJAGO_VEH_ELECTRO_SHOOTER_3_BIN",
+       "name": "Electro-Shooter",
+       "build": 3,
+       "ringColor": "#F0F55D",
+       "abilities": [
+        9,
+        22,
+        25,
+        26,
+        47
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Jay - 3. Electro-Shooter.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Jay - 3. Electro-Shooter.png",
+       "atlas": 184
+      }
+     ]
+    },
+    {
+     "baseName": "Blade Bike",
+     "builds": [
+      {
+       "stableId": "WORLD_NINJAGO_VEH_BLADE_BIKE_1_BIN",
+       "name": "Blade Bike",
+       "build": 1,
+       "ringColor": "#5DF5E6",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Kai - 1. Blade Bike.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Kai - 1. Blade Bike.png",
+       "atlas": 185
+      },
+      {
+       "stableId": "WORLD_NINJAGO_VEH_FLYING_FIRE_BIKE_2_BIN",
+       "name": "Flying Fire Bike",
+       "build": 2,
+       "ringColor": "#F5655D",
+       "abilities": [
+        9,
+        26
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Kai - 2. Flying Fire Bike.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Kai - 2. Flying Fire Bike.png",
+       "atlas": 186
+      },
+      {
+       "stableId": "WORLD_NINJAGO_VEH_BLADES_OF_FIRE_3_BIN",
+       "name": "Blades of Fire",
+       "build": 3,
+       "ringColor": "#5D9FF5",
+       "abilities": [
+        26,
+        47,
+        73
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Kai - 3. Blades of Fire.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Kai - 3. Blades of Fire.png",
+       "atlas": 187
+      }
+     ]
+    },
+    {
+     "baseName": "Lloyd's Golden Dragon",
+     "builds": [
+      {
+       "stableId": "WORLD_NINJAGO_VEH_LLOYD_S_GOLDEN_DRAGON_1_BIN",
+       "name": "Lloyd's Golden Dragon",
+       "build": 1,
+       "ringColor": "#EDF55D",
+       "abilities": [
+        26
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Lloyd - 1. Lloyd's Golden Dragon.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Lloyd - 1. Lloyd's Golden Dragon.png",
+       "atlas": 188
+      },
+      {
+       "stableId": "WORLD_NINJAGO_VEH_SWORD_PROJECTOR_DRAGON_2_BIN",
+       "name": "Sword Projector Dragon",
+       "build": 2,
+       "ringColor": "#5DF5CC",
+       "abilities": [
+        26,
+        73
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Lloyd - 2. Sword Projector Dragon.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Lloyd - 2. Sword Projector Dragon.png",
+       "atlas": 189
+      },
+      {
+       "stableId": "WORLD_NINJAGO_VEH_MEGA_FLIGHT_DRAGON_3_BIN",
+       "name": "Mega Flight Dragon",
+       "build": 3,
+       "ringColor": "#F5CF5D",
+       "abilities": [
+        26,
+        73
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Lloyd - 3. Mega Flight Dragon.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Lloyd - 3. Mega Flight Dragon.png",
+       "atlas": 190
+      }
+     ]
+    },
+    {
+     "baseName": "Samurai Mech",
+     "builds": [
+      {
+       "stableId": "WORLD_NINJAGO_VEH_SAMURAI_MECH_1_BIN",
+       "name": "Samurai Mech",
+       "build": 1,
+       "ringColor": "#5DF574",
+       "abilities": [
+        79
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Nya - 1. Samurai Mech.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Nya - 1. Samurai Mech.png",
+       "atlas": 191
+      },
+      {
+       "stableId": "WORLD_NINJAGO_VEH_SAMURAI_SHOOTER_2_BIN",
+       "name": "Samurai Shooter",
+       "build": 2,
+       "ringColor": "#71F55D",
+       "abilities": [
+        69
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Nya - 2. Samurai Shooter.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Nya - 2. Samurai Shooter.png",
+       "atlas": 192
+      },
+      {
+       "stableId": "WORLD_NINJAGO_VEH_SOARING_SAMURAI_MECH_3_BIN",
+       "name": "Soaring Samurai Mech",
+       "build": 3,
+       "ringColor": "#F59A5D",
+       "abilities": [
+        25,
+        26
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Nya - 3. Soaring Samurai Mech.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Nya - 3. Soaring Samurai Mech.png",
+       "atlas": 193
+      }
+     ]
+    },
+    {
+     "baseName": "Flying White Dragon",
+     "builds": [
+      {
+       "stableId": "WORLD_NINJAGO_VEH_FLYING_WHITE_DRAGON_1_BIN",
+       "name": "Flying White Dragon",
+       "build": 1,
+       "ringColor": "#F5B15D",
+       "abilities": [
+        26
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Sensei Wu - 1. Flying White Dragon.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Sensei Wu - 1. Flying White Dragon.png",
+       "atlas": 194
+      },
+      {
+       "stableId": "WORLD_NINJAGO_VEH_GOLDEN_FIRE_DRAGON_2_BIN",
+       "name": "Golden Fire Dragon",
+       "build": 2,
+       "ringColor": "#5DF58D",
+       "abilities": [
+        26,
+        73
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Sensei Wu - 2. Golden Fire Dragon.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Sensei Wu - 2. Golden Fire Dragon.png",
+       "atlas": 195
+      },
+      {
+       "stableId": "WORLD_NINJAGO_VEH_ULTRA_DESTRUCTION_DRAGON_3_BIN",
+       "name": "Ultra Destruction Dragon",
+       "build": 3,
+       "ringColor": "#71F55D",
+       "abilities": [
+        26
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Sensei Wu - 3. Ultra Destruction Dragon.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Sensei Wu - 3. Ultra Destruction Dragon.png",
+       "atlas": 196
+      }
+     ]
+    },
+    {
+     "baseName": "NinjaCopter",
+     "builds": [
+      {
+       "stableId": "WORLD_NINJAGO_VEH_NINJACOPTER_1_BIN",
+       "name": "NinjaCopter",
+       "build": 1,
+       "ringColor": "#C7F55D",
+       "abilities": [
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Zane - 1. NinjaCopter.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Zane - 1. NinjaCopter.png",
+       "atlas": 197
+      },
+      {
+       "stableId": "WORLD_NINJAGO_VEH_GLACIATOR_2_BIN",
+       "name": "Glaciator",
+       "build": 2,
+       "ringColor": "#5DF576",
+       "abilities": [
+        9,
+        25,
+        26,
+        73
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Zane - 2. Glaciator.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Zane - 2. Glaciator.png",
+       "atlas": 198
+      },
+      {
+       "stableId": "WORLD_NINJAGO_VEH_FREEZE_FIGHTER_3_BIN",
+       "name": "Freeze Fighter",
+       "build": 3,
+       "ringColor": "#5DA6F5",
+       "abilities": [
+        9,
+        25,
+        26,
+        47
+       ],
+       "bin": "All Bin Files/Ninjago/Vehicules/Zane - 3. Freeze Fighter.bin",
+       "portrait": "All Bin Files/Ninjago/Vehicules/Zane - 3. Freeze Fighter.png",
+       "atlas": 199
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Portal 2",
+   "logo": "All Bin Files/Portal 2/Logo/Portal_2.png",
+   "characters": [
+    {
+     "stableId": "WORLD_PORTAL_2_CHAR_CHELL_BIN",
+     "name": "Chell",
+     "build": 0,
+     "ringColor": "#5DF5BD",
+     "abilities": [
+      2,
+      62
+     ],
+     "bin": "All Bin Files/Portal 2/Characters/Chell.bin",
+     "portrait": "All Bin Files/Portal 2/Characters/Chell.png",
+     "atlas": 200
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Companion Cube",
+     "builds": [
+      {
+       "stableId": "WORLD_PORTAL_2_VEH_COMPANION_CUBE_1_BIN",
+       "name": "Companion Cube",
+       "build": 1,
+       "ringColor": "#D9F55D",
+       "abilities": [
+        99
+       ],
+       "bin": "All Bin Files/Portal 2/Vehicules/Chell - 1. Companion Cube.bin",
+       "portrait": "All Bin Files/Portal 2/Vehicules/Chell - 1. Companion Cube.png",
+       "atlas": 201
+      },
+      {
+       "stableId": "WORLD_PORTAL_2_VEH_LASER_DEFLECTOR_2_BIN",
+       "name": "Laser Deflector",
+       "build": 2,
+       "ringColor": "#5DDEF5",
+       "abilities": [
+        48
+       ],
+       "bin": "All Bin Files/Portal 2/Vehicules/Chell - 2. Laser Deflector.bin",
+       "portrait": "All Bin Files/Portal 2/Vehicules/Chell - 2. Laser Deflector.png",
+       "atlas": 202
+      },
+      {
+       "stableId": "WORLD_PORTAL_2_VEH_GOLD_HEART_EMITTER_3_BIN",
+       "name": "Gold Heart Emitter",
+       "build": 3,
+       "ringColor": "#5D92F5",
+       "abilities": [
+        42
+       ],
+       "bin": "All Bin Files/Portal 2/Vehicules/Chell - 3. Gold Heart Emitter.bin",
+       "portrait": "All Bin Files/Portal 2/Vehicules/Chell - 3. Gold Heart Emitter.png",
+       "atlas": 203
+      }
+     ]
+    },
+    {
+     "baseName": "Sentry Turret",
+     "builds": [
+      {
+       "stableId": "WORLD_PORTAL_2_VEH_SENTRY_TURRET_1_BIN",
+       "name": "Sentry Turret",
+       "build": 1,
+       "ringColor": "#B3F55D",
+       "abilities": [
+        69,
+        91
+       ],
+       "bin": "All Bin Files/Portal 2/Vehicules/Chell - 1. Sentry Turret.bin",
+       "portrait": "All Bin Files/Portal 2/Vehicules/Chell - 1. Sentry Turret.png",
+       "atlas": 204
+      },
+      {
+       "stableId": "WORLD_PORTAL_2_VEH_TURRET_STRIKER_2_BIN",
+       "name": "Turret Striker",
+       "build": 2,
+       "ringColor": "#F5765D",
+       "abilities": [
+        47,
+        69
+       ],
+       "bin": "All Bin Files/Portal 2/Vehicules/Chell - 2. Turret Striker.bin",
+       "portrait": "All Bin Files/Portal 2/Vehicules/Chell - 2. Turret Striker.png",
+       "atlas": 205
+      },
+      {
+       "stableId": "WORLD_PORTAL_2_VEH_FLYING_TURRET_CARRIER_3_BIN",
+       "name": "Flying Turret Carrier",
+       "build": 3,
+       "ringColor": "#6AF55D",
+       "abilities": [
+        9,
+        26,
+        69
+       ],
+       "bin": "All Bin Files/Portal 2/Vehicules/Chell - 3. Flying Turret Carrier.bin",
+       "portrait": "All Bin Files/Portal 2/Vehicules/Chell - 3. Flying Turret Carrier.png",
+       "atlas": 206
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Scooby-Doo!",
+   "logo": "All Bin Files/Scooby-Doo!/Logo/Scooby-Doo.png",
+   "characters": [
+    {
+     "stableId": "WORLD_SCOOBY_DOO_CHAR_SCOOBY_DOO_BIN",
+     "name": "Scooby-Doo",
+     "build": 0,
+     "ringColor": "#5DD4F5",
+     "abilities": [
+      17,
+      18,
+      32,
+      57,
+      76,
+      89
+     ],
+     "bin": "All Bin Files/Scooby-Doo!/Characters/Scooby-Doo.bin",
+     "portrait": "All Bin Files/Scooby-Doo!/Characters/Scooby-Doo.png",
+     "atlas": 207
+    },
+    {
+     "stableId": "WORLD_SCOOBY_DOO_CHAR_SHAGGY_BIN",
+     "name": "Shaggy",
+     "build": 0,
+     "ringColor": "#F5E35D",
+     "abilities": [
+      18,
+      32,
+      44,
+      76,
+      89
+     ],
+     "bin": "All Bin Files/Scooby-Doo!/Characters/Shaggy.bin",
+     "portrait": "All Bin Files/Scooby-Doo!/Characters/Shaggy.png",
+     "atlas": 208
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Scooby Snack",
+     "builds": [
+      {
+       "stableId": "WORLD_SCOOBY_DOO_VEH_SCOOBY_SNACK_1_BIN",
+       "name": "Scooby Snack",
+       "build": 1,
+       "ringColor": "#79F55D",
+       "abilities": [
+        79
+       ],
+       "bin": "All Bin Files/Scooby-Doo!/Vehicules/Scooby-Doo - 1. Scooby Snack.bin",
+       "portrait": "All Bin Files/Scooby-Doo!/Vehicules/Scooby-Doo - 1. Scooby Snack.png",
+       "atlas": 209
+      },
+      {
+       "stableId": "WORLD_SCOOBY_DOO_VEH_SCOOBY_FIRE_SNACK_2_BIN",
+       "name": "Scooby Fire Snack",
+       "build": 2,
+       "ringColor": "#5DE8F5",
+       "abilities": [
+        47
+       ],
+       "bin": "All Bin Files/Scooby-Doo!/Vehicules/Scooby-Doo - 2. Scooby Fire Snack.bin",
+       "portrait": "All Bin Files/Scooby-Doo!/Vehicules/Scooby-Doo - 2. Scooby Fire Snack.png",
+       "atlas": 210
+      },
+      {
+       "stableId": "WORLD_SCOOBY_DOO_VEH_SCOOBY_GHOST_SNACK_3_BIN",
+       "name": "Scooby Ghost Snack",
+       "build": 3,
+       "ringColor": "#5D9AF5",
+       "abilities": [
+        76
+       ],
+       "bin": "All Bin Files/Scooby-Doo!/Vehicules/Scooby-Doo - 3. Scooby Ghost Snack.bin",
+       "portrait": "All Bin Files/Scooby-Doo!/Vehicules/Scooby-Doo - 3. Scooby Ghost Snack.png",
+       "atlas": 211
+      }
+     ]
+    },
+    {
+     "baseName": "Mystery Machine",
+     "builds": [
+      {
+       "stableId": "WORLD_SCOOBY_DOO_VEH_MYSTERY_MACHINE_1_BIN",
+       "name": "Mystery Machine",
+       "build": 1,
+       "ringColor": "#F5E85D",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/Scooby-Doo!/Vehicules/Shaggy - 1. Mystery Machine.bin",
+       "portrait": "All Bin Files/Scooby-Doo!/Vehicules/Shaggy - 1. Mystery Machine.png",
+       "atlas": 212
+      },
+      {
+       "stableId": "WORLD_SCOOBY_DOO_VEH_MYSTERY_TOW_GO_2_BIN",
+       "name": "Mystery Tow & Go",
+       "build": 2,
+       "ringColor": "#5DF5F5",
+       "abilities": [
+        1,
+        88
+       ],
+       "bin": "All Bin Files/Scooby-Doo!/Vehicules/Shaggy - 2. Mystery Tow & Go.bin",
+       "portrait": "All Bin Files/Scooby-Doo!/Vehicules/Shaggy - 2. Mystery Tow & Go.png",
+       "atlas": 213
+      },
+      {
+       "stableId": "WORLD_SCOOBY_DOO_VEH_MYSTERY_MONSTER_3_BIN",
+       "name": "Mystery Monster",
+       "build": 3,
+       "ringColor": "#5DF57B",
+       "abilities": [
+        36,
+        40,
+        97
+       ],
+       "bin": "All Bin Files/Scooby-Doo!/Vehicules/Shaggy - 3. Mystery Monster.bin",
+       "portrait": "All Bin Files/Scooby-Doo!/Vehicules/Shaggy - 3. Mystery Monster.png",
+       "atlas": 214
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Sonic the Hedgehog",
+   "logo": "All Bin Files/Sonic the Hedgehog/Logo/Sonic.png",
+   "characters": [
+    {
+     "stableId": "WORLD_SONIC_THE_HEDGEHOG_CHAR_SONIC_THE_HEDGEHOG_BIN",
+     "name": "Sonic the Hedgehog",
+     "build": 0,
+     "ringColor": "#5DF595",
+     "abilities": [
+      2,
+      35,
+      74,
+      78
+     ],
+     "bin": "All Bin Files/Sonic the Hedgehog/Characters/Sonic the Hedgehog.bin",
+     "portrait": "All Bin Files/Sonic the Hedgehog/Characters/Sonic the Hedgehog.png",
+     "atlas": 215
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Sonic Speedster",
+     "builds": [
+      {
+       "stableId": "WORLD_SONIC_THE_HEDGEHOG_VEH_SONIC_SPEEDSTER_1_BIN",
+       "name": "Sonic Speedster",
+       "build": 1,
+       "ringColor": "#F5835D",
+       "abilities": [
+        1,
+        14
+       ],
+       "bin": "All Bin Files/Sonic the Hedgehog/Vehicules/Sonic the Hedgehog - 1. Sonic Speedster.bin",
+       "portrait": "All Bin Files/Sonic the Hedgehog/Vehicules/Sonic the Hedgehog - 1. Sonic Speedster.png",
+       "atlas": 216
+      },
+      {
+       "stableId": "WORLD_SONIC_THE_HEDGEHOG_VEH_BLUE_TYPHON_2_BIN",
+       "name": "Blue Typhoon",
+       "build": 2,
+       "ringColor": "#97F55D",
+       "abilities": [
+        9,
+        14,
+        25,
+        26,
+        72
+       ],
+       "bin": "All Bin Files/Sonic the Hedgehog/Vehicules/Sonic the Hedgehog - 2. Blue Typhon.bin",
+       "portrait": "All Bin Files/Sonic the Hedgehog/Vehicules/Sonic the Hedgehog - 2. Blue Typhon.png",
+       "atlas": 217
+      },
+      {
+       "stableId": "WORLD_SONIC_THE_HEDGEHOG_VEH_MOTO_BUG_3_BIN",
+       "name": "Moto Bug",
+       "build": 3,
+       "ringColor": "#B1F55D",
+       "abilities": [
+        1,
+        14,
+        17,
+        78,
+        96
+       ],
+       "bin": "All Bin Files/Sonic the Hedgehog/Vehicules/Sonic the Hedgehog - 3. Moto Bug.bin",
+       "portrait": "All Bin Files/Sonic the Hedgehog/Vehicules/Sonic the Hedgehog - 3. Moto Bug.png",
+       "atlas": 218
+      }
+     ]
+    },
+    {
+     "baseName": "The Tornado",
+     "builds": [
+      {
+       "stableId": "WORLD_SONIC_THE_HEDGEHOG_VEH_THE_TORNADO_1_BIN",
+       "name": "The Tornado",
+       "build": 1,
+       "ringColor": "#5DF5B1",
+       "abilities": [
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/Sonic the Hedgehog/Vehicules/Sonic the Hedgehog - 1. The Tornado.bin",
+       "portrait": "All Bin Files/Sonic the Hedgehog/Vehicules/Sonic the Hedgehog - 1. The Tornado.png",
+       "atlas": 219
+      },
+      {
+       "stableId": "WORLD_SONIC_THE_HEDGEHOG_VEH_CRABMEAT_2_BIN",
+       "name": "Crabmeat",
+       "build": 2,
+       "ringColor": "#D9F55D",
+       "abilities": [
+        37,
+        47,
+        78
+       ],
+       "bin": "All Bin Files/Sonic the Hedgehog/Vehicules/Sonic the Hedgehog - 2. Crabmeat.bin",
+       "portrait": "All Bin Files/Sonic the Hedgehog/Vehicules/Sonic the Hedgehog - 2. Crabmeat.png",
+       "atlas": 220
+      },
+      {
+       "stableId": "WORLD_SONIC_THE_HEDGEHOG_VEH_EGG_CATCHER_3_BIN",
+       "name": "Egg Catcher",
+       "build": 3,
+       "ringColor": "#E6F55D",
+       "abilities": [
+        9,
+        22,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/Sonic the Hedgehog/Vehicules/Sonic the Hedgehog - 3. Egg Catcher.bin",
+       "portrait": "All Bin Files/Sonic the Hedgehog/Vehicules/Sonic the Hedgehog - 3. Egg Catcher.png",
+       "atlas": 221
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Teen Titans Go!",
+   "logo": "All Bin Files/Teen Titans Go!/Logo/Teen_Titans_Go.png",
+   "characters": [
+    {
+     "stableId": "WORLD_TEEN_TITANS_GO_CHAR_BEAST_BOY_BIN",
+     "name": "Beast Boy",
+     "build": 0,
+     "ringColor": "#9FF55D",
+     "abilities": [
+      2,
+      5,
+      6,
+      17,
+      18,
+      21,
+      26,
+      57,
+      68,
+      71,
+      89
+     ],
+     "bin": "All Bin Files/Teen Titans Go!/Characters/Beast Boy.bin",
+     "portrait": "All Bin Files/Teen Titans Go!/Characters/Beast Boy.png",
+     "atlas": 222
+    },
+    {
+     "stableId": "WORLD_TEEN_TITANS_GO_CHAR_RAVEN_BIN",
+     "name": "Raven",
+     "build": 0,
+     "ringColor": "#60F55D",
+     "abilities": [
+      21,
+      22,
+      26,
+      41,
+      45,
+      47,
+      49,
+      51,
+      64
+     ],
+     "bin": "All Bin Files/Teen Titans Go!/Characters/Raven.bin",
+     "portrait": "All Bin Files/Teen Titans Go!/Characters/Raven.png",
+     "atlas": 223
+    },
+    {
+     "stableId": "WORLD_TEEN_TITANS_GO_CHAR_STARFIRE_BIN",
+     "name": "Starfire",
+     "build": 0,
+     "ringColor": "#F5DE5D",
+     "abilities": [
+      2,
+      5,
+      18,
+      26,
+      42,
+      47,
+      59,
+      63
+     ],
+     "bin": "All Bin Files/Teen Titans Go!/Characters/Starfire.bin",
+     "portrait": "All Bin Files/Teen Titans Go!/Characters/Starfire.png",
+     "atlas": 224
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "T-Car",
+     "builds": [
+      {
+       "stableId": "WORLD_TEEN_TITANS_GO_VEH_T_CAR_1_BIN",
+       "name": "T-Car",
+       "build": 1,
+       "ringColor": "#5DEBF5",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/Teen Titans Go!/Vehicules/Beast Boy - 1. T-Car.bin",
+       "portrait": "All Bin Files/Teen Titans Go!/Vehicules/Beast Boy - 1. T-Car.png",
+       "atlas": 225
+      },
+      {
+       "stableId": "WORLD_TEEN_TITANS_GO_VEH_T_FORKLIFT_2_BIN",
+       "name": "T-Forklift",
+       "build": 2,
+       "ringColor": "#5DC5F5",
+       "abilities": [
+        1,
+        21,
+        69
+       ],
+       "bin": "All Bin Files/Teen Titans Go!/Vehicules/Beast Boy - 2. T-Forklift.bin",
+       "portrait": "All Bin Files/Teen Titans Go!/Vehicules/Beast Boy - 2. T-Forklift.png",
+       "atlas": 226
+      },
+      {
+       "stableId": "WORLD_TEEN_TITANS_GO_VEH_T_PLANE_3_BIN",
+       "name": "T-Plane",
+       "build": 3,
+       "ringColor": "#F5CF5D",
+       "abilities": [
+        1,
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/Teen Titans Go!/Vehicules/Beast Boy - 3. T-Plane.bin",
+       "portrait": "All Bin Files/Teen Titans Go!/Vehicules/Beast Boy - 3. T-Plane.png",
+       "atlas": 227
+      }
+     ]
+    },
+    {
+     "baseName": "Spellbook of Azarath",
+     "builds": [
+      {
+       "stableId": "WORLD_TEEN_TITANS_GO_VEH_SPELLBOOK_OF_AZARATH_1_BIN",
+       "name": "Spellbook of Azarath",
+       "build": 1,
+       "ringColor": "#5DA4F5",
+       "abilities": [
+        14,
+        21,
+        26,
+        47
+       ],
+       "bin": "All Bin Files/Teen Titans Go!/Vehicules/Raven - 1. Spellbook of Azarath.bin",
+       "portrait": "All Bin Files/Teen Titans Go!/Vehicules/Raven - 1. Spellbook of Azarath.png",
+       "atlas": 228
+      },
+      {
+       "stableId": "WORLD_TEEN_TITANS_GO_VEH_RAVEN_WINGS_2_BIN",
+       "name": "Raven Wings",
+       "build": 2,
+       "ringColor": "#F5EB5D",
+       "abilities": [
+        26,
+        47
+       ],
+       "bin": "All Bin Files/Teen Titans Go!/Vehicules/Raven - 2. Raven Wings.bin",
+       "portrait": "All Bin Files/Teen Titans Go!/Vehicules/Raven - 2. Raven Wings.png",
+       "atlas": 229
+      },
+      {
+       "stableId": "WORLD_TEEN_TITANS_GO_VEH_GIANT_HAND_3_BIN",
+       "name": "Giant Hand",
+       "build": 3,
+       "ringColor": "#5DF585",
+       "abilities": [
+        17,
+        79
+       ],
+       "bin": "All Bin Files/Teen Titans Go!/Vehicules/Raven - 3. Giant Hand.bin",
+       "portrait": "All Bin Files/Teen Titans Go!/Vehicules/Raven - 3. Giant Hand.png",
+       "atlas": 230
+      }
+     ]
+    },
+    {
+     "baseName": "Titan Robot",
+     "builds": [
+      {
+       "stableId": "WORLD_TEEN_TITANS_GO_VEH_TITAN_ROBOT_1_BIN",
+       "name": "Titan Robot",
+       "build": 1,
+       "ringColor": "#5DF574",
+       "abilities": [
+        69
+       ],
+       "bin": "All Bin Files/Teen Titans Go!/Vehicules/Starfire - 1. Titan Robot.bin",
+       "portrait": "All Bin Files/Teen Titans Go!/Vehicules/Starfire - 1. Titan Robot.png",
+       "atlas": 231
+      },
+      {
+       "stableId": "WORLD_TEEN_TITANS_GO_VEH_T_ROCKET_2_BIN",
+       "name": "T-Rocket",
+       "build": 2,
+       "ringColor": "#C0F55D",
+       "abilities": [
+        9,
+        26,
+        47
+       ],
+       "bin": "All Bin Files/Teen Titans Go!/Vehicules/Starfire - 2. T-Rocket.bin",
+       "portrait": "All Bin Files/Teen Titans Go!/Vehicules/Starfire - 2. T-Rocket.png",
+       "atlas": 232
+      },
+      {
+       "stableId": "WORLD_TEEN_TITANS_GO_VEH_ROBOT_RETRIEVER_3_BIN",
+       "name": "Robot Retriever",
+       "build": 3,
+       "ringColor": "#5DF562",
+       "abilities": [
+        22
+       ],
+       "bin": "All Bin Files/Teen Titans Go!/Vehicules/Starfire - 3. Robot Retriever.bin",
+       "portrait": "All Bin Files/Teen Titans Go!/Vehicules/Starfire - 3. Robot Retriever.png",
+       "atlas": 233
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "The A-Team",
+   "logo": "All Bin Files/The A-Team/Logo/The_A-team.png",
+   "characters": [
+    {
+     "stableId": "WORLD_THE_A_TEAM_CHAR_B_A_BARACUS_BIN",
+     "name": "B.A. Baracus",
+     "build": 0,
+     "ringColor": "#BDF55D",
+     "abilities": [
+      0,
+      10,
+      24,
+      48,
+      54,
+      69,
+      79,
+      84
+     ],
+     "bin": "All Bin Files/The A-Team/Characters/B.A. Baracus.bin",
+     "portrait": "All Bin Files/The A-Team/Characters/B.A. Baracus.png",
+     "atlas": 234
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "B. A. 's Van",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_A_TEAM_VEH_B_A_S_VAN_1_BIN",
+       "name": "B. A. 's Van",
+       "build": 1,
+       "ringColor": "#5DEDF5",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/The A-Team/Vehicules/B.A. Baracus - 1. B. A. 's Van.bin",
+       "portrait": "All Bin Files/The A-Team/Vehicules/B.A. Baracus - 1. B. A. 's Van.png",
+       "atlas": 235
+      },
+      {
+       "stableId": "WORLD_THE_A_TEAM_VEH_FOOL_SMASHER_2_BIN",
+       "name": "Fool Smasher",
+       "build": 2,
+       "ringColor": "#5DA1F5",
+       "abilities": [
+        1,
+        69,
+        79
+       ],
+       "bin": "All Bin Files/The A-Team/Vehicules/B.A. Baracus - 2. Fool Smasher.bin",
+       "portrait": "All Bin Files/The A-Team/Vehicules/B.A. Baracus - 2. Fool Smasher.png",
+       "atlas": 236
+      },
+      {
+       "stableId": "WORLD_THE_A_TEAM_VEH_THE_PAIN_PLANE_3_BIN",
+       "name": "The Pain Plane",
+       "build": 3,
+       "ringColor": "#5DF5A1",
+       "abilities": [
+        9,
+        26,
+        88
+       ],
+       "bin": "All Bin Files/The A-Team/Vehicules/B.A. Baracus - 3. The Pain Plane.bin",
+       "portrait": "All Bin Files/The A-Team/Vehicules/B.A. Baracus - 3. The Pain Plane.png",
+       "atlas": 237
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "The Goonies",
+   "logo": "All Bin Files/The Goonies/Logo/The_Goonies.png",
+   "characters": [
+    {
+     "stableId": "WORLD_THE_GOONIES_CHAR_SLOTH_BIN",
+     "name": "Sloth",
+     "build": 0,
+     "ringColor": "#BBF55D",
+     "abilities": [
+      10,
+      17,
+      18,
+      33,
+      66,
+      79,
+      90
+     ],
+     "bin": "All Bin Files/The Goonies/Characters/Sloth.bin",
+     "portrait": "All Bin Files/The Goonies/Characters/Sloth.png",
+     "atlas": 238
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "One-Eyed Willy's Pirate Ship",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_GOONIES_VEH_ONE_EYED_WILLY_PIRATE_SHIP_1_BIN",
+       "name": "One-Eyed Willy's Pirate Ship",
+       "build": 1,
+       "ringColor": "#F5DE5D",
+       "abilities": [
+        69
+       ],
+       "bin": "All Bin Files/The Goonies/Vehicules/Sloth - 1. One Eyed Willy Pirate Ship.bin",
+       "portrait": "All Bin Files/The Goonies/Vehicules/Sloth - 1. One Eyed Willy Pirate Ship.png",
+       "atlas": 239
+      },
+      {
+       "stableId": "WORLD_THE_GOONIES_VEH_FANGED_FORTUNE_2_BIN",
+       "name": "Fanged Fortune",
+       "build": 2,
+       "ringColor": "#E3F55D",
+       "abilities": [
+        36,
+        40,
+        97
+       ],
+       "bin": "All Bin Files/The Goonies/Vehicules/Sloth - 2. Fanged Fortune.bin",
+       "portrait": "All Bin Files/The Goonies/Vehicules/Sloth - 2. Fanged Fortune.png",
+       "atlas": 240
+      },
+      {
+       "stableId": "WORLD_THE_GOONIES_VEH_THE_INFERNO_CANNON_3_BIN",
+       "name": "The Inferno Cannon",
+       "build": 3,
+       "ringColor": "#5DAEF5",
+       "abilities": [
+        69
+       ],
+       "bin": "All Bin Files/The Goonies/Vehicules/Sloth - 3. The Inferno Cannon.bin",
+       "portrait": "All Bin Files/The Goonies/Vehicules/Sloth - 3. The Inferno Cannon.png",
+       "atlas": 241
+      }
+     ]
+    },
+    {
+     "baseName": "Skeleton Organ",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_GOONIES_VEH_SKELETON_ORGAN_1_BIN",
+       "name": "Skeleton Organ",
+       "build": 1,
+       "ringColor": "#C5F55D",
+       "abilities": [
+        69,
+        70,
+        72
+       ],
+       "bin": "All Bin Files/The Goonies/Vehicules/Sloth - 1. Skeleton Organ.bin",
+       "portrait": "All Bin Files/The Goonies/Vehicules/Sloth - 1. Skeleton Organ.png",
+       "atlas": 242
+      },
+      {
+       "stableId": "WORLD_THE_GOONIES_VEH_SKELETON_JUKEBOX_2_BIN",
+       "name": "Skeleton Jukebox",
+       "build": 2,
+       "ringColor": "#5DC7F5",
+       "abilities": [
+        72
+       ],
+       "bin": "All Bin Files/The Goonies/Vehicules/Sloth - 2. Skeleton Jukebox.bin",
+       "portrait": "All Bin Files/The Goonies/Vehicules/Sloth - 2. Skeleton Jukebox.png",
+       "atlas": 243
+      },
+      {
+       "stableId": "WORLD_THE_GOONIES_VEH_SKELE_TURKEY_3_BIN",
+       "name": "Skele-Turkey",
+       "build": 3,
+       "ringColor": "#5DF576",
+       "abilities": [
+        26,
+        47,
+        69
+       ],
+       "bin": "All Bin Files/The Goonies/Vehicules/Sloth - 3. Skele-Turkey.bin",
+       "portrait": "All Bin Files/The Goonies/Vehicules/Sloth - 3. Skele-Turkey.png",
+       "atlas": 244
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "The LEGO Batman Movie",
+   "logo": "All Bin Files/The LEGO Batman Movie/Logo/The_LEGO_Batman_Movie.png",
+   "characters": [
+    {
+     "stableId": "WORLD_THE_LEGO_BATMAN_MOVIE_CHAR_BATGIRL_BIN",
+     "name": "Batgirl",
+     "build": 0,
+     "ringColor": "#5DF5A9",
+     "abilities": [
+      8,
+      15,
+      32,
+      33,
+      43,
+      66,
+      76
+     ],
+     "bin": "All Bin Files/The LEGO Batman Movie/Characters/Batgirl.bin",
+     "portrait": "All Bin Files/The LEGO Batman Movie/Characters/Batgirl.png",
+     "atlas": 245
+    },
+    {
+     "stableId": "WORLD_THE_LEGO_BATMAN_MOVIE_CHAR_EXCALIBUR_BATMAN_BIN",
+     "name": "Excalibur Batman",
+     "build": 0,
+     "ringColor": "#BBF55D",
+     "abilities": [
+      8,
+      33,
+      48,
+      54,
+      66,
+      76,
+      81
+     ],
+     "bin": "All Bin Files/The LEGO Batman Movie/Characters/Excalibur Batman.bin",
+     "portrait": "All Bin Files/The LEGO Batman Movie/Characters/Excalibur Batman.png",
+     "atlas": 246
+    },
+    {
+     "stableId": "WORLD_THE_LEGO_BATMAN_MOVIE_CHAR_ROBIN_BIN",
+     "name": "Robin",
+     "build": 0,
+     "ringColor": "#F5E65D",
+     "abilities": [
+      2,
+      10,
+      18,
+      24,
+      32,
+      44,
+      48,
+      61,
+      77,
+      95
+     ],
+     "bin": "All Bin Files/The LEGO Batman Movie/Characters/Robin.bin",
+     "portrait": "All Bin Files/The LEGO Batman Movie/Characters/Robin.png",
+     "atlas": 247
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Batwing",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_LEGO_BATMAN_MOVIE_VEH_BATWING_1_BIN",
+       "name": "Batwing",
+       "build": 1,
+       "ringColor": "#F5D95D",
+       "abilities": [
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/The LEGO Batman Movie/Vehicules/Batgirl - 1. Batwing.bin",
+       "portrait": "All Bin Files/The LEGO Batman Movie/Vehicules/Batgirl - 1. Batwing.png",
+       "atlas": 248
+      },
+      {
+       "stableId": "WORLD_THE_LEGO_BATMAN_MOVIE_VEH_THE_BLACK_THUNDER_2_BIN",
+       "name": "The Black Thunder",
+       "build": 2,
+       "ringColor": "#F5CA5D",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/The LEGO Batman Movie/Vehicules/Batgirl - 2. The Black Thunder.bin",
+       "portrait": "All Bin Files/The LEGO Batman Movie/Vehicules/Batgirl - 2. The Black Thunder.png",
+       "atlas": 249
+      },
+      {
+       "stableId": "WORLD_THE_LEGO_BATMAN_MOVIE_VEH_BAT_TANK_3_BIN",
+       "name": "Bat-Tank",
+       "build": 3,
+       "ringColor": "#5DF583",
+       "abilities": [
+        1,
+        69
+       ],
+       "bin": "All Bin Files/The LEGO Batman Movie/Vehicules/Batgirl - 3. Bat-Tank.bin",
+       "portrait": "All Bin Files/The LEGO Batman Movie/Vehicules/Batgirl - 3. Bat-Tank.png",
+       "atlas": 250
+      }
+     ]
+    },
+    {
+     "baseName": "Bionic Steed",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_LEGO_BATMAN_MOVIE_VEH_BIONIC_STEED_1_BIN",
+       "name": "Bionic Steed",
+       "build": 1,
+       "ringColor": "#6FF55D",
+       "abilities": [
+        73,
+        78
+       ],
+       "bin": "All Bin Files/The LEGO Batman Movie/Vehicules/Excalibur Batman - 1. Bionic Steed.bin",
+       "portrait": "All Bin Files/The LEGO Batman Movie/Vehicules/Excalibur Batman - 1. Bionic Steed.png",
+       "atlas": 251
+      },
+      {
+       "stableId": "WORLD_THE_LEGO_BATMAN_MOVIE_VEH_BAT_RAPTOR_2_BIN",
+       "name": "Bat-Raptor",
+       "build": 2,
+       "ringColor": "#CCF55D",
+       "abilities": [
+        78,
+        79
+       ],
+       "bin": "All Bin Files/The LEGO Batman Movie/Vehicules/Excalibur Batman - 2. Bat-Raptor.bin",
+       "portrait": "All Bin Files/The LEGO Batman Movie/Vehicules/Excalibur Batman - 2. Bat-Raptor.png",
+       "atlas": 252
+      },
+      {
+       "stableId": "WORLD_THE_LEGO_BATMAN_MOVIE_VEH_ULTRABAT_3_BIN",
+       "name": "Ultrabat",
+       "build": 3,
+       "ringColor": "#5DF5AE",
+       "abilities": [
+        26,
+        72,
+        79
+       ],
+       "bin": "All Bin Files/The LEGO Batman Movie/Vehicules/Excalibur Batman - 3. Ultrabat.bin",
+       "portrait": "All Bin Files/The LEGO Batman Movie/Vehicules/Excalibur Batman - 3. Ultrabat.png",
+       "atlas": 253
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "The LEGO Movie",
+   "logo": "All Bin Files/The LEGO Movie/Logo/The_LEGO_Movie.png",
+   "characters": [
+    {
+     "stableId": "WORLD_THE_LEGO_MOVIE_CHAR_BAD_COP_BIN",
+     "name": "Bad Cop",
+     "build": 0,
+     "ringColor": "#5DF576",
+     "abilities": [
+      47,
+      55,
+      65,
+      84
+     ],
+     "bin": "All Bin Files/The LEGO Movie/Characters/Bad Cop.bin",
+     "portrait": "All Bin Files/The LEGO Movie/Characters/Bad Cop.png",
+     "atlas": 254
+    },
+    {
+     "stableId": "WORLD_THE_LEGO_MOVIE_CHAR_BENNY_BIN",
+     "name": "Benny",
+     "build": 0,
+     "ringColor": "#D1F55D",
+     "abilities": [
+      32,
+      39,
+      54,
+      72,
+      84,
+      86
+     ],
+     "bin": "All Bin Files/The LEGO Movie/Characters/Benny.bin",
+     "portrait": "All Bin Files/The LEGO Movie/Characters/Benny.png",
+     "atlas": 255
+    },
+    {
+     "stableId": "WORLD_THE_LEGO_MOVIE_CHAR_EMMET_BIN",
+     "name": "Emmet",
+     "build": 0,
+     "ringColor": "#5DDCF5",
+     "abilities": [
+      20,
+      24,
+      54
+     ],
+     "bin": "All Bin Files/The LEGO Movie/Characters/Emmet.bin",
+     "portrait": "All Bin Files/The LEGO Movie/Characters/Emmet.png",
+     "atlas": 256
+    },
+    {
+     "stableId": "WORLD_THE_LEGO_MOVIE_CHAR_UNKITTY_BIN",
+     "name": "Unikitty",
+     "build": 0,
+     "ringColor": "#F5925D",
+     "abilities": [
+      6,
+      54,
+      63
+     ],
+     "bin": "All Bin Files/The LEGO Movie/Characters/Unkitty.bin",
+     "portrait": "All Bin Files/The LEGO Movie/Characters/Unkitty.png",
+     "atlas": 257
+    },
+    {
+     "stableId": "WORLD_THE_LEGO_MOVIE_CHAR_WYLDSTYLE_BIN",
+     "name": "Wyldstyle",
+     "build": 0,
+     "ringColor": "#7EF55D",
+     "abilities": [
+      2,
+      54,
+      65
+     ],
+     "bin": "All Bin Files/The LEGO Movie/Characters/Wyldstyle.bin",
+     "portrait": "All Bin Files/The LEGO Movie/Characters/Wyldstyle.png",
+     "atlas": 258
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Police Car",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_LEGO_MOVIE_VEH_POLICE_CAR_1_BIN",
+       "name": "Police Car",
+       "build": 1,
+       "ringColor": "#5DBDF5",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/The LEGO Movie/Vehicules/Bad Cop - 1. Police Car.bin",
+       "portrait": "All Bin Files/The LEGO Movie/Vehicules/Bad Cop - 1. Police Car.png",
+       "atlas": 259
+      },
+      {
+       "stableId": "WORLD_THE_LEGO_MOVIE_VEH_AERIAL_SQUAD_CAR_2_BIN",
+       "name": "Aerial Squad Car",
+       "build": 2,
+       "ringColor": "#ABF55D",
+       "abilities": [
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/The LEGO Movie/Vehicules/Bad Cop - 2. Aerial Squad Car.bin",
+       "portrait": "All Bin Files/The LEGO Movie/Vehicules/Bad Cop - 2. Aerial Squad Car.png",
+       "atlas": 260
+      },
+      {
+       "stableId": "WORLD_THE_LEGO_MOVIE_VEH_MISSILE_STRIKER_3_BIN",
+       "name": "Missile Striker",
+       "build": 3,
+       "ringColor": "#5DF0F5",
+       "abilities": [
+        9,
+        25,
+        26,
+        69
+       ],
+       "bin": "All Bin Files/The LEGO Movie/Vehicules/Bad Cop - 3. Missile Striker.bin",
+       "portrait": "All Bin Files/The LEGO Movie/Vehicules/Bad Cop - 3. Missile Striker.png",
+       "atlas": 261
+      }
+     ]
+    },
+    {
+     "baseName": "Benny's Spaceship",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_LEGO_MOVIE_VEH_BENNY_SPACESHIP_1_BIN",
+       "name": "Benny's Spaceship",
+       "build": 1,
+       "ringColor": "#F5C55D",
+       "abilities": [
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/The LEGO Movie/Vehicules/Benny - 1. Benny Spaceship.bin",
+       "portrait": "All Bin Files/The LEGO Movie/Vehicules/Benny - 1. Benny Spaceship.png",
+       "atlas": 262
+      },
+      {
+       "stableId": "WORLD_THE_LEGO_MOVIE_VEH_LASERCRAFT_2_BIN",
+       "name": "Lasercraft",
+       "build": 2,
+       "ringColor": "#5DF5F0",
+       "abilities": [
+        9,
+        25,
+        26,
+        47
+       ],
+       "bin": "All Bin Files/The LEGO Movie/Vehicules/Benny - 2. Lasercraft.bin",
+       "portrait": "All Bin Files/The LEGO Movie/Vehicules/Benny - 2. Lasercraft.png",
+       "atlas": 263
+      },
+      {
+       "stableId": "WORLD_THE_LEGO_MOVIE_VEH_THE_ANNIHILATOR_3_BIN",
+       "name": "The Annihilator",
+       "build": 3,
+       "ringColor": "#67F55D",
+       "abilities": [
+        9,
+        25,
+        26,
+        69
+       ],
+       "bin": "All Bin Files/The LEGO Movie/Vehicules/Benny - 3. The Annihilator.bin",
+       "portrait": "All Bin Files/The LEGO Movie/Vehicules/Benny - 3. The Annihilator.png",
+       "atlas": 264
+      }
+     ]
+    },
+    {
+     "baseName": "Emmet's Excavator",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_LEGO_MOVIE_VEH_EMMET_EXCAVATOR_1_BIN",
+       "name": "Emmet's Excavator",
+       "build": 1,
+       "ringColor": "#C7F55D",
+       "abilities": [
+        1,
+        17
+       ],
+       "bin": "All Bin Files/The LEGO Movie/Vehicules/Emmet - 1. Emmet Excavator.bin",
+       "portrait": "All Bin Files/The LEGO Movie/Vehicules/Emmet - 1. Emmet Excavator.png",
+       "atlas": 265
+      },
+      {
+       "stableId": "WORLD_THE_LEGO_MOVIE_VEH_THE_DESTROYDOZER_2_BIN",
+       "name": "The Destroydozer",
+       "build": 2,
+       "ringColor": "#5DD9F5",
+       "abilities": [
+        1,
+        17
+       ],
+       "bin": "All Bin Files/The LEGO Movie/Vehicules/Emmet - 2. The Destroydozer.bin",
+       "portrait": "All Bin Files/The LEGO Movie/Vehicules/Emmet - 2. The Destroydozer.png",
+       "atlas": 266
+      },
+      {
+       "stableId": "WORLD_THE_LEGO_MOVIE_VEH_DESTRUCT_O_MECH_3_BIN",
+       "name": "Destruct-o-Mech",
+       "build": 3,
+       "ringColor": "#5DF576",
+       "abilities": [
+        79
+       ],
+       "bin": "All Bin Files/The LEGO Movie/Vehicules/Emmet - 3. Destruct-O-Mech.bin",
+       "portrait": "All Bin Files/The LEGO Movie/Vehicules/Emmet - 3. Destruct-O-Mech.png",
+       "atlas": 267
+      }
+     ]
+    },
+    {
+     "baseName": "Cloud Cuckoo Car",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_LEGO_MOVIE_VEH_CLOUD_CUCKOO_CAR_1_BIN",
+       "name": "Cloud Cuckoo Car",
+       "build": 1,
+       "ringColor": "#ABF55D",
+       "abilities": [
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/The LEGO Movie/Vehicules/Unkitty - 1. Cloud Cuckoo Car.bin",
+       "portrait": "All Bin Files/The LEGO Movie/Vehicules/Unkitty - 1. Cloud Cuckoo Car.png",
+       "atlas": 268
+      },
+      {
+       "stableId": "WORLD_THE_LEGO_MOVIE_VEH_X_STREAM_SOAKER_2_BIN",
+       "name": "X-Stream Soaker",
+       "build": 2,
+       "ringColor": "#F5655D",
+       "abilities": [
+        26,
+        36,
+        40
+       ],
+       "bin": "All Bin Files/The LEGO Movie/Vehicules/Unkitty - 2. X-Stream Soaker.bin",
+       "portrait": "All Bin Files/The LEGO Movie/Vehicules/Unkitty - 2. X-Stream Soaker.png",
+       "atlas": 269
+      },
+      {
+       "stableId": "WORLD_THE_LEGO_MOVIE_VEH_RAINBOW_CANON_3_BIN",
+       "name": "Rainbow Cannon",
+       "build": 3,
+       "ringColor": "#5DC7F5",
+       "abilities": [
+        9,
+        25,
+        26,
+        63
+       ],
+       "bin": "All Bin Files/The LEGO Movie/Vehicules/Unkitty - 3. Rainbow Canon.bin",
+       "portrait": "All Bin Files/The LEGO Movie/Vehicules/Unkitty - 3. Rainbow Canon.png",
+       "atlas": 270
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "The Lord of the Rings",
+   "logo": "All Bin Files/The Lord of the Rings/Logo/The_Lord_of_the_rings.png",
+   "characters": [
+    {
+     "stableId": "WORLD_THE_LORD_OF_THE_RINGS_CHAR_GANDALF_THE_GREY_BIN",
+     "name": "Gandalf",
+     "build": 0,
+     "ringColor": "#5DDCF5",
+     "abilities": [
+      36,
+      44,
+      51,
+      52,
+      75
+     ],
+     "bin": "All Bin Files/The Lord of the Rings/Characters/Gandalf The Grey.bin",
+     "portrait": "All Bin Files/The Lord of the Rings/Characters/Gandalf The Grey.png",
+     "atlas": 271
+    },
+    {
+     "stableId": "WORLD_THE_LORD_OF_THE_RINGS_CHAR_GIMLI_BIN",
+     "name": "Gimli",
+     "build": 0,
+     "ringColor": "#F5655D",
+     "abilities": [
+      57,
+      79
+     ],
+     "bin": "All Bin Files/The Lord of the Rings/Characters/Gimli.bin",
+     "portrait": "All Bin Files/The Lord of the Rings/Characters/Gimli.png",
+     "atlas": 272
+    },
+    {
+     "stableId": "WORLD_THE_LORD_OF_THE_RINGS_CHAR_GOLLUM_BIN",
+     "name": "Gollum",
+     "build": 0,
+     "ringColor": "#CAF55D",
+     "abilities": [
+      2,
+      8,
+      18,
+      57,
+      69
+     ],
+     "bin": "All Bin Files/The Lord of the Rings/Characters/Gollum.bin",
+     "portrait": "All Bin Files/The Lord of the Rings/Characters/Gollum.png",
+     "atlas": 273
+    },
+    {
+     "stableId": "WORLD_THE_LORD_OF_THE_RINGS_CHAR_LEGOLAS_BIN",
+     "name": "Legolas",
+     "build": 0,
+     "ringColor": "#5DB1F5",
+     "abilities": [
+      2,
+      61,
+      84
+     ],
+     "bin": "All Bin Files/The Lord of the Rings/Characters/Legolas.bin",
+     "portrait": "All Bin Files/The Lord of the Rings/Characters/Legolas.png",
+     "atlas": 274
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Axe Chariot",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_LORD_OF_THE_RINGS_VEH_AXE_CHARIOT_1_BIN",
+       "name": "Axe Chariot",
+       "build": 1,
+       "ringColor": "#5DF5BB",
+       "abilities": [
+        1,
+        88
+       ],
+       "bin": "All Bin Files/The Lord of the Rings/Vehicules/Gimli - 1. Axe Chariot.bin",
+       "portrait": "All Bin Files/The Lord of the Rings/Vehicules/Gimli - 1. Axe Chariot.png",
+       "atlas": 275
+      },
+      {
+       "stableId": "WORLD_THE_LORD_OF_THE_RINGS_VEH_AXE_HURLER_2_BIN",
+       "name": "Axe Hurler",
+       "build": 2,
+       "ringColor": "#F5DE5D",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/The Lord of the Rings/Vehicules/Gimli - 2. Axe Hurler.bin",
+       "portrait": "All Bin Files/The Lord of the Rings/Vehicules/Gimli - 2. Axe Hurler.png",
+       "atlas": 276
+      },
+      {
+       "stableId": "WORLD_THE_LORD_OF_THE_RINGS_VEH_SOARING_CHARIOT_3_BIN",
+       "name": "Soaring Chariot",
+       "build": 3,
+       "ringColor": "#5DC2F5",
+       "abilities": [
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/The Lord of the Rings/Vehicules/Gimli - 3. Soaring Chariot.bin",
+       "portrait": "All Bin Files/The Lord of the Rings/Vehicules/Gimli - 3. Soaring Chariot.png",
+       "atlas": 277
+      }
+     ]
+    },
+    {
+     "baseName": "Shelob the Great",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_LORD_OF_THE_RINGS_VEH_SHELOB_THE_GREAT_1_BIN",
+       "name": "Shelob the Great",
+       "build": 1,
+       "ringColor": "#C7F55D",
+       "abilities": [
+        17
+       ],
+       "bin": "All Bin Files/The Lord of the Rings/Vehicules/Gollum - 1. Shelob the Great.bin",
+       "portrait": "All Bin Files/The Lord of the Rings/Vehicules/Gollum - 1. Shelob the Great.png",
+       "atlas": 278
+      },
+      {
+       "stableId": "WORLD_THE_LORD_OF_THE_RINGS_VEH_6_LEGGED_STALKER_2_BIN",
+       "name": "6-Legged Stalker",
+       "build": 2,
+       "ringColor": "#5DF571",
+       "abilities": [
+        17,
+        79
+       ],
+       "bin": "All Bin Files/The Lord of the Rings/Vehicules/Gollum - 2. 6-Legged Stalker.bin",
+       "portrait": "All Bin Files/The Lord of the Rings/Vehicules/Gollum - 2. 6-Legged Stalker.png",
+       "atlas": 279
+      },
+      {
+       "stableId": "WORLD_THE_LORD_OF_THE_RINGS_VEH_POISON_SLINGER_3_BIN",
+       "name": "Poison Slinger",
+       "build": 3,
+       "ringColor": "#5DF560",
+       "abilities": [
+        17,
+        73,
+        79
+       ],
+       "bin": "All Bin Files/The Lord of the Rings/Vehicules/Gollum - 3. Poison Slinger.bin",
+       "portrait": "All Bin Files/The Lord of the Rings/Vehicules/Gollum - 3. Poison Slinger.png",
+       "atlas": 280
+      }
+     ]
+    },
+    {
+     "baseName": "Arrow Launcher",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_LORD_OF_THE_RINGS_VEH_ARROW_LAUNCHER_1_BIN",
+       "name": "Arrow Launcher",
+       "build": 1,
+       "ringColor": "#5DF560",
+       "abilities": [
+        1,
+        84
+       ],
+       "bin": "All Bin Files/The Lord of the Rings/Vehicules/Legolas - 1. Arrow Launcher.bin",
+       "portrait": "All Bin Files/The Lord of the Rings/Vehicules/Legolas - 1. Arrow Launcher.png",
+       "atlas": 281
+      },
+      {
+       "stableId": "WORLD_THE_LORD_OF_THE_RINGS_VEH_SEEKING_SHOOTER_2_BIN",
+       "name": "Seeking Shooter",
+       "build": 2,
+       "ringColor": "#F5AB5D",
+       "abilities": [
+        1,
+        73,
+        84
+       ],
+       "bin": "All Bin Files/The Lord of the Rings/Vehicules/Legolas - 2. Seeking Shooter.bin",
+       "portrait": "All Bin Files/The Lord of the Rings/Vehicules/Legolas - 2. Seeking Shooter.png",
+       "atlas": 282
+      },
+      {
+       "stableId": "WORLD_THE_LORD_OF_THE_RINGS_VEH_TRIPLE_BALLISTA_3_BIN",
+       "name": "Triple Ballista",
+       "build": 3,
+       "ringColor": "#5DF583",
+       "abilities": [
+        1,
+        73,
+        84
+       ],
+       "bin": "All Bin Files/The Lord of the Rings/Vehicules/Legolas - 3. Triple Ballista.bin",
+       "portrait": "All Bin Files/The Lord of the Rings/Vehicules/Legolas - 3. Triple Ballista.png",
+       "atlas": 283
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "The Powerpuff Girls",
+   "logo": "All Bin Files/The Powerpuff Girls/Logo/Powerpuff_Girls.png",
+   "characters": [
+    {
+     "stableId": "WORLD_THE_POWERPUFF_GIRLS_CHAR_BLOSSOM_BIN",
+     "name": "Blossom",
+     "build": 0,
+     "ringColor": "#5DB3F5",
+     "abilities": [
+      18,
+      26,
+      27,
+      42,
+      45,
+      47,
+      49,
+      100
+     ],
+     "bin": "All Bin Files/The Powerpuff Girls/Characters/Blossom.bin",
+     "portrait": "All Bin Files/The Powerpuff Girls/Characters/Blossom.png",
+     "atlas": 284
+    },
+    {
+     "stableId": "WORLD_THE_POWERPUFF_GIRLS_CHAR_BUBBLES_BIN",
+     "name": "Bubbles",
+     "build": 0,
+     "ringColor": "#5DBDF5",
+     "abilities": [
+      5,
+      18,
+      26,
+      42,
+      47,
+      49,
+      59,
+      63,
+      72
+     ],
+     "bin": "All Bin Files/The Powerpuff Girls/Characters/Bubbles.bin",
+     "portrait": "All Bin Files/The Powerpuff Girls/Characters/Bubbles.png",
+     "atlas": 285
+    },
+    {
+     "stableId": "WORLD_THE_POWERPUFF_GIRLS_CHAR_BUTTERCUP_BIN",
+     "name": "Buttercup",
+     "build": 0,
+     "ringColor": "#F5E85D",
+     "abilities": [
+      18,
+      26,
+      38,
+      42,
+      49,
+      75,
+      79
+     ],
+     "bin": "All Bin Files/The Powerpuff Girls/Characters/Buttercup.bin",
+     "portrait": "All Bin Files/The Powerpuff Girls/Characters/Buttercup.png",
+     "atlas": 286
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "PPG Smartphone",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_POWERPUFF_GIRLS_VEH_PPG_SMARTPHONE_1_BIN",
+       "name": "PPG Smartphone",
+       "build": 1,
+       "ringColor": "#F5E85D",
+       "abilities": [
+        26,
+        47
+       ],
+       "bin": "All Bin Files/The Powerpuff Girls/Vehicules/Blossom - 1. PPG Smartphone.bin",
+       "portrait": "All Bin Files/The Powerpuff Girls/Vehicules/Blossom - 1. PPG Smartphone.png",
+       "atlas": 287
+      },
+      {
+       "stableId": "WORLD_THE_POWERPUFF_GIRLS_VEH_PPG_HOTLINE_2_BIN",
+       "name": "PPG Hotline",
+       "build": 2,
+       "ringColor": "#5DF5ED",
+       "abilities": [
+        63
+       ],
+       "bin": "All Bin Files/The Powerpuff Girls/Vehicules/Blossom - 2. PPG Hotline.bin",
+       "portrait": "All Bin Files/The Powerpuff Girls/Vehicules/Blossom - 2. PPG Hotline.png",
+       "atlas": 288
+      },
+      {
+       "stableId": "WORLD_THE_POWERPUFF_GIRLS_VEH_POWERPUFF_MAG_NET_3_BIN",
+       "name": "Powerpuff Mag-Net",
+       "build": 3,
+       "ringColor": "#C2F55D",
+       "abilities": [
+        69
+       ],
+       "bin": "All Bin Files/The Powerpuff Girls/Vehicules/Blossom - 3. Powerpuff Mag-Net.bin",
+       "portrait": "All Bin Files/The Powerpuff Girls/Vehicules/Blossom - 3. Powerpuff Mag-Net.png",
+       "atlas": 289
+      }
+     ]
+    },
+    {
+     "baseName": "Octi",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_POWERPUFF_GIRLS_VEH_OCTI_1_BIN",
+       "name": "Octi",
+       "build": 1,
+       "ringColor": "#79F55D",
+       "abilities": [
+        18,
+        47
+       ],
+       "bin": "All Bin Files/The Powerpuff Girls/Vehicules/Bubbles - 1. Octi.bin",
+       "portrait": "All Bin Files/The Powerpuff Girls/Vehicules/Bubbles - 1. Octi.png",
+       "atlas": 290
+      },
+      {
+       "stableId": "WORLD_THE_POWERPUFF_GIRLS_VEH_SUPER_SKUNK_2_BIN",
+       "name": "Super Skunk",
+       "build": 2,
+       "ringColor": "#5DE8F5",
+       "abilities": [
+        17,
+        89,
+        96
+       ],
+       "bin": "All Bin Files/The Powerpuff Girls/Vehicules/Bubbles - 2. Super Skunk.bin",
+       "portrait": "All Bin Files/The Powerpuff Girls/Vehicules/Bubbles - 2. Super Skunk.png",
+       "atlas": 291
+      },
+      {
+       "stableId": "WORLD_THE_POWERPUFF_GIRLS_VEH_SONIC_SQUID_3_BIN",
+       "name": "Sonic Squid",
+       "build": 3,
+       "ringColor": "#5DE8F5",
+       "abilities": [
+        18,
+        72,
+        97
+       ],
+       "bin": "All Bin Files/The Powerpuff Girls/Vehicules/Bubbles - 3. Sonic Squid.bin",
+       "portrait": "All Bin Files/The Powerpuff Girls/Vehicules/Bubbles - 3. Sonic Squid.png",
+       "atlas": 292
+      }
+     ]
+    },
+    {
+     "baseName": "Mega Blast Bot",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_POWERPUFF_GIRLS_VEH_MEGA_BLAST_BOT_1_BIN",
+       "name": "Mega Blast Bot",
+       "build": 1,
+       "ringColor": "#5DF59A",
+       "abilities": [
+        69
+       ],
+       "bin": "All Bin Files/The Powerpuff Girls/Vehicules/Buttercup - 1. Mega Blast Bot.bin",
+       "portrait": "All Bin Files/The Powerpuff Girls/Vehicules/Buttercup - 1. Mega Blast Bot.png",
+       "atlas": 293
+      },
+      {
+       "stableId": "WORLD_THE_POWERPUFF_GIRLS_VEH_SLAMMIN_GUITAR_2_BIN",
+       "name": "Slammin' Guitar",
+       "build": 2,
+       "ringColor": "#5DE6F5",
+       "abilities": [
+        72
+       ],
+       "bin": "All Bin Files/The Powerpuff Girls/Vehicules/Buttercup - 2. Slammin' Guitar.bin",
+       "portrait": "All Bin Files/The Powerpuff Girls/Vehicules/Buttercup - 2. Slammin' Guitar.png",
+       "atlas": 294
+      },
+      {
+       "stableId": "WORLD_THE_POWERPUFF_GIRLS_VEH_KA_POW_CANNON_3_BIN",
+       "name": "Ka-Pow Cannon",
+       "build": 3,
+       "ringColor": "#5DF5CF",
+       "abilities": [
+        79
+       ],
+       "bin": "All Bin Files/The Powerpuff Girls/Vehicules/Buttercup - 3. Ka-Pow Cannon.bin",
+       "portrait": "All Bin Files/The Powerpuff Girls/Vehicules/Buttercup - 3. Ka-Pow Cannon.png",
+       "atlas": 295
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "The Simpsons",
+   "logo": "All Bin Files/The Simpsons/Logo/The_Simpsons.png",
+   "characters": [
+    {
+     "stableId": "WORLD_THE_SIMPSONS_CHAR_BART_SIMPSON_BIN",
+     "name": "Bart Simpson",
+     "build": 0,
+     "ringColor": "#5DF5B6",
+     "abilities": [
+      57,
+      84
+     ],
+     "bin": "All Bin Files/The Simpsons/Characters/Bart Simpson.bin",
+     "portrait": "All Bin Files/The Simpsons/Characters/Bart Simpson.png",
+     "atlas": 296
+    },
+    {
+     "stableId": "WORLD_THE_SIMPSONS_CHAR_HOMER_SIMPSON_BIN",
+     "name": "Homer Simpson",
+     "build": 0,
+     "ringColor": "#F5AE5D",
+     "abilities": [
+      6,
+      13,
+      72,
+      79
+     ],
+     "bin": "All Bin Files/The Simpsons/Characters/Homer Simpson.bin",
+     "portrait": "All Bin Files/The Simpsons/Characters/Homer Simpson.png",
+     "atlas": 297
+    },
+    {
+     "stableId": "WORLD_THE_SIMPSONS_CHAR_KRUSTY_THE_CLOWN_BIN",
+     "name": "Krusty the Clown",
+     "build": 0,
+     "ringColor": "#5DF5DE",
+     "abilities": [
+      36,
+      40
+     ],
+     "bin": "All Bin Files/The Simpsons/Characters/Krusty the Clown.bin",
+     "portrait": "All Bin Files/The Simpsons/Characters/Krusty the Clown.png",
+     "atlas": 298
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Gravity Sprinter",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_SIMPSONS_VEH_GRAVITY_SPRINTER_1_BIN",
+       "name": "Gravity Sprinter",
+       "build": 1,
+       "ringColor": "#5DB1F5",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/The Simpsons/Vehicules/Bart Simpson - 1. Gravity Sprinter.bin",
+       "portrait": "All Bin Files/The Simpsons/Vehicules/Bart Simpson - 1. Gravity Sprinter.png",
+       "atlas": 299
+      },
+      {
+       "stableId": "WORLD_THE_SIMPSONS_VEH_STREET_SHREDDER_2_BIN",
+       "name": "Street Shredder",
+       "build": 2,
+       "ringColor": "#F59F5D",
+       "abilities": [
+        1,
+        74
+       ],
+       "bin": "All Bin Files/The Simpsons/Vehicules/Bart Simpson - 2. Street Shredder.bin",
+       "portrait": "All Bin Files/The Simpsons/Vehicules/Bart Simpson - 2. Street Shredder.png",
+       "atlas": 300
+      },
+      {
+       "stableId": "WORLD_THE_SIMPSONS_VEH_SKY_CLOBBERER_3_BIN",
+       "name": "Sky Clobberer",
+       "build": 3,
+       "ringColor": "#F5745D",
+       "abilities": [
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/The Simpsons/Vehicules/Bart Simpson - 3. Sky Clobberer.bin",
+       "portrait": "All Bin Files/The Simpsons/Vehicules/Bart Simpson - 3. Sky Clobberer.png",
+       "atlas": 301
+      }
+     ]
+    },
+    {
+     "baseName": "Homer's Car",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_SIMPSONS_VEH_HOMER_S_CAR_1_BIN",
+       "name": "Homer's Car",
+       "build": 1,
+       "ringColor": "#F5885D",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/The Simpsons/Vehicules/Homer Simpson - 1. Homer's Car.bin",
+       "portrait": "All Bin Files/The Simpsons/Vehicules/Homer Simpson - 1. Homer's Car.png",
+       "atlas": 302
+      },
+      {
+       "stableId": "WORLD_THE_SIMPSONS_VEH_THE_HOMERCRAFT_2_BIN",
+       "name": "The Homercraft",
+       "build": 2,
+       "ringColor": "#F5A95D",
+       "abilities": [],
+       "bin": "All Bin Files/The Simpsons/Vehicules/Homer Simpson - 2. The Homercraft.bin",
+       "portrait": "All Bin Files/The Simpsons/Vehicules/Homer Simpson - 2. The Homercraft.png",
+       "atlas": 303
+      },
+      {
+       "stableId": "WORLD_THE_SIMPSONS_VEH_THE_SUBMAHOMER_3_BIN",
+       "name": "The SubmaHomer",
+       "build": 3,
+       "ringColor": "#9FF55D",
+       "abilities": [
+        18,
+        69
+       ],
+       "bin": "All Bin Files/The Simpsons/Vehicules/Homer Simpson - 3. The SubmaHomer.bin",
+       "portrait": "All Bin Files/The Simpsons/Vehicules/Homer Simpson - 3. The SubmaHomer.png",
+       "atlas": 304
+      }
+     ]
+    },
+    {
+     "baseName": "Taunt-o-Vision",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_SIMPSONS_VEH_TAUNT_O_VISION_1_BIN",
+       "name": "Taunt-o-Vision",
+       "build": 1,
+       "ringColor": "#74F55D",
+       "abilities": [
+        69,
+        85
+       ],
+       "bin": "All Bin Files/The Simpsons/Vehicules/Homer Simpson - 1. Taunt-O-Vision.bin",
+       "portrait": "All Bin Files/The Simpsons/Vehicules/Homer Simpson - 1. Taunt-O-Vision.png",
+       "atlas": 305
+      },
+      {
+       "stableId": "WORLD_THE_SIMPSONS_VEH_BLAST_CAM_2_BIN",
+       "name": "Blast Cam",
+       "build": 2,
+       "ringColor": "#B3F55D",
+       "abilities": [
+        69
+       ],
+       "bin": "All Bin Files/The Simpsons/Vehicules/Homer Simpson - 2. Blast Cam.bin",
+       "portrait": "All Bin Files/The Simpsons/Vehicules/Homer Simpson - 2. Blast Cam.png",
+       "atlas": 306
+      },
+      {
+       "stableId": "WORLD_THE_SIMPSONS_VEH_THE_MECHAHOMER_3_BIN",
+       "name": "The MechaHomer",
+       "build": 3,
+       "ringColor": "#5DF595",
+       "abilities": [
+        47
+       ],
+       "bin": "All Bin Files/The Simpsons/Vehicules/Homer Simpson - 3. The MechaHomer.bin",
+       "portrait": "All Bin Files/The Simpsons/Vehicules/Homer Simpson - 3. The MechaHomer.png",
+       "atlas": 307
+      }
+     ]
+    },
+    {
+     "baseName": "Clown Bike",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_SIMPSONS_VEH_CLOWN_BIKE_1_BIN",
+       "name": "Clown Bike",
+       "build": 1,
+       "ringColor": "#5DE1F5",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/The Simpsons/Vehicules/Krusty the Clown - 1. Clown Bike.bin",
+       "portrait": "All Bin Files/The Simpsons/Vehicules/Krusty the Clown - 1. Clown Bike.png",
+       "atlas": 308
+      },
+      {
+       "stableId": "WORLD_THE_SIMPSONS_VEH_CANON_BIKE_2_BIN",
+       "name": "Cannon Bike",
+       "build": 2,
+       "ringColor": "#F5905D",
+       "abilities": [
+        1
+       ],
+       "bin": "All Bin Files/The Simpsons/Vehicules/Krusty the Clown - 2. Canon Bike.bin",
+       "portrait": "All Bin Files/The Simpsons/Vehicules/Krusty the Clown - 2. Canon Bike.png",
+       "atlas": 309
+      },
+      {
+       "stableId": "WORLD_THE_SIMPSONS_VEH_ANTI_GRAVITY_ROCKET_BIKE_3_BIN",
+       "name": "Anti-Gravity Rocket Bike",
+       "build": 3,
+       "ringColor": "#BBF55D",
+       "abilities": [
+        9,
+        25,
+        26
+       ],
+       "bin": "All Bin Files/The Simpsons/Vehicules/Krusty the Clown - 3. Anti-Gravity Rocket Bike.bin",
+       "portrait": "All Bin Files/The Simpsons/Vehicules/Krusty the Clown - 3. Anti-Gravity Rocket Bike.png",
+       "atlas": 310
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "The Wizard of Oz",
+   "logo": "All Bin Files/The Wizard of Oz/Logo/The_Wizard_of_OZ.png",
+   "characters": [
+    {
+     "stableId": "WORLD_THE_WIZARD_OF_OZ_CHAR_WICKED_WITCH_OF_THE_WEST_BIN",
+     "name": "Wicked Witch",
+     "build": 0,
+     "ringColor": "#F5DE5D",
+     "abilities": [
+      26,
+      44,
+      51,
+      52,
+      56,
+      69
+     ],
+     "bin": "All Bin Files/The Wizard of Oz/Characters/Wicked Witch of the West.bin",
+     "portrait": "All Bin Files/The Wizard of Oz/Characters/Wicked Witch of the West.png",
+     "atlas": 311
+    }
+   ],
+   "vehicles": [
+    {
+     "baseName": "Winged Monkey",
+     "builds": [
+      {
+       "stableId": "WORLD_THE_WIZARD_OF_OZ_VEH_WINGED_MONKEY_1_BIN",
+       "name": "Winged Monkey",
+       "build": 1,
+       "ringColor": "#5DF571",
+       "abilities": [],
+       "bin": "All Bin Files/The Wizard of Oz/Vehicules/Wicked Witch of the West - 1. Winged Monkey.bin",
+       "portrait": "All Bin Files/The Wizard of Oz/Vehicules/Wicked Witch of the West - 1. Winged Monkey.png",
+       "atlas": 312
+      },
+      {
+       "stableId": "WORLD_THE_WIZARD_OF_OZ_VEH_BATTLE_MONKEY_2_BIN",
+       "name": "Battle Monkey",
+       "build": 2,
+       "ringColor": "#F5F05D",
+       "abilities": [
+        26,
+        69
+       ],
+       "bin": "All Bin Files/The Wizard of Oz/Vehicules/Wicked Witch of the West - 2. Battle Monkey.bin",
+       "portrait": "All Bin Files/The Wizard of Oz/Vehicules/Wicked Witch of the West - 2. Battle Monkey.png",
+       "atlas": 313
+      },
+      {
+       "stableId": "WORLD_THE_WIZARD_OF_OZ_VEH_COMMANDER_MONKEY_3_BIN",
+       "name": "Commander Monkey",
+       "build": 3,
+       "ringColor": "#8BF55D",
+       "abilities": [
+        26,
+        69,
+        72
+       ],
+       "bin": "All Bin Files/The Wizard of Oz/Vehicules/Wicked Witch of the West - 3. Commander Monkey.bin",
+       "portrait": "All Bin Files/The Wizard of Oz/Vehicules/Wicked Witch of the West - 3. Commander Monkey.png",
+       "atlas": 314
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

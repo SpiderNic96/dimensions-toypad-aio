@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>LegoToypad Remote</title>
+<link rel="stylesheet" href="/style.css?v=21">
+</head>
+<body>
+<div id="stage">
+  <div id="loading">
+    <img id="loadingLogo" alt="">
+    <div id="loadBar"></div>
+    <div id="loadingText"></div>
+  </div>
+  <img id="bgimg" alt="">
+  <div id="topbar">
+    <img id="wordmark" alt="">
+    <img id="byHarrysof" alt="by harrysof">
+  </div>
+
+  <div id="padScreen" class="screen active">
+    <div class="pad-layout-wrapper">
+      <div class="pad-deck-card">
+        <div id="pads"></div>
+      </div>
+      <div class="pad-controls-card">
+        <div id="actionBar"></div>
+        <div id="statusMessage" class="status-message"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="franchiseScreen" class="screen">
+    <div class="screen-header">
+      <div id="franchiseTitle">PICK A WORLD</div>
+    </div>
+    <div class="grid-wrapper">
+      <div id="franchiseGrid"></div>
+      <div class="scrollbar" id="franchiseScroll"><img src="" alt=""></div>
+    </div>
+  </div>
+
+  <div id="rosterScreen" class="screen">
+    <div class="screen-header">
+      <img id="worldLogo" alt="">
+    </div>
+    <div class="grid-wrapper">
+      <div id="rosterGrid"></div>
+      <div class="scrollbar" id="rosterScroll"><img src="" alt=""></div>
+    </div>
+  </div>
+
+  <div id="plusScreen" class="screen">
+    <div class="screen-header">
+      <img id="plusWorldLogo" alt="">
+    </div>
+    <div class="plus-wrapper">
+      <div id="plusPanel"><div id="plusGrid"></div></div>
+    </div>
+  </div>
+
+  <button id="backBtn">&#8249;</button>
+  <div id="floatName"></div>
+  <img id="dragGhost" class="dragGhost" alt="">
+</div>
+<script src="/app.js?v=21"></script>
+</body>
+</html>

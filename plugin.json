@@ -1,0 +1,16 @@
+{
+  "name": "Dimensions Toypad",
+  "author": "MetalNic96",
+  "flags": [],
+  "api_version": 2,
+  "publish": {
+    "tags": [
+      "gaming",
+      "emulation",
+      "toys-to-life"
+    ],
+    "description": "Place, move and clear LEGO Dimensions figures on an emulated Toy Pad, with live pad LED mirroring. Supports RPCS3, Cemu, shadPS4 and Dimensions Recompiled.",
+    "image": "https://raw.githubusercontent.com/SpiderNic96/dimensions-toypad/main/assets/banner.png"
+  },
+  "version": "0.1.0"
+}

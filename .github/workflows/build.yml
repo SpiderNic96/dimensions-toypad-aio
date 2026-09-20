@@ -1,0 +1,38 @@
+name: Build and Release Plugin
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Plugin
+        run: npm run build
+
+      - name: Package Plugin
+        run: |
+          mkdir -p dimensions-toypad
+          cp -r assets bin data dist py_modules web index.js main.py package.json plugin.json dimensions-toypad/
+          zip -r dimensions-toypad-release.zip dimensions-toypad/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dimensions-toypad-release.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

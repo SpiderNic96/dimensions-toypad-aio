@@ -1,0 +1,610 @@
+{
+ "abilities": [
+  {
+   "name": "A-Team Master Build",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/A-Team Master Build.png",
+   "ringColor": "#5DF56A"
+  },
+  {
+   "name": "Accelerator Switches",
+   "section": "Vehicular",
+   "icon": "Assets/Abilities/Vehicular/Accelerator Switches Ability.png",
+   "ringColor": "#5DF574"
+  },
+  {
+   "name": "Acrobat",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Acrobat Ability.png",
+   "ringColor": "#5D9CF5"
+  },
+  {
+   "name": "Apparate Access",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Apparate Access Ability.png",
+   "ringColor": "#5DF5CA"
+  },
+  {
+   "name": "Arcade Dock",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Arcade Dock Ability.png",
+   "ringColor": "#F5A15D"
+  },
+  {
+   "name": "Atlantis Elemental",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Atlantis Elemental Ability.png",
+   "ringColor": "#D4F55D"
+  },
+  {
+   "name": "Big Transform",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Big Transform Ability.png",
+   "ringColor": "#F5BD5D"
+  },
+  {
+   "name": "BMO Docking Stations",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/BMO Docking Stations Ability.png",
+   "ringColor": "#9FF55D"
+  },
+  {
+   "name": "Boomerang",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Boomerang Ability.png",
+   "ringColor": "#8BF55D"
+  },
+  {
+   "name": "Cargo Hook",
+   "section": "Vehicular",
+   "icon": "Assets/Abilities/Vehicular/Cargo Hook Ability.png",
+   "ringColor": "#F5F05D"
+  },
+  {
+   "name": "Character Changing",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Character Changing Ability.png",
+   "ringColor": "#5DF5DC"
+  },
+  {
+   "name": "Charge Transfer",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Charge Transfer Ability.png",
+   "ringColor": "#95F55D"
+  },
+  {
+   "name": "Chi",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Chi Ability.png",
+   "ringColor": "#5DB1F5"
+  },
+  {
+   "name": "Chili Eating",
+   "section": "One-Timed",
+   "icon": "Assets/Abilities/One-Timed Use/Chili Eating Ability.png",
+   "ringColor": "#74F55D"
+  },
+  {
+   "name": "Cursed Red LEGO Objects",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Cursed Red LEGO Objects Ability.png",
+   "ringColor": "#F5D65D"
+  },
+  {
+   "name": "Detective Mode",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Detective Mode Ability.png",
+   "ringColor": "#9CF55D"
+  },
+  {
+   "name": "Diffindo",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Diffindo Ability.png",
+   "ringColor": "#A1F55D"
+  },
+  {
+   "name": "Dig",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Dig Ability.png",
+   "ringColor": "#DCF55D"
+  },
+  {
+   "name": "Dive",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Dive Ability.png",
+   "ringColor": "#5D97F5"
+  },
+  {
+   "name": "Doctor Regenerate",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Doctor Regenerate Ability.png",
+   "ringColor": "#F5ED5D"
+  },
+  {
+   "name": "Drill",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Drill Ability.png",
+   "ringColor": "#5DF5CA"
+  },
+  {
+   "name": "Drone Mazes",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Drone Mazes Ability.png",
+   "ringColor": "#5DF57E"
+  },
+  {
+   "name": "Electricity",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Electricity Ability.png",
+   "ringColor": "#F5F25D"
+  },
+  {
+   "name": "Fantastical Briefcase",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Fantastical Briefcase Ability.png",
+   "ringColor": "#5DF580"
+  },
+  {
+   "name": "Fix-It",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Fix-It Ability.png",
+   "ringColor": "#5DF5C0"
+  },
+  {
+   "name": "Flight Dock",
+   "section": "Vehicular",
+   "icon": "Assets/Abilities/Vehicular/Flight Dock Ability.png",
+   "ringColor": "#F57E5D"
+  },
+  {
+   "name": "Flying",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Flying Ability.png",
+   "ringColor": "#65F55D"
+  },
+  {
+   "name": "Freeze Breath",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Freeze Breath Ability.png",
+   "ringColor": "#F5855D"
+  },
+  {
+   "name": "Fuse Box",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Fuse Box Ability.png",
+   "ringColor": "#5DC5F5"
+  },
+  {
+   "name": "Ghost Chipper",
+   "section": "One-Timed",
+   "icon": "Assets/Abilities/One-Timed Use/Ghost Chipper Ability.png",
+   "ringColor": "#F5E15D"
+  },
+  {
+   "name": "Ghost Puzzles",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Ghost Puzzles Ability.png",
+   "ringColor": "#5DF5D1"
+  },
+  {
+   "name": "Ghost Trap",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Ghost Trap Ability.png",
+   "ringColor": "#F5F05D"
+  },
+  {
+   "name": "Glide",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Glide Ability.png",
+   "ringColor": "#5DB6F5"
+  },
+  {
+   "name": "Grapple",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Grapple Ability.png",
+   "ringColor": "#8DF55D"
+  },
+  {
+   "name": "Gremlin Transform",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Gremlin Transform Ability.png",
+   "ringColor": "#F58B5D"
+  },
+  {
+   "name": "Grind Rails",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Grind Rails Ability.png",
+   "ringColor": "#5DF5E1"
+  },
+  {
+   "name": "Growth",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Growth Ability.png",
+   "ringColor": "#F55D5D"
+  },
+  {
+   "name": "Guardian",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Guardian Ability.png",
+   "ringColor": "#5DF5D6"
+  },
+  {
+   "name": "Gyrosphere Switches",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Gyrosphere Switches Ability.png",
+   "ringColor": "#F5BB5D"
+  },
+  {
+   "name": "Hacking",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Hacking Ability.png",
+   "ringColor": "#F5855D"
+  },
+  {
+   "name": "Hazard Cleaner",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Hazard Cleaner Ability.png",
+   "ringColor": "#5DF5E6"
+  },
+  {
+   "name": "Hazard Protection",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Hazard Protection Ability.png",
+   "ringColor": "#5DF58D"
+  },
+  {
+   "name": "Heart Regen",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Heart Regen Ability.png",
+   "ringColor": "#F5855D"
+  },
+  {
+   "name": "High Security Access",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/High Security Access Ability.png",
+   "ringColor": "#F5AB5D"
+  },
+  {
+   "name": "Illumination",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Illumination Ability.png",
+   "ringColor": "#5DF56C"
+  },
+  {
+   "name": "Intelligence",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Intelligence Ability.png",
+   "ringColor": "#C0F55D"
+  },
+  {
+   "name": "Invulnerability",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Invulnerability Ability.png",
+   "ringColor": "#5DF590"
+  },
+  {
+   "name": "Laser",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Laser Ability.png",
+   "ringColor": "#5DABF5"
+  },
+  {
+   "name": "Laser Deflector",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Laser Deflector Ability.png",
+   "ringColor": "#5DBBF5"
+  },
+  {
+   "name": "LEGO Constructs",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/LEGO Constructs Ability.png",
+   "ringColor": "#F5AE5D"
+  },
+  {
+   "name": "Lock Picking",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Lock Picking Ability.png",
+   "ringColor": "#5DC0F5"
+  },
+  {
+   "name": "Magic",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Magic Ability.png",
+   "ringColor": "#B3F55D"
+  },
+  {
+   "name": "Magical Shield",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Magical Shield Ability.png",
+   "ringColor": "#5DF585"
+  },
+  {
+   "name": "Magno Gloves",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Magno Gloves Ability.png",
+   "ringColor": "#5DF5E8"
+  },
+  {
+   "name": "Master Build",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Master Build Ability.png",
+   "ringColor": "#F5AE5D"
+  },
+  {
+   "name": "Melt Ice",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Melt Ice Ability.png",
+   "ringColor": "#60F55D"
+  },
+  {
+   "name": "Mind Control",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Mind Control Ability.png",
+   "ringColor": "#5DF574"
+  },
+  {
+   "name": "Mini Access",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Mini Access Ability.png",
+   "ringColor": "#F5BB5D"
+  },
+  {
+   "name": "P.K.E. Meter",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/P.K.E. Meter Ability.png",
+   "ringColor": "#5DF57E"
+  },
+  {
+   "name": "Parseltongue Doors",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Parseltongue Doors Ability.png",
+   "ringColor": "#5DF5C2"
+  },
+  {
+   "name": "Phone Home",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Phone Home Ability.png",
+   "ringColor": "#5DF5E1"
+  },
+  {
+   "name": "Pole Vault",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Pole Vault Ability.png",
+   "ringColor": "#5DF56C"
+  },
+  {
+   "name": "Portal Gun",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Portal Gun Ability.png",
+   "ringColor": "#E1F55D"
+  },
+  {
+   "name": "Rainbow LEGO Objects",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Rainbow LEGO Objects Ability.png",
+   "ringColor": "#5DF562"
+  },
+  {
+   "name": "Raven Portals",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Raven Portals Ability.png",
+   "ringColor": "#5DF5D1"
+  },
+  {
+   "name": "Relic Detector",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Relic Detector Ability.png",
+   "ringColor": "#5DF585"
+  },
+  {
+   "name": "Rope Swing",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Rope Swing Ability.png",
+   "ringColor": "#F5855D"
+  },
+  {
+   "name": "Scan Disguise",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Scan Disguise Ability.png",
+   "ringColor": "#F5E85D"
+  },
+  {
+   "name": "Shape Shift",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Shape Shift Ability.png",
+   "ringColor": "#90F55D"
+  },
+  {
+   "name": "Silver LEGO Blowup",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Silver LEGO Blowup Ability.png",
+   "ringColor": "#B3F55D"
+  },
+  {
+   "name": "Skeleton Organ Port",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Skeleton Organ Port Ability.png",
+   "ringColor": "#5DF588"
+  },
+  {
+   "name": "Slurp Access",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Slurp Access Ability.png",
+   "ringColor": "#BBF55D"
+  },
+  {
+   "name": "Sonar Smash",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Sonar Smash Ability.png",
+   "ringColor": "#F5B15D"
+  },
+  {
+   "name": "Special Attack",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Special Attack Ability.png",
+   "ringColor": "#F59A5D"
+  },
+  {
+   "name": "Speed",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Speed Ability.png",
+   "ringColor": "#A4F55D"
+  },
+  {
+   "name": "Spinjitzu",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Spinjitzu Ability.png",
+   "ringColor": "#F5B15D"
+  },
+  {
+   "name": "Stealth",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Stealth Ability.png",
+   "ringColor": "#5DF5CF"
+  },
+  {
+   "name": "Suit Rip",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Suit Rip Ability.png",
+   "ringColor": "#79F55D"
+  },
+  {
+   "name": "Super Jump",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Super Jump Ability.png",
+   "ringColor": "#5DF567"
+  },
+  {
+   "name": "Super Strength",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Super Strength Ability.png",
+   "ringColor": "#5DF567"
+  },
+  {
+   "name": "Suspend Ghost",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Suspend Ghost Ability.png",
+   "ringColor": "#5DF576"
+  },
+  {
+   "name": "Sword Switch",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Sword Switch Ability.png",
+   "ringColor": "#5DF59F"
+  },
+  {
+   "name": "TARDIS Access",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/TARDIS Access Ability.png",
+   "ringColor": "#5DF5D6"
+  },
+  {
+   "name": "TARDIS Travel",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/TARDIS Travel Ability.png",
+   "ringColor": "#5DF55D"
+  },
+  {
+   "name": "Target",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Target Ability.png",
+   "ringColor": "#F59F5D"
+  },
+  {
+   "name": "Taunt",
+   "section": "One-Timed",
+   "icon": "Assets/Abilities/One-Timed Use/Taunt Ability.png",
+   "ringColor": "#5DF5CA"
+  },
+  {
+   "name": "Technology",
+   "section": "Common",
+   "icon": "Assets/Abilities/Common/Technology Ability.png",
+   "ringColor": "#5DF5AB"
+  },
+  {
+   "name": "Time Travel",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Time Travel Ability.png",
+   "ringColor": "#CFF55D"
+  },
+  {
+   "name": "Tow Bar",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Tow Bar Ability.png",
+   "ringColor": "#5DF574"
+  },
+  {
+   "name": "Tracking",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Tracking Ability.png",
+   "ringColor": "#5DF0F5"
+  },
+  {
+   "name": "Truffle Shuffle",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Truffle Shuffle Ability.png",
+   "ringColor": "#5DF59A"
+  },
+  {
+   "name": "Turret Switch",
+   "section": "Vehicular",
+   "icon": "Assets/Abilities/Vehicular/Turret Switch Ability.png",
+   "ringColor": "#5DF579"
+  },
+  {
+   "name": "Underwater Drone",
+   "section": "Vehicular",
+   "icon": "Assets/Abilities/Vehicular/Underwater Drone Ability.png",
+   "ringColor": "#5D8DF5"
+  },
+  {
+   "name": "Underwater Interactions",
+   "section": "Vehicular",
+   "icon": "Assets/Abilities/Vehicular/Underwater Interactions Ability.png",
+   "ringColor": "#5DCFF5"
+  },
+  {
+   "name": "Uniform Changing",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Uniform Changing Ability.png",
+   "ringColor": "#5D8DF5"
+  },
+  {
+   "name": "Vent Access",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Vent Access Ability.png",
+   "ringColor": "#F58D5D"
+  },
+  {
+   "name": "Vine Cut",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Vine Cut Ability.png",
+   "ringColor": "#5DF5A9"
+  },
+  {
+   "name": "Water Spray",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/Water Spray Ability.png",
+   "ringColor": "#F5855D"
+  },
+  {
+   "name": "Weapon Switch",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Weapon Switch Ability.png",
+   "ringColor": "#5DF59F"
+  },
+  {
+   "name": "Weight Switch",
+   "section": "Exclusive",
+   "icon": "Assets/Abilities/Exclusive/Weight Switch Ability.png",
+   "ringColor": "#F57E5D"
+  },
+  {
+   "name": "X-Ray Vision",
+   "section": "Uncommon",
+   "icon": "Assets/Abilities/Uncommon/X-Ray Vision Ability.png",
+   "ringColor": "#A6F55D"
+  }
+ ]
+}
