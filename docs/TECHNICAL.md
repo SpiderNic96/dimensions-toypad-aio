@@ -89,3 +89,8 @@ zip -r dimensions-toypad-release.zip . -x "*.git*" "data/favourites.json" "data/
 - **Favorites**: When you favorite a character, its `stableId` is written to `favourites.json` within the plugin's data directory. The UI then flags this specific `stableId` with a visual accent (a heart/star).
 - **Move/Swap**: Accomplished entirely via the Python dictionary tracking slot occupancy. Moving a tag triggers a virtually simulated physical "Tag Removed" event followed by a "Tag Placed" event on the new slot, forcing the emulator to safely de-spawn and re-spawn the character in-game without corruption.
 - **Clear All**: Iterates over all occupied slots and fires sequential "Tag Removed" packets to the emulator, emptying the physical simulated state.
+
+### shadPS4 Setup Automation (`shadps4_setup.py`)
+- **Automated Configuration**: shadPS4 configuration is handled seamlessly by `shadps4_setup.py`. It bypasses the Qt GUI entirely and writes directly to `config.json` (noting that legacy `config.toml` files are ignored by modern shadPS4 builds).
+- **USB Device Binding**: It specifically forces the `usb_device_backend` integer to `3`, which correctly corresponds to the internal `DimensionsToypad` enumerator in shadPS4's C++ source code. Without this specific integer mapping, shadPS4 will never open TCP port 9191 to listen for the plugin.
+- **EBOOT Extraction**: shadPS4 mandates decrypted `eboot.bin` files. While the plugin automates emulator configuration, the user must manually extract `.pkg` archives using Linux CLI tools (e.g., `ps4-pkg-unpacker`) and provide a console-decrypted `eboot.bin` alongside the `sce_sys` and `sce_module` dependencies.

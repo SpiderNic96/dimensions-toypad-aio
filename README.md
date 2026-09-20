@@ -79,3 +79,11 @@ For detailed information on how the backends interact, how to build from source,
 - **Optional Metadata**: Alongside your `.bin`, you can add a `.png`/`.webp` image with the exact same filename for the portrait, and a `.json` file containing metadata like `{"name": "My Custom Character", "franchise": "DC Comics"}`.
 - *Note: Files are stored here so they survive Decky plugin updates or reinstalls!*
 
+
+### shadPS4: Game Extraction & EBOOT Decryption on Linux
+To play the PS4 version of LEGO Dimensions via shadPS4 on your Steam Deck or Linux desktop, you cannot simply load a raw `.pkg` file. You must extract it and provide a decrypted EBOOT.
+1. **Dumping the Game**: You must dump your legally owned copy of LEGO Dimensions from a jailbroken PS4. Use a dumping payload (like Itemzflow or ftpdump) to ensure the `eboot.bin` and all `.prx` modules are dumped in their **decrypted** state.
+2. **PKG Extraction (Linux)**: If you have a `.pkg` file, you can extract it on Linux using open-source tools like [ps4-pkg-unpacker](https://github.com/Red-Prig/ps4-pkg-unpacker) or `unpkg`. 
+   - Command line example: `./ps4-pkg-unpacker -x your_game.pkg output_dir/`
+3. **Decrypted EBOOT**: The raw `.pkg` contains an encrypted `eboot.bin`. **shadPS4 cannot run encrypted EBOOTs.** You must replace the extracted `eboot.bin` with the decrypted payload dumped from your PS4's memory.
+4. **Directory Structure**: Ensure your final directory contains the decrypted `eboot.bin` alongside the `sce_sys/` and `sce_module/` directories. Point shadPS4's game directory setting directly to this folder.
