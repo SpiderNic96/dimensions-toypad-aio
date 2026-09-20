@@ -100,3 +100,45 @@ zip -r dimensions-toypad-release.zip . -x "*.git*" "data/favourites.json" "data/
 - **The Why**: shadPS4 handles cheats by parsing specific patch files at runtime via its Qt GUI layer. Unlike basic emulator settings (which are stored cleanly in `config.json`), cheat toggles often require the Qt GUI to parse the memory offsets and inject them, or they require writing complex structures that the current Python backend is not programmed to safely parse and serialize.
 - **The Workaround**: To manage cheats, you must launch shadPS4 in Desktop Mode using its standard Qt GUI, apply your cheats there, and then boot back into Gaming Mode.
 - **Future Implementation Needs**: For the Decky plugin to support a cheat file selector/implementor for shadPS4, the `shadps4_setup.py` script would need to be rewritten to include a full parser for shadPS4's patch file format. It would then need to expose a list of discovered cheats over the Decky IPC bridge to `index.js`, where a new React UI component would allow the user to toggle them, and finally write those toggled states back to whatever configuration file shadPS4 expects before boot.
+
+
+## Exhaustive Step-by-Step Emulator Setup Guides
+
+### 1. CEMU (Wii U)
+1. **Base Game**: Obtain your base game files (unpacked folder format containing `code`, `content`, and `meta` directories).
+2. **Update & DLC**: You must install the latest Update Patch and the DLC packs to use Year 2 characters.
+3. **Installation**: 
+   - Open the CEMU Desktop GUI.
+   - Go to **File** -> **Install game title, update or DLC**.
+   - Navigate to your Update folder and select its `meta.xml`. Wait for the success prompt.
+   - Repeat this process for the DLC folder's `meta.xml`.
+4. **Crash Fix**: Navigate to **Options** -> **Graphic Packs**. Download the latest community packs, expand LEGO Dimensions, and explicitly enable the **Crash Fix** to prevent random gameplay freezing.
+5. **Toypad Hook**: Ensure your Toypad settings in CEMU's input/USB configuration are mapped to the localhost plugin (`127.0.0.1:9191`).
+
+### 2. RPCS3 (PS3)
+1. **Base Game**: Place your extracted PS3 game folder (e.g., `BLES02146`) into RPCS3's virtual HDD (`dev_hdd0/disc/` or `dev_hdd0/game/`).
+2. **Update & DLC**: 
+   - Go to **File** -> **Install Packages/Raps/Edats**.
+   - Select your Game Update `.pkg` file.
+   - Select your DLC `.pkg` files.
+   - Select your `.rap` license files (required for DLC decryption).
+3. **Configuration**: Right-click LEGO Dimensions in the game list -> **Create Custom Configuration**.
+4. **Toypad Hook**: Go to the **Advanced** tab. Under **USB Devices**, find the drop-down and select **LEGO Dimensions Toypad**. Ensure it is communicating on the default port `9191`.
+
+### 3. shadPS4 (PS4)
+1. **PKG Extraction**: Dump your Base Game, Update, and DLC `.pkg` files from your console. Use `ps4-pkg-unpacker` to extract them on your Deck/Linux machine.
+2. **Merging**: Extract the Base Game first. Then extract the Update `.pkg` and merge/overwrite those files directly into the Base Game directory. DLC files must be extracted to shadPS4's expected `dlc/` directory structure.
+3. **EBOOT Decryption**: You *must* replace the encrypted `eboot.bin` found in the PKG with a fully decrypted EBOOT dumped directly from your PS4's memory via a payload like Itemzflow.
+4. **Sysmodules**: ShadPS4 requires decrypted system modules to communicate with USB devices. Dump `libusb` and `libScePad` from your PS4 and place them into your shadPS4 `user/sys_modules/` folder.
+5. **Patches & Cheats**: Place community patches (like 60FPS or resolution unlocks) into the shadPS4 `patches/` folder. You must open the shadPS4 Qt GUI in Desktop Mode to manually toggle these patches on.
+
+### 4. Harry's Latest Recompiled (Windows Native)
+1. **Building**: Clone Harry's latest Recompiled repository. Follow the repository's CMake build instructions to compile the executable. 
+2. **Asset Extraction**: The Recompiled `.exe` requires the original game assets to function. Extract your LEGO Dimensions game data and place it in the exact directory structure requested by the Recompiled build instructions (typically alongside the compiled executable).
+3. **Shortcut Creation**: 
+   - Open Steam in Desktop Mode.
+   - Click **Add a Game** -> **Add a Non-Steam Game** -> **Browse** -> Select the compiled `.exe`.
+4. **Emulating via Proton**: 
+   - Right-click the new shortcut in Steam -> **Properties** -> **Compatibility**.
+   - Check **"Force the use of a specific Steam Play compatibility tool"** and select **Proton Experimental** or **Proton GE**.
+5. **Integration**: Always launch this shortcut via **Gaming Mode**. This is strictly required for the Decky Loader UI compositor to successfully inject the React Toypad Modal over the Proton-emulated game window.
