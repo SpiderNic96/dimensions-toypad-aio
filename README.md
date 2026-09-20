@@ -56,7 +56,9 @@ For detailed information on how the backends interact, how to build from source,
 ## Credits
 - **MetalNic96**: Original plugin author.
 - **Harrysof**: Phone remote web app implementation.
-- Various contributors to the LEGO Dimensions emulation community.
+- **nevercookfirst**: Developer of the LEGO Dimensions Recompiled Windows port.
+- **The Original LD Virtualiser Team**: For pioneering the foundational Toypad emulation protocols.
+- **Decky Lego Dimensions Discord Community**: For testing, feedback, and continued support of the emulation ecosystem.
 
 ### Advanced Configuration & Shortcuts
 
