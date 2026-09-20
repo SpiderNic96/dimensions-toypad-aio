@@ -58,3 +58,34 @@ zip -r dimensions-toypad-release.zip . -x "*.git*" "data/favourites.json" "data/
 ## Custom Bin Files & Upgrades
 - **Loading:** Place raw NFC `.bin` dumps of characters or vehicles into the `custom_tags/` directory. The `gamescan.py` script indexes these on startup.
 - **Upgrades:** When the game writes upgrade data to a vehicle tag, the Python backend captures the write payload and patches the `.bin` file on disk. This ensures your vehicle upgrades persist across reboots.
+
+
+## Feature Deep Dives
+
+### Anomaly Modloader (shadPS4)
+- **Sourcing**: The plugin dynamically fetches the `anomaly.prx` from the official GitHub release (connorh315/anomaly).
+- **Verification**: It verifies the PRX magic bytes (`4F 15 3D 1D`) before writing to disk to prevent corrupted module injections that silently crash shadPS4.
+- **Integration**: Unlike standard PS4 loading where modules go to `sce_module/`, shadPS4 auto-loads custom modules via `custom_modules/<GAME_SERIAL>/`. The plugin actively places `anomaly.prx` there, and provisions a `mods/` folder in the game directory.
+- **Toggling**: Mod toggles are implemented by cleanly moving `.DAT`/`.HDR` pairs into a `mods/.disabled/` subfolder, ensuring the user's files are never permanently deleted but remain hidden from the game's virtual filesystem.
+
+### Web App Extended (Phone Sync)
+- **Integration**: Inspired by Harrysof's LegoToypad web implementation, the plugin runs a localized HTTP server (`web.py`) on your Deck.
+- **Serving**: The frontend HTML/JS/CSS assets are mapped and served directly from `assets/Web/`.
+- **Sync**: The web app uses standard polling/WebSocket connections to constantly ask the Python daemon (`main.py`) for the current pad state and LED colors. Whenever the emulator modifies the LED state, the daemon broadcasts it to the phone interface simultaneously.
+
+### Game Shortcut Creation
+- **Mechanism**: The plugin includes `shortcuts.py`, which is capable of writing directly to Steam's binary `shortcuts.vdf` file.
+- **Implementation**: It parses the binary VDF file (bypassing the need for external `vdf` libraries on the Deck), looks up Steam's internal ID generator, and injects the AppImage/Flatpak execution parameters for RPCS3, CEMU, and shadPS4 directly.
+- **Safety**: It inherently checks if the Steam client is currently running and refuses to write if it is, because Steam overwrites `shortcuts.vdf` on exit.
+
+### Tri-Render LED Sync (Modal, Overlay, Phone)
+1. **The Source**: The emulator (via TCP) sends an exact RGB value and brightness payload (e.g., `0x80`, `R`, `G`, `B`) intended for the physical Toypad hardware.
+2. **The Backend**: `main.py` stores this in a live `leds` dictionary for each of the 3 pads (Center, Left, Right).
+3. **Decky Modal**: The React frontend (`index.js`) continuously queries the daemon and injects the color code into the React components' CSS gradient properties for the pad backgrounds.
+4. **Phone App**: `web.py` transmits the exact same hex conversions to the phone browser, applying them via DOM manipulation.
+5. **C++ Overlay**: The `toypad-overlay` binary hooks into the game screen and reads the pad state directly via an IPC mechanism (shared memory/pipes), drawing the exact RGB colors atop the game engine's framebuffer.
+
+### Tag Management (Clear, Move, Favourite)
+- **Favorites**: When you favorite a character, its `stableId` is written to `favourites.json` within the plugin's data directory. The UI then flags this specific `stableId` with a visual accent (a heart/star).
+- **Move/Swap**: Accomplished entirely via the Python dictionary tracking slot occupancy. Moving a tag triggers a virtually simulated physical "Tag Removed" event followed by a "Tag Placed" event on the new slot, forcing the emulator to safely de-spawn and re-spawn the character in-game without corruption.
+- **Clear All**: Iterates over all occupied slots and fires sequential "Tag Removed" packets to the emulator, emptying the physical simulated state.
