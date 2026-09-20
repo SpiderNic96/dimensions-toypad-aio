@@ -55,8 +55,8 @@ For detailed information on how the backends interact, how to build from source,
 
 ## Credits & References
 - **[MetalNic96](https://github.com/MetalNic96)**: Original plugin author.
-- **[Harrysof](https://github.com/Harrysof)**: Phone remote web app implementation and Recompiled contributions.
-- **[nevercookfirst](https://github.com/nevercookfirst)**: Developer of the LEGO Dimensions Recompiled Windows port.
+- **[Harrysof](https://github.com/Harrysof)**: Phone remote web app implementation and LegoToypad Windows app base creations that made any of this possible or gave inspiration for my own development.
+- **[nevercookfirst](https://github.com/nevercookfirst)**: Developer of the LEGO Dimensions Recompiled Windows port and heavy contributor to emulator tcp implementations.
 - **[Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader)**: The foundational plugin framework for SteamOS.
 - **The Original LD Virtualiser Team**: For pioneering the foundational Toypad emulation protocols.
 - **Decky Lego Dimensions Discord Community**: For testing, feedback, and continued support of the emulation ecosystem.
