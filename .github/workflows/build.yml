@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20' # Bumped to 20 so the workaround flag actually works
 
       - name: Install Dependencies
         run: npm install
@@ -36,3 +36,5 @@ jobs:
           files: dimensions-toypad-release.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+      
