@@ -192,10 +192,10 @@ class Plugin:
         """
         self._custom = custom_tags.scan(registry.INSTALL_ROOT)
         # Also check runtime drop folder for backwards compatibility
-        runtime_drop = Path(decky.DECKY_PLUGIN_RUNTIME_DIR) / "custom"
+        runtime_drop = registry.INSTALL_ROOT / "custom"
         if runtime_drop.is_dir():
             seen_stables = {t.stableId for t in self._custom}
-            for tag in custom_tags.scan(Path(decky.DECKY_PLUGIN_RUNTIME_DIR)):
+            for tag in custom_tags.scan(registry.INSTALL_ROOT):
                 if tag.stableId not in seen_stables:
                     self._custom.append(tag)
         for tag in self._custom:
@@ -561,7 +561,7 @@ class Plugin:
         if not working.is_file():
             # Check for existing save in root TAG_CACHE or runtime dir from previous builds
             legacy = registry.TAG_CACHE / f"{entry['stableId']}.bin"
-            runtime_legacy = Path(decky.DECKY_PLUGIN_RUNTIME_DIR) / "tags" / backend / f"{entry['stableId']}.bin"
+            runtime_legacy = registry.INSTALL_ROOT / "tags" / backend / f"{entry['stableId']}.bin"
             if legacy.is_file():
                 shutil.copy2(legacy, working)
             elif runtime_legacy.is_file():
@@ -635,7 +635,7 @@ class Plugin:
                     raw = entry["bin"]
                     src = (Path(raw) if Path(raw).is_absolute()
                            else PLUGIN_DIR / "assets" / raw)
-                    tmp = Path(decky.DECKY_PLUGIN_RUNTIME_DIR) / "scratch"
+                    tmp = Path.home() / ".local/share/dimensions-toypad/scratch"
                     tmp.mkdir(parents=True, exist_ok=True)
                     out = tmp / f"slot{slot}-{Path(entry['bin']).name}"
                     if src.is_file():
