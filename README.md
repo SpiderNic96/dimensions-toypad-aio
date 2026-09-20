@@ -57,3 +57,25 @@ For detailed information on how the backends interact, how to build from source,
 - **MetalNic96**: Original plugin author.
 - **Harrysof**: Phone remote web app implementation.
 - Various contributors to the LEGO Dimensions emulation community.
+
+### Advanced Configuration & Shortcuts
+
+#### CEMU Graphic Packs & Mods
+- To prevent known crashes in the CEMU version of LEGO Dimensions, you must enable the **Crash Fix Graphic Pack**.
+- Download the community Graphic Packs through CEMU's built-in downloader and check the box under the LEGO Dimensions entry.
+- Ensure the game's **Base**, **Update**, and **DLC** folders are merged or installed correctly via CEMU's title manager to prevent missing assets.
+
+#### Emulator Steam Shortcuts
+- When adding emulators (RPCS3, CEMU, shadPS4) or the Recompiled Windows executable to Steam:
+  1. Go to Desktop Mode -> Open Steam -> Add a Game -> Add a Non-Steam Game.
+  2. Browse to the emulator's executable (or the Recompiled `.exe`).
+  3. If adding the Windows Recompiled port or the Windows version of CEMU, right-click the shortcut in Steam -> Properties -> Compatibility -> Force the use of **Proton Experimental** or **Proton GE**.
+  4. Launch via Gaming Mode to ensure Decky Loader can inject the Toypad Modal UI.
+
+### Custom Bin Files
+- You can add your own unreleased characters, custom builds, or third-party vehicle tags by placing the raw `.bin` files into your Deck's persistent storage.
+- **Directory**: `~/.local/share/dimensions-toypad/custom/` (You may need to create this directory).
+- Simply drop a 180-byte `.bin` file here. It will automatically populate in a "Custom" section in the Toypad UI.
+- **Optional Metadata**: Alongside your `.bin`, you can add a `.png`/`.webp` image with the exact same filename for the portrait, and a `.json` file containing metadata like `{"name": "My Custom Character", "franchise": "DC Comics"}`.
+- *Note: Files are stored here so they survive Decky plugin updates or reinstalls!*
+
