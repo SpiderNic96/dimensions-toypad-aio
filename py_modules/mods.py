@@ -896,3 +896,47 @@ def running(name: str) -> bool:
     except OSError:
         pass
     return False
+
+def recomp_configure(exe: Path) -> dict:
+    import re
+    
+    parent_dir = exe.parent
+    toml_path = parent_dir / "legodimensions.toml"
+    if not toml_path.is_file():
+        return {"ok": True, "changed": [], "note": "No legodimensions.toml found"}
+        
+    win_base = "Z:" + str(parent_dir).replace("/", "\\")
+    
+    defaults = {
+        "game_data_root": r"game",
+        "update_data_root": r"update",
+        "user_data_root": r"content",
+        "log_file": r"game.log",
+        "hid_mappings_file": r"gamecontrollerdb.txt",
+        "mods_root": r"mods",
+        "mods_update_root": r"update-mods",
+        "modcli_path": r"tools\modcli\modcli.exe",
+        "mods_content_root": r"content\0000000000000000\5752084B\00000002",
+        "mods_game_root": r"game",
+        "updater_path": r"tools\rexupdate\rexupdate.exe",
+    }
+    
+    with open(toml_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+        
+    changed = False
+    for i, line in enumerate(lines):
+        match = re.match(r"^([a-zA-Z0-9_]+)\s*=\s*(['\"].*?['\"])", line)
+        if match:
+            key = match.group(1)
+            if key in defaults:
+                new_val = f"'{win_base}\\{defaults[key]}'"
+                if match.group(2) != new_val:
+                    lines[i] = f"{key} = {new_val}\n"
+                    changed = True
+                    
+    if changed:
+        with open(toml_path, "w", encoding="utf-8") as f:
+            f.writelines(lines)
+        return {"ok": True, "changed": ["Rewrote paths to Z:\\"]}
+    return {"ok": True, "changed": [], "note": "Paths already correct"}

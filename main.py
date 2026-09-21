@@ -1277,14 +1277,21 @@ class Plugin:
 
         For shadPS4: enable Toy Pad, listener port, and register dump directory.
         For Cemu: enable EmulateDimensionsToypad, listener port 9191, 60fps graphic pack, and game path.
-        RPCS3 and recomp need nothing.
+        For recomp: rewrite legodimensions.toml paths to the Z:\ drive.
+        RPCS3 needs nothing.
         """
-        if key not in ("shadps4", "cemu"):
+        if key not in ("shadps4", "cemu", "recomp"):
             return {"ok": True, "changed": [], "note": "no setup needed"}
 
         def work():
+            if key == "recomp":
+                if not game:
+                    return {"ok": False, "error": "no game selected"}
+                return modlib.recomp_configure(Path(game))
+                
             record = Installer(root=self._root()).status(key)
             exe = Path(record["path"]) if record.get("path") else None
+            
             if key == "shadps4":
                 addon = shadps4_setup.status(exe).get("addonDir") or None
                 return shadps4_setup.configure(game=game or None,
