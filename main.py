@@ -1327,17 +1327,25 @@ class Plugin:
         """
         def work():
             backend = registry.get(key)
-            record = Installer(root=self._root()).status(key)
-            if not record["installed"]:
-                return {"ok": False, "error": f"{backend.label} is not installed"}
-            exe = Path(record["path"])
             path = game or self.settings["games"].get(key, "")
+            
+            if not backend.artifact:
+                # User-supplied backend (recomp), the game IS the exe
+                exe = Path(path) if path else Path("")
+                args = "" if not backend.artifact else (backend.launch_args.format(game=path) if path else "")
+            else:
+                record = Installer(root=self._root()).status(key)
+                if not record["installed"]:
+                    return {"ok": False, "error": f"{backend.label} is not installed"}
+                exe = Path(record["path"])
+                args = "" if not backend.artifact else (backend.launch_args.format(game=path) if path else "")
+
             return {
                 "ok": True,
-                "name": backend.shortcut_name or f"{backend.label} Toypad",
+                "name": backend.shortcut_name or backend.label,
                 "exe": str(exe),
-                "startDir": str(exe.parent),
-                "args": backend.launch_args.format(game=path) if path else "",
+                "startDir": str(exe.parent) if str(exe) else "",
+                "args": args,
             }
         return await self.loop.run_in_executor(None, work)
 
@@ -1357,7 +1365,7 @@ class Plugin:
             if not sc.available:
                 return {"ok": False, "error": "no Steam user config found"}
             path = game or self.settings["games"].get(key, "")
-            args = backend.launch_args.format(game=path) if path else ""
+            args = "" if not backend.artifact else (backend.launch_args.format(game=path) if path else "")
             name = backend.shortcut_name or f"{backend.label} Toypad"
             appid = sc.add(name, Path(record["path"]), args)
             return ({"ok": True, "appid": appid, "name": name}
