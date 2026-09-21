@@ -208,6 +208,9 @@ def mount_points() -> list[Path]:
     # / itself is huge; the interesting parts of it are under home and media.
     roots = [r for r in roots if str(r) != "/"]
     roots.append(Path.home())
+    for library in [Path.home() / ".local/share/Steam/steamapps/compatdata", Path("/run/media/mmcblk0p1/steamapps/compatdata")]:
+        if library.is_dir():
+            roots.append(library)
 
     # Removable media, one root PER CARD rather than one for /run/media.
     #
@@ -227,6 +230,13 @@ def mount_points() -> list[Path]:
                 grandchildren = [g for g in child.iterdir() if g.is_dir()] \
                     if child.name in ("deck", os.environ.get("USER", "")) else []
                 roots.extend(grandchildren or [child])
+                for mount in (grandchildren or [child]):
+                    lib = mount / "steamapps" / "compatdata"
+                    if lib.is_dir():
+                        roots.append(lib)
+                    lib2 = mount / "SteamLibrary" / "steamapps" / "compatdata"
+                    if lib2.is_dir():
+                        roots.append(lib2)
         except OSError:
             continue
 
@@ -339,6 +349,8 @@ def identify(here: Path, filenames: list[str]) -> list[Found]:
         elif low in ("default.xex", "default_mp.xex"):
             out.append(Found("recomp", str(here / fname), here.name, "",
                              "Xbox 360", False))
+        elif low == "legodimensions.exe":
+            out.append(Found("recomp", str(here / fname), "Dimensions Recompiled", "", "Windows Exe", True))
         elif low.startswith("game") and low.endswith(".hdr"):
             out.append(Found("recomp", str(here), here.name, "",
                              "Xbox 360 GOD", False))
