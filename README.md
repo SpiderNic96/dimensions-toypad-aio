@@ -37,10 +37,11 @@ While Decky plugins are designed for Gaming Mode, the background server (which h
 - The plugin handles the TCP translation layer automatically.
 
 ### Recompiled Backend (by nevercookfirst)
-- The Recompiled version of LEGO Dimensions is Windows-native. To run it on the Steam Deck, you must use a compatibility layer like Proton (by adding it as a Non-Steam Game) or configure it through Lutris/Wine.
-- The plugin detects the Recompiled backend automatically.
-- **Important**: You must launch the game through Steam (Gaming Mode) for the Decky Loader UI overlay to successfully hook into the rendering pipeline.
-
+- The Recompiled version of LEGO Dimensions is Windows-native. To run it on the Steam Deck, you must use Proton.
+- **Shortcut Creation**: Do **NOT** add the game manually via Steam Desktop Mode. Instead, use the Decky Plugin's built-in "Add shortcut for Dimensions Recompiled" button in Gaming Mode. The plugin will automatically detect your `legodimensions.exe`, add it to Steam, and seamlessly patch the game's configuration file to fix Proton filepath errors.
+- **Refresh Steam**: You may need to reboot your Steam Deck (or switch to Desktop mode and back) for the newly created shortcut to physically appear in your library.
+- **Proton Setup**: Before launching, go to the new shortcut's Properties -> Compatibility and force it to use **Proton Experimental** or **Proton GE**.
+- **Important**: Always launch the game through Steam (Gaming Mode) for the Decky Loader UI overlay to successfully hook into the rendering pipeline.
 ## Usage
 - **Hotkey**: By default, pressing Volume Up + Volume Down together will open the Toypad modal in-game. Pressing it again will close it. 
 - **Navigation**: Use the D-Pad to scroll through characters and the franchises grid. Press `A` on a pad slot to select it, then select a character to place them.
@@ -69,11 +70,11 @@ For detailed information on how the backends interact, how to build from source,
 - Ensure the game's **Base**, **Update**, and **DLC** folders are merged or installed correctly via CEMU's title manager to prevent missing assets.
 
 #### Emulator Steam Shortcuts
-- When adding emulators (RPCS3, CEMU, shadPS4) or the Recompiled Windows executable to Steam:
+- When adding emulators (RPCS3, CEMU, shadPS4) to Steam manually:
   1. Go to Desktop Mode -> Open Steam -> Add a Game -> Add a Non-Steam Game.
-  2. Browse to the emulator's executable (or the Recompiled `.exe`).
-  3. If adding the Windows Recompiled port or the Windows version of CEMU, right-click the shortcut in Steam -> Properties -> Compatibility -> Force the use of **Proton Experimental** or **Proton GE**.
-  4. Launch via Gaming Mode to ensure Decky Loader can inject the Toypad Modal UI.
+  2. Browse to the emulator's executable.
+  3. Launch via Gaming Mode to ensure Decky Loader can inject the Toypad Modal UI.
+- *(Note: For Dimensions Recompiled, always use the automated Shortcut Creator built directly into the Decky Plugin menu instead of adding it manually).*
 
 ### Custom Bin Files
 - You can add your own unreleased characters, custom builds, or third-party vehicle tags by placing the raw `.bin` files into your Deck's persistent storage.
