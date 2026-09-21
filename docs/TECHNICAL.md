@@ -132,13 +132,13 @@ zip -r dimensions-toypad-release.zip . -x "*.git*" "data/favourites.json" "data/
 4. **Sysmodules**: ShadPS4 requires decrypted system modules to communicate with USB devices. Dump `libusb` and `libScePad` from your PS4 and place them into your shadPS4 `user/sys_modules/` folder.
 5. **Patches & Cheats**: Place community patches (like 60FPS or resolution unlocks) into the shadPS4 `patches/` folder. You must open the shadPS4 Qt GUI in Desktop Mode to manually toggle these patches on.
 
-### 4. NeverCookFirst Latest Recompiled (Windows Native) (Untested)
-1. **Building**: Clone NeverCook latest Recompiled repository. Follow the repository's CMake build instructions to compile the executable. 
-2. **Asset Extraction**: The Recompiled `.exe` requires the original game assets to function. Extract your LEGO Dimensions game data and place it in the exact directory structure requested by the Recompiled build instructions (typically alongside the compiled executable).
-3. **Shortcut Creation**: 
-   - Open Steam in Desktop Mode.
-   - Click **Add a Game** -> **Add a Non-Steam Game** -> **Browse** -> Select the compiled `.exe`.
-4. **Emulating via Proton**: 
-   - Right-click the new shortcut in Steam -> **Properties** -> **Compatibility**.
-   - Check **"Force the use of a specific Steam Play compatibility tool"** and select **Proton Experimental** or **Proton GE**.
-5. **Integration**: Always launch this shortcut via **Gaming Mode**. This is strictly required for the Decky Loader UI compositor to successfully inject the React Toypad Modal over the Proton-emulated game window.
+### 4. Dimensions Recompiled (Native PC / Windows)
+1. **Installation**: Follow the official Dimensions Recompiled setup guide to extract your Xbox 360 game data and install the `legodimensions.exe` game on your Steam Deck. 
+2. **Shortcut Creation (Automatic)**:
+   - Do **NOT** add the game manually via Desktop Mode!
+   - Open the Decky Plugin in Gaming Mode, go to Settings -> **Add shortcut for Dimensions Recompiled**.
+   - The plugin's background scanner will automatically locate your `legodimensions.exe` across both your internal SSD and SD cards.
+   - Simply select the executable from the pop-up list.
+3. **Auto-Patching Magic**: When the plugin creates your shortcut, it seamlessly patches your game's `legodimensions.toml` configuration file. It converts the installer's hardcoded Windows paths (e.g., `C:\Games\...`) into universal Linux/Proton paths mapped to the `Z:\` drive. This completely eliminates the notorious `--game_data_root does not exist` crash!
+4. **Save Migration**: If migrating a PS4 save via DimensionsSaveConverter, launch the Recompiled game once to create a blank save (Slot 1). Then point the converter's output directly into the newly generated `00000001` folder inside your `content` directory.
+5. **Playing**: Simply launch the newly created "Dimensions Recompiled" shortcut directly from your Steam library in Gaming Mode. The Decky plugin handles all custom tag spawning, LED sync, and file abstraction natively over Proton without any extra configuration needed!
